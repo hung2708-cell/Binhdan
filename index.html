@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Bính Dần 1986 Pickleball - Live Score</title>
+  <title>Bính Dần 1986 Pickleball - Giải Đồng Đội</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -66,9 +66,9 @@
           Lư Trung Hỏa • 1986
         </div>
         <h2 id="heroTourName" class="font-black text-base sm:text-xl text-white uppercase leading-tight truncate">
-          Giải Pickleball Bính Dần Open
+          Giải Đồng Đội Bính Dần 1986
         </h2>
-        <p class="text-xs text-amber-200/75 mt-0.5">Cập nhật tỷ số trực tiếp từng điểm • Kết nối OBS Livestream</p>
+        <p class="text-xs text-amber-200/75 mt-0.5">4 Trận Đôi (15đ) • Đơn Quyết Định (21đ) • Live Score</p>
       </div>
     </section>
 
@@ -90,61 +90,60 @@
       </div>
     </section>
 
-    <!-- TABS: LỊCH THI ĐẤU, BẢNG XẾP HẠNG & NHÁNH ĐẤU -->
+    <!-- TABS: LƯỢT ĐẤU ĐỒNG ĐỘI & BẢNG XẾP HẠNG -->
     <section class="space-y-3">
       <div class="flex gap-2 border-b border-orange-500/20 pb-2 overflow-x-auto">
-        <button id="btnTabMatches" onclick="switchPubTab('matches')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-gradient-to-r from-orange-500 to-red-600 text-white shadow">
-          Lịch & Kết quả
+        <button id="btnTabTies" onclick="switchPubTab('ties')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-gradient-to-r from-orange-500 to-red-600 text-white shadow">
+          Lượt đấu Đồng đội
         </button>
         <button id="btnTabStandings" onclick="switchPubTab('standings')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60">
-          Bảng xếp hạng
-        </button>
-        <button id="btnTabBracket" onclick="switchPubTab('bracket')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60">
-          Nhánh đấu
+          Bảng xếp hạng (3-2-1-0)
         </button>
       </div>
 
-      <!-- DANH SÁCH TRẬN ĐẤU -->
-      <div id="panelMatches" class="space-y-2.5"></div>
+      <!-- DANH SÁCH LƯỢT ĐẤU ĐỒNG ĐỘI -->
+      <div id="panelTies" class="space-y-3"></div>
 
-      <!-- BẢNG XẾP HẠNG TỰ ĐỘNG -->
-      <div id="panelStandings" class="hidden fire-card rounded-2xl overflow-hidden">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-gradient-to-r from-orange-600/25 to-red-600/15 text-amber-300 uppercase">
-            <tr>
-              <th class="py-2.5 px-3">#</th>
-              <th class="py-2.5 px-2">Đội</th>
-              <th class="py-2.5 px-2 text-center">Trận</th>
-              <th class="py-2.5 px-2 text-center">Thắng</th>
-              <th class="py-2.5 px-3 text-right">Hiệu số</th>
-            </tr>
-          </thead>
-          <tbody id="standingsBody" class="divide-y divide-orange-500/15"></tbody>
-        </table>
+      <!-- BẢNG XẾP HẠNG ĐỒNG ĐỘI -->
+      <div id="panelStandings" class="hidden space-y-2">
+        <div class="fire-card rounded-2xl overflow-x-auto">
+          <table class="w-full text-left text-xs min-w-[340px]">
+            <thead class="bg-gradient-to-r from-orange-600/25 to-red-600/15 text-amber-300 uppercase">
+              <tr>
+                <th class="py-2.5 px-2.5">#</th>
+                <th class="py-2.5 px-2">CLB / Đội</th>
+                <th class="py-2.5 px-1.5 text-center">Trận</th>
+                <th class="py-2.5 px-1.5 text-center">T-H-B</th>
+                <th class="py-2.5 px-1.5 text-center">HS Hiệp</th>
+                <th class="py-2.5 px-1.5 text-center">HS Điểm</th>
+                <th class="py-2.5 px-2.5 text-right">Điểm</th>
+              </tr>
+            </thead>
+            <tbody id="standingsBody" class="divide-y divide-orange-500/15"></tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-amber-200/55 px-1">
+          * Quy định: Thắng 3đ, Hòa 2đ, Thua 1đ, Bỏ cuộc 0đ. Bằng điểm xét Đối đầu trực tiếp → Hiệu số hiệp → Hiệu số điểm.
+        </p>
       </div>
-
-      <!-- SƠ ĐỒ NHÁNH ĐẤU LOẠI TRỰC TIẾP -->
-      <div id="panelBracket" class="hidden pt-1"></div>
     </section>
 
   </main>
 
   <script type="module">
     import { db, ref, onValue } from './js/firebase-config.js';
-    import { renderBracketHTML } from './js/bracket-engine.js';
 
     window.switchPubTab = (tab) => {
-      const tabs = ['matches', 'standings', 'bracket'];
-      const btnIds = { matches: 'btnTabMatches', standings: 'btnTabStandings', bracket: 'btnTabBracket' };
-      const panelIds = { matches: 'panelMatches', standings: 'panelStandings', bracket: 'panelBracket' };
+      const isTies = tab === 'ties';
+      document.getElementById('panelTies').classList.toggle('hidden', !isTies);
+      document.getElementById('panelStandings').classList.toggle('hidden', isTies);
 
-      tabs.forEach(t => {
-        const isActive = t === tab;
-        document.getElementById(panelIds[t]).classList.toggle('hidden', !isActive);
-        document.getElementById(btnIds[t]).className = isActive
-          ? 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-gradient-to-r from-orange-500 to-red-600 text-white shadow'
-          : 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60';
-      });
+      document.getElementById('btnTabTies').className = isTies
+        ? 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-gradient-to-r from-orange-500 to-red-600 text-white shadow'
+        : 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60';
+      document.getElementById('btnTabStandings').className = !isTies
+        ? 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-gradient-to-r from-orange-500 to-red-600 text-white shadow'
+        : 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60';
     };
 
     onValue(ref(db, '/'), (snap) => {
@@ -152,26 +151,16 @@
       const settings = data.settings || {};
       const courts = data.courts || {};
       const matches = data.matches || {};
+      const ties = data.ties || {};
       const teams = data.teams || {};
 
-      // Cập nhật tên giải & logo (ưu tiên ảnh upload từ Admin, nếu không dùng logo.jpg mặc định)
-      const tourName = settings.name || 'Giải Pickleball Bính Dần Open 2026';
+      const tourName = settings.name || 'Giải Đồng Đội Bính Dần 1986';
       document.getElementById('pubTourName').textContent = tourName;
       document.getElementById('heroTourName').textContent = tourName;
 
-      if (settings.logo) {
-        document.getElementById('pubLogo').src = settings.logo;
-        document.getElementById('pubLogo').style.display = 'block';
-        document.getElementById('pubLogoFallback').style.display = 'none';
-        document.getElementById('heroLogo').src = settings.logo;
-        document.getElementById('heroLogo').style.display = 'block';
-      }
-
       // 1. Render Live Courts
-      const courtEntries = Object.entries(courts);
       let activeCount = 0;
-
-      const courtsHtml = courtEntries.map(([cId, c]) => {
+      const courtsHtml = Object.entries(courts).map(([cId, c]) => {
         const m = c.activeMatchId ? matches[c.activeMatchId] : null;
         if (m) activeCount++;
 
@@ -186,34 +175,56 @@
             </div>`;
         }
 
+        // Tính tỷ số tổng đồng đội nếu có
+        let tieBadge = '';
+        if (m.tieId && ties[m.tieId]) {
+          let wA = 0, wB = 0;
+          (ties[m.tieId].matchIds || []).forEach(id => {
+            if (matches[id]?.winner === 'A') wA++;
+            if (matches[id]?.winner === 'B') wB++;
+          });
+          tieBadge = `<span class="text-[10px] font-black px-2 py-0.5 rounded bg-orange-500/20 text-amber-300 border border-orange-500/30">TỔNG ${wA}-${wB}</span>`;
+        }
+
         const isA = m.servingTeam === 'A';
         const dots = m.serverNumber === 2 ? '●●' : '●';
         const isDone = m.status === 'finished';
+        const subTitle = m.category ? m.category.split('(')[0].trim() : '';
 
         return `
           <div class="fire-card rounded-2xl overflow-hidden">
-            <div class="bg-gradient-to-r from-red-600/25 via-orange-600/20 to-transparent px-3.5 py-2 border-b border-orange-500/25 flex items-center justify-between">
-              <span class="font-black text-xs text-amber-300 uppercase">${c.name}</span>
-              <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isDone ? 'bg-white/10 text-gray-300' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
-                ${isDone ? 'KẾT THÚC' : '● LIVE'}
-              </span>
+            <div class="bg-gradient-to-r from-red-600/25 via-orange-600/20 to-transparent px-3.5 py-2 border-b border-orange-500/25 flex items-center justify-between gap-2">
+              <span class="font-black text-xs text-amber-300 uppercase truncate">${c.name}</span>
+              <div class="flex items-center gap-1.5 shrink-0">
+                ${tieBadge}
+                <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isDone ? 'bg-white/10 text-gray-300' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
+                  ${isDone ? 'XONG' : '● LIVE'}
+                </span>
+              </div>
             </div>
-            <div class="p-3.5 space-y-2.5">
+            <div class="p-3.5 space-y-2">
+              <div class="text-[11px] font-bold text-orange-400 truncate">${subTitle}</div>
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2 min-w-0 pr-2">
-                  <span class="text-sm font-bold truncate ${m.winner === 'A' ? 'text-emerald-400' : 'text-white'}">${m.teamA.name}</span>
-                  ${!isDone && isA ? `<span class="text-[10px] text-amber-400 font-black">${dots}</span>` : ''}
+                <div class="min-w-0 pr-2">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm font-bold truncate ${m.winner === 'A' ? 'text-emerald-400' : 'text-white'}">${m.teamA.name}</span>
+                    ${!isDone && isA ? `<span class="text-[10px] text-amber-400 font-black">${dots}</span>` : ''}
+                  </div>
+                  <div class="text-[10px] text-amber-200/60 truncate">${m.isDreambreaker ? 'Đơn 21 điểm' : (m.teamA.players || []).join(' / ')}</div>
                 </div>
-                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg ${isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">
+                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg shrink-0 ${isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">
                   ${m.teamA.score}
                 </span>
               </div>
               <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2 min-w-0 pr-2">
-                  <span class="text-sm font-bold truncate ${m.winner === 'B' ? 'text-emerald-400' : 'text-white'}">${m.teamB.name}</span>
-                  ${!isDone && !isA ? `<span class="text-[10px] text-amber-400 font-black">${dots}</span>` : ''}
+                <div class="min-w-0 pr-2">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-sm font-bold truncate ${m.winner === 'B' ? 'text-emerald-400' : 'text-white'}">${m.teamB.name}</span>
+                    ${!isDone && !isA ? `<span class="text-[10px] text-amber-400 font-black">${dots}</span>` : ''}
+                  </div>
+                  <div class="text-[10px] text-amber-200/60 truncate">${m.isDreambreaker ? 'Đơn 21 điểm' : (m.teamB.players || []).join(' / ')}</div>
                 </div>
-                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg ${!isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">
+                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg shrink-0 ${!isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">
                   ${m.teamB.score}
                 </span>
               </div>
@@ -224,58 +235,115 @@
       document.getElementById('liveCourtsGrid').innerHTML = courtsHtml || '<p class="text-xs text-amber-200/50">Chưa có sân nào.</p>';
       document.getElementById('liveCountBadge').textContent = `${activeCount} sân đang đấu`;
 
-      // 2. Render Matches List
-      const matchesArr = Object.values(matches);
-      document.getElementById('panelMatches').innerHTML = matchesArr.map(m => {
-        const badge = m.status === 'finished'
-          ? '<span class="text-[10px] px-2 py-0.5 rounded bg-white/10 text-gray-300 font-bold">XONG</span>'
-          : (m.status === 'live'
-            ? '<span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">LIVE</span>'
-            : '<span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 font-bold">CHỜ</span>');
+      // 2. Render Danh sách Lượt đấu Đồng đội (Ties)
+      const tiesArr = Object.values(ties).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      document.getElementById('panelTies').innerHTML = tiesArr.map(tie => {
+        const subMatches = (tie.matchIds || []).map(id => matches[id]).filter(Boolean);
+        let wA = 0, wB = 0;
+        subMatches.forEach(m => { if (m.winner === 'A') wA++; if (m.winner === 'B') wB++; });
 
         return `
-          <div class="fire-card rounded-xl px-3.5 py-3 flex items-center justify-between gap-2">
-            <div class="w-2/5 text-xs sm:text-sm font-bold truncate ${m.winner === 'A' ? 'text-emerald-400' : 'text-amber-50'}">${m.teamA.name}</div>
-            <div class="flex flex-col items-center shrink-0">
-              <span class="text-sm font-black text-orange-400">${m.teamA.score} - ${m.teamB.score}</span>
-              ${badge}
+          <div class="fire-card rounded-2xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-orange-500/20 pb-2">
+              <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-orange-500/20 text-amber-300">
+                ${tie.stage === 'knockout' ? 'Loại trực tiếp' : 'Vòng bảng'}
+              </span>
+              <div class="font-black text-sm text-white">
+                ${tie.teamAName} <span class="text-orange-400 mx-1.5 text-base">${wA} - ${wB}</span> ${tie.teamBName}
+              </div>
             </div>
-            <div class="w-2/5 text-xs sm:text-sm font-bold truncate text-right ${m.winner === 'B' ? 'text-emerald-400' : 'text-amber-50'}">${m.teamB.name}</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              ${subMatches.map(m => `
+                <div class="bg-[#0c0908] border border-orange-500/15 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs">
+                  <div class="min-w-0">
+                    <div class="text-[10px] font-bold text-amber-300/80">${m.category.split('(')[0]}</div>
+                    <div class="text-[11px] text-gray-300 truncate">${(m.teamA.players || []).join('/')} vs ${(m.teamB.players || []).join('/')}</div>
+                  </div>
+                  <span class="shrink-0 font-black text-sm ${m.status === 'live' ? 'text-emerald-400' : 'text-orange-400'}">
+                    ${m.teamA.score} - ${m.teamB.score}
+                  </span>
+                </div>
+              `).join('')}
+            </div>
           </div>`;
-      }).join('') || '<p class="text-xs text-amber-200/50 text-center py-6">Chưa có lịch thi đấu.</p>';
+      }).join('') || '<p class="text-xs text-amber-200/50 text-center py-6">Chưa có lượt đấu đồng đội nào.</p>';
 
-      // 3. Tính Bảng Xếp Hạng tự động
+      // 3. Tính Bảng Xếp Hạng Đồng Đội (Thắng 3, Hòa 2, Thua 1, Bỏ cuộc 0)
       const stats = {};
-      Object.values(teams).forEach(t => {
-        stats[t.name] = { name: t.name, played: 0, wins: 0, diff: 0 };
+      const h2h = {}; // h2h[teamA][teamB] = 'W' | 'L' | 'D'
+      const initTeam = (name) => {
+        if (!stats[name]) stats[name] = { name, played: 0, w: 0, d: 0, l: 0, setDiff: 0, ptDiff: 0, pts: 0 };
+        if (!h2h[name]) h2h[name] = {};
+      };
+
+      Object.values(teams).forEach(t => initTeam(t.name));
+
+      tiesArr.filter(t => t.stage === 'group').forEach(tie => {
+        initTeam(tie.teamAName);
+        initTeam(tie.teamBName);
+        const subMatches = (tie.matchIds || []).slice(0, 4).map(id => matches[id]).filter(Boolean);
+        const allFinished = subMatches.length === 4 && subMatches.every(m => m.status === 'finished');
+
+        if (!tie.walkoverWinner && !allFinished) return;
+
+        const sA = stats[tie.teamAName];
+        const sB = stats[tie.teamBName];
+        sA.played++; sB.played++;
+
+        let wA = 0, wB = 0;
+        subMatches.forEach(m => {
+          if (m.winner === 'A') wA++;
+          if (m.winner === 'B') wB++;
+          sA.ptDiff += (m.teamA.score - m.teamB.score);
+          sB.ptDiff += (m.teamB.score - m.teamA.score);
+        });
+        sA.setDiff += (wA - wB);
+        sB.setDiff += (wB - wA);
+
+        if (tie.walkoverWinner === 'A') {
+          sA.w++; sA.pts += 3; sB.l++; sB.pts += 0;
+          h2h[tie.teamAName][tie.teamBName] = 'W'; h2h[tie.teamBName][tie.teamAName] = 'L';
+        } else if (tie.walkoverWinner === 'B') {
+          sB.w++; sB.pts += 3; sA.l++; sA.pts += 0;
+          h2h[tie.teamBName][tie.teamAName] = 'W'; h2h[tie.teamAName][tie.teamBName] = 'L';
+        } else if (wA > wB) {
+          sA.w++; sA.pts += 3; sB.l++; sB.pts += 1;
+          h2h[tie.teamAName][tie.teamBName] = 'W'; h2h[tie.teamBName][tie.teamAName] = 'L';
+        } else if (wB > wA) {
+          sB.w++; sB.pts += 3; sA.l++; sA.pts += 1;
+          h2h[tie.teamBName][tie.teamAName] = 'W'; h2h[tie.teamAName][tie.teamBName] = 'L';
+        } else {
+          sA.d++; sA.pts += 2; sB.d++; sB.pts += 2;
+          h2h[tie.teamAName][tie.teamBName] = 'D'; h2h[tie.teamBName][tie.teamAName] = 'D';
+        }
       });
 
-      matchesArr.filter(m => m.status === 'finished').forEach(m => {
-        if (!stats[m.teamA.name]) stats[m.teamA.name] = { name: m.teamA.name, played: 0, wins: 0, diff: 0 };
-        if (!stats[m.teamB.name]) stats[m.teamB.name] = { name: m.teamB.name, played: 0, wins: 0, diff: 0 };
+      // Sắp xếp theo Điểm -> Đối đầu (nếu 2 đội bằng điểm) -> Hiệu số hiệp -> Hiệu số điểm
+      const arr = Object.values(stats);
+      const ptsCount = {};
+      arr.forEach(r => { ptsCount[r.pts] = (ptsCount[r.pts] || 0) + 1; });
 
-        stats[m.teamA.name].played++;
-        stats[m.teamB.name].played++;
-        stats[m.teamA.name].diff += (m.teamA.score - m.teamB.score);
-        stats[m.teamB.name].diff += (m.teamB.score - m.teamA.score);
-
-        if (m.winner === 'A') stats[m.teamA.name].wins++;
-        if (m.winner === 'B') stats[m.teamB.name].wins++;
+      arr.sort((a, b) => {
+        if (b.pts !== a.pts) return b.pts - a.pts;
+        if (ptsCount[a.pts] === 2) {
+          if (h2h[a.name]?.[b.name] === 'W') return -1;
+          if (h2h[a.name]?.[b.name] === 'L') return 1;
+        }
+        if (b.setDiff !== a.setDiff) return b.setDiff - a.setDiff;
+        return b.ptDiff - a.ptDiff;
       });
 
-      const ranked = Object.values(stats).sort((a, b) => b.wins - a.wins || b.diff - a.diff);
-      document.getElementById('standingsBody').innerHTML = ranked.map((r, i) => `
+      document.getElementById('standingsBody').innerHTML = arr.map((r, i) => `
         <tr class="hover:bg-orange-500/5">
-          <td class="py-2.5 px-3 font-black ${i < 2 ? 'text-amber-400' : 'text-amber-200/40'}">${i + 1}</td>
+          <td class="py-2.5 px-2.5 font-black ${i < 2 ? 'text-amber-400' : 'text-amber-200/40'}">${i + 1}</td>
           <td class="py-2.5 px-2 font-bold text-white">${r.name}</td>
-          <td class="py-2.5 px-2 text-center text-amber-200/60">${r.played}</td>
-          <td class="py-2.5 px-2 text-center font-black text-emerald-400">${r.wins}</td>
-          <td class="py-2.5 px-3 text-right font-bold ${r.diff >= 0 ? 'text-amber-200' : 'text-red-400'}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
+          <td class="py-2.5 px-1.5 text-center text-amber-200/60">${r.played}</td>
+          <td class="py-2.5 px-1.5 text-center text-gray-300">${r.w}-${r.d}-${r.l}</td>
+          <td class="py-2.5 px-1.5 text-center font-bold ${r.setDiff >= 0 ? 'text-emerald-400' : 'text-red-400'}">${r.setDiff > 0 ? '+' : ''}${r.setDiff}</td>
+          <td class="py-2.5 px-1.5 text-center font-bold ${r.ptDiff >= 0 ? 'text-amber-200' : 'text-red-400'}">${r.ptDiff > 0 ? '+' : ''}${r.ptDiff}</td>
+          <td class="py-2.5 px-2.5 text-right font-black text-orange-400 text-sm">${r.pts}</td>
         </tr>
-      `).join('') || '<tr><td colspan="5" class="py-6 text-center text-amber-200/50">Chưa có dữ liệu xếp hạng.</td></tr>';
-
-      // 4. Render Sơ đồ nhánh đấu
-      document.getElementById('panelBracket').innerHTML = renderBracketHTML(matches);
+      `).join('') || '<tr><td colspan="7" class="py-6 text-center text-amber-200/50">Chưa có dữ liệu xếp hạng.</td></tr>';
     });
   </script>
 </body>
