@@ -67,12 +67,10 @@
       <div class="court-surface rounded-lg overflow-hidden text-xs font-bold">
         <!-- NỬA SÂN TRÊN (ĐỘI B) -->
         <div class="grid grid-cols-2 divide-x divide-white/80 h-16">
-          <!-- Ô Trái của Đội B (nhìn từ dưới lên là bên Trái = Ô Chẵn của B) -->
           <div id="boxB0" class="flex flex-col items-center justify-center p-1 text-center relative transition-colors">
             <span class="text-[9px] text-white/60 uppercase">Phải (Chẵn)</span>
             <span id="pB0" class="truncate max-w-full text-white text-xs">-</span>
           </div>
-          <!-- Ô Phải của Đội B (nhìn từ dưới lên là bên Phải = Ô Lẻ của B) -->
           <div id="boxB1" class="flex flex-col items-center justify-center p-1 text-center relative transition-colors">
             <span class="text-[9px] text-white/60 uppercase">Trái (Lẻ)</span>
             <span id="pB1" class="truncate max-w-full text-white text-xs">-</span>
@@ -87,12 +85,10 @@
 
         <!-- NỬA SÂN DƯỚI (ĐỘI A) -->
         <div class="grid grid-cols-2 divide-x divide-white/80 h-16">
-          <!-- Ô Trái (Lẻ) của Đội A -->
           <div id="boxA1" class="flex flex-col items-center justify-center p-1 text-center relative transition-colors">
             <span id="pA1" class="truncate max-w-full text-white text-xs">-</span>
             <span class="text-[9px] text-white/60 uppercase">Trái (Lẻ)</span>
           </div>
-          <!-- Ô Phải (Chẵn) của Đội A -->
           <div id="boxA0" class="flex flex-col items-center justify-center p-1 text-center relative transition-colors">
             <span id="pA0" class="truncate max-w-full text-white text-xs">-</span>
             <span class="text-[9px] text-white/60 uppercase">Phải (Chẵn)</span>
@@ -132,7 +128,9 @@
     import { db, ref, set, update, onValue } from './js/firebase-config.js';
     import { awardPoint, faultOrSideOut, undoLastAction, getCallScore, getMatchAlerts } from './js/pickleball-engine.js';
     import { requirePin } from './js/auth.js';
-await requirePin('referee');
+
+    // Yêu cầu nhập PIN Trọng tài (mặc định: 1234)
+    await requirePin('referee');
 
     const params = new URLSearchParams(window.location.search);
     let currentCourtId = params.get('court') || 'court_1';
@@ -141,7 +139,6 @@ await requirePin('referee');
     let unsubMatch = null;
     let soundEnabled = true;
 
-    // Tạo âm thanh bằng Web Audio API (không cần file MP3)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playBeep(freq = 800, duration = 0.12, type = 'sine') {
       if (!soundEnabled) return;
@@ -196,6 +193,17 @@ await requirePin('referee');
     async function saveMatch(newState) {
       if (!currentMatchId) return;
       await set(ref(db, `matches/${currentMatchId}`), newState);
+
+      // Tự động đẩy đội thắng vào vòng tiếp theo nếu là trận Knockout
+      if (newState.status === 'finished' && newState.winner && newState.nextMatchId && newState.nextSlot) {
+        const winTeam = newState.winner === 'A' ? newState.teamA : newState.teamB;
+        const targetPath = `matches/${newState.nextMatchId}/team${newState.nextSlot}`;
+        await update(ref(db, targetPath), {
+          name: winTeam.name,
+          players: winTeam.players || [winTeam.name, '']
+        });
+        playBeep(1046, 0.35, 'triangle');
+      }
     }
 
     window.changeCourt = (cId) => { window.location.search = `?court=${cId}`; };
@@ -247,7 +255,6 @@ await requirePin('referee');
       const pB0 = (m.teamB.players && m.teamB.players[0]) || 'B1';
       const pB1 = (m.teamB.players && m.teamB.players[1]) || 'B2';
 
-      // Xác định ô đang cầm bóng giao (Điểm chẵn -> Ô Phải [0], Điểm lẻ -> Ô Trái [1])
       const isA = m.servingTeam === 'A';
       const activeScore = isA ? m.teamA.score : m.teamB.score;
       const isEven = activeScore % 2 === 0;
@@ -275,7 +282,8 @@ await requirePin('referee');
       const alerts = getMatchAlerts(m);
       const banner = document.getElementById('alertBanner');
       if (alerts.winner) {
-        banner.textContent = `🏆 KẾT THÚC! ${alerts.winner === 'A' ? m.teamA.name : m.teamB.name} CHIẾN THẮNG!`;
+        const nextNote = m.nextMatchId ? ' (Đã tự động điền vào vòng sau!)' : '';
+        banner.textContent = `🏆 KẾT THÚC! ${alerts.winner === 'A' ? m.teamA.name : m.teamB.name} THẮNG!${nextNote}`;
         banner.className = 'rounded-xl px-3 py-2 text-center font-black text-xs uppercase bg-emerald-500 text-black';
       } else if (alerts.isGamePoint) {
         banner.textContent = `🔥 GAME POINT CHO ${alerts.gamePointTeam === 'A' ? m.teamA.name : m.teamB.name}`;
