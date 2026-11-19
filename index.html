@@ -216,22 +216,19 @@
         </div>
       </div>
 
-      <!-- CÁC TAB TRÊN MÁY TÍNH -->
+      <!-- 5 TAB KHÁN GIẢ TRÊN MÁY TÍNH -->
       <nav class="hidden lg:flex items-center gap-1 flex-1 justify-center px-1">
-        <button type="button" onclick="switchPubTab('live')" data-tab="live" class="desk-tab px-2.5 py-1.5 rounded-xl text-[11px] font-black bg-orange-500 text-slate-950 flex items-center gap-1">
-          <svg class="w-3.5 h-3.5"><use href="#icon-pickleball"></use></svg> Sân Live
+        <button type="button" onclick="switchPubTab('live')" data-tab="live" class="desk-tab px-3 py-1.5 rounded-xl text-[11px] font-black bg-orange-500 text-slate-950 flex items-center gap-1">
+          <svg class="w-3.5 h-3.5"><use href="#icon-pickleball"></use></svg> Live
         </button>
-        <button type="button" onclick="switchPubTab('ties')" data-tab="ties" class="desk-tab nav-team-only px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Lượt đấu</button>
-        <button type="button" onclick="switchPubTab('standings')" data-tab="standings" class="desk-tab nav-team-only px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Xếp hạng</button>
-        <button type="button" onclick="switchPubTab('groups')" data-tab="groups" class="desk-tab px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Bảng A–D</button>
-        <button type="button" onclick="switchPubTab('bracket')" data-tab="bracket" class="desk-tab px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Sơ đồ nhánh</button>
-        <button type="button" onclick="switchPubTab('players')" data-tab="players" class="desk-tab px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Điểm trình</button>
+        <button type="button" onclick="switchPubTab('ties')" data-tab="ties" class="desk-tab nav-team-only px-3 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Đấu</button>
+        <button type="button" onclick="switchPubTab('standings')" data-tab="standings" class="desk-tab nav-team-only px-3 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">XH</button>
+        <button type="button" onclick="switchPubTab('groups')" data-tab="groups" class="desk-tab px-3 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Bảng</button>
+        <button type="button" onclick="switchPubTab('completed')" data-tab="completed" class="desk-tab px-3 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Chi tiết</button>
       </nav>
 
+      <!-- KHU VỰC BTC / TRỌNG TÀI (CÓ MẬT KHẨU PIN) -->
       <div class="flex items-center gap-1.5 shrink-0">
-        <button type="button" onclick="exportTournamentExcel()" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 flex items-center gap-1" title="Xuất Excel tổng hợp giải đấu">
-          <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> <span class="hidden sm:inline">Xuất Excel</span>
-        </button>
         <button type="button" onclick="openRefereeWithPin()" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-slate-200 flex items-center gap-1">
           <i data-lucide="gavel" class="w-3.5 h-3.5 text-orange-400"></i> <span class="hidden sm:inline">Trọng tài</span>
         </button>
@@ -244,8 +241,8 @@
 
   <main class="max-w-7xl mx-auto p-3.5 sm:p-4 lg:p-6 space-y-4">
 
-    <!-- THẺ TÓM TẮT GIẢI CHUẨN SPORTCONNECT -->
-    <section class="sc-hero rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <!-- THẺ TÓM TẮT GIẢI CHO KHÁN GIẢ -->
+    <section class="sc-hero rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-3">
       <div class="flex items-center gap-3 min-w-0">
         <img src="logo.jpg" onerror="this.style.display='none'" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-orange-500/50 bg-black shrink-0" alt="Logo" />
         <div class="min-w-0">
@@ -254,21 +251,12 @@
             <span id="scLiveCourtsPill" class="px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">0 sân live</span>
           </div>
           <h1 id="scHeroTitle" class="font-black text-sm sm:text-lg text-white uppercase truncate mt-1">Giải Pickleball Bính Dần 1986</h1>
-          <p id="scHeroMeta" class="text-[11px] text-slate-400 truncate">SportConnect • Sẵn sàng thi đấu</p>
+          <p id="scHeroMeta" class="text-[11px] text-slate-400 truncate">Theo dõi tỷ số trực tiếp & kết quả giải đấu</p>
         </div>
-      </div>
-
-      <div class="flex items-center gap-2 shrink-0">
-        <button type="button" onclick="exportTournamentExcel()" class="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-[11px] font-black text-emerald-300 flex items-center gap-1">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i> Xuất Excel
-        </button>
-        <button type="button" onclick="switchPubTab('bracket')" class="fire-btn px-3 py-1.5 rounded-xl text-[11px] font-black text-white shadow">
-          Sơ đồ nhánh
-        </button>
       </div>
     </section>
 
-    <!-- 1. SÂN LIVE -->
+    <!-- 1. LIVE -->
     <section id="panelLive" class="pub-panel space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-black text-orange-400 uppercase text-sm flex items-center gap-2">
@@ -280,7 +268,7 @@
       <div id="liveCourtsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5"></div>
     </section>
 
-    <!-- 2. LƯỢT ĐẤU ĐỒNG ĐỘI -->
+    <!-- 2. ĐẤU (LƯỢT ĐẤU ĐỒNG ĐỘI) -->
     <section id="panelTies" class="pub-panel hidden space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-black text-orange-400 uppercase text-sm">Lịch & Kết quả Lượt đấu Đồng đội</h2>
@@ -289,7 +277,7 @@
       <div id="tiesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-3.5"></div>
     </section>
 
-    <!-- 3. BẢNG XẾP HẠNG (3 • 2 • 1 • 0 + HIỆU SỐ +- ) -->
+    <!-- 3. XH (BẢNG XẾP HẠNG 3 • 2 • 1 • 0 + HIỆU SỐ +-) -->
     <section id="panelStandings" class="pub-panel hidden space-y-2.5">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-black text-orange-400 uppercase text-sm">Bảng xếp hạng Đồng đội (3 • 2 • 1 • 0)</h2>
@@ -313,57 +301,17 @@
       </div>
     </section>
 
-    <!-- 4. CHIA BẢNG A–D -->
+    <!-- 4. BẢNG (CHỈ XEM BẢNG A–D & SƠ ĐỒ NHÁNH SERIE A / B CHO KHÁN GIẢ) -->
     <section id="panelGroups" class="pub-panel hidden space-y-4">
-      <div class="sc-card rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div class="flex gap-1.5 overflow-x-auto no-scrollbar">
-          <button type="button" onclick="selectGroupCat('ALL')" data-gcat="ALL" class="gcat-btn shrink-0 px-3 py-1.5 rounded-full text-xs font-black bg-orange-500 text-slate-950">Tất cả</button>
-          <button type="button" onclick="selectGroupCat('Đôi Nam')" data-gcat="Đôi Nam" class="gcat-btn shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/[0.06] text-slate-300">Đôi Nam</button>
-          <button type="button" onclick="selectGroupCat('Đôi Nữ')" data-gcat="Đôi Nữ" class="gcat-btn shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/[0.06] text-slate-300">Đôi Nữ</button>
-          <button type="button" onclick="selectGroupCat('Đôi Nam Nữ')" data-gcat="Đôi Nam Nữ" class="gcat-btn shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/[0.06] text-slate-300">Đôi Nam Nữ</button>
-        </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <select id="groupCountSel" class="bg-[#090b0f] border border-white/10 rounded-xl px-2.5 py-2 text-xs font-bold text-amber-300 outline-none">
-            <option value="2">2 Bảng (A, B)</option>
-            <option value="4" selected>4 Bảng (A–D)</option>
-          </select>
-          <button type="button" onclick="autoDrawGroups()" class="fire-btn px-3.5 py-2 rounded-xl text-xs font-black text-white shadow flex items-center gap-1.5">
-            <svg class="w-4 h-4"><use href="#icon-pickleball"></use></svg> Bốc thăm chia bảng
-          </button>
-        </div>
-      </div>
-
-      <div id="groupsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-
-      <div class="sc-card rounded-2xl p-4 space-y-2.5">
-        <h3 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Danh sách đội/cặp (<span id="poolCount">0</span>)</h3>
-        <div id="unassignedList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs"></div>
-      </div>
-    </section>
-
-    <!-- 5. SƠ ĐỒ NHÁNH NỐI CẶP (HOVER/CHẠM SÁNG TRẬN ĐÃ ĐẤU + BẤM XEM CHI TIẾT TỶ SỐ) -->
-    <section id="panelBracket" class="pub-panel hidden space-y-4">
-      <div class="sc-card rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 class="font-black text-orange-400 uppercase text-sm">Sơ đồ nhánh Đồng đội & Nội dung Đôi</h2>
-          <p class="text-[11px] text-slate-400 mt-0.5">Di chuột hoặc chạm vào đội để sáng lên các trận đã đấu • Bấm vào trận để xem chi tiết tỷ số từng lượt</p>
-        </div>
-        <div class="flex flex-wrap items-center gap-2 shrink-0">
-          <select id="bracketScopeSel" onchange="renderBracketTrees()" class="bg-[#090b0f] border border-white/10 rounded-xl px-2.5 py-2 text-xs font-bold text-white outline-none">
-            <option value="team">Nội dung Đồng đội</option>
-            <option value="doubles">Nội dung Đôi</option>
-          </select>
-          <button type="button" onclick="generateSeriesBrackets()" class="fire-btn px-3.5 py-2 rounded-xl text-xs font-black text-white shadow">
-            Tự chia Nhánh A & B
-          </button>
-          <select id="bracketTargetCourt" class="bg-[#090b0f] border border-white/10 rounded-xl px-2.5 py-2 text-xs font-bold text-amber-300 outline-none"></select>
-        </div>
+      <div class="space-y-3">
+        <h2 class="font-black text-orange-400 uppercase text-sm">Bảng đấu A–D</h2>
+        <div id="groupsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
 
       <div class="sc-card rounded-2xl p-4 space-y-3">
-        <div class="flex items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center justify-between gap-2">
           <span class="px-2.5 py-1 rounded-lg bg-orange-500/20 border border-orange-400/40 text-amber-300 font-black text-xs uppercase">
-            Serie A • Nhất & Nhì bảng
+            Sơ đồ nhánh Serie A • Nhất & Nhì bảng
           </span>
           <span id="activeTeamFocusLabel" class="text-[11px] font-bold text-emerald-400 truncate"></span>
         </div>
@@ -372,57 +320,39 @@
 
       <div class="sc-card rounded-2xl p-4 space-y-3">
         <span class="px-2.5 py-1 rounded-lg bg-sky-500/20 border border-sky-400/40 text-sky-300 font-black text-xs uppercase">
-          Serie B • Ba & Tư bảng
+          Sơ đồ nhánh Serie B • Ba & Tư bảng
         </span>
         <div id="treeSerieB" class="sc-bracket-board"></div>
       </div>
     </section>
 
-    <!-- 6. ĐIỂM TRÌNH VĐV -->
-    <section id="panelPlayers" class="pub-panel hidden space-y-4">
-      <div class="sc-card rounded-2xl p-4 space-y-3">
-        <div class="flex items-center justify-between gap-2">
-          <h2 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Tính điểm trình ghép cặp</h2>
-          <span id="pairCalcBadge" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-orange-500/20 text-amber-300 border border-orange-500/30 tabular-nums">
-            Tổng: 0.0
-          </span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <button type="button" onclick="openPairSlotPicker(1)" class="w-full bg-[#090b0f] border border-white/10 hover:border-orange-500/40 rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between gap-2 text-xs">
-            <span id="pairSlot1Label" class="font-bold text-slate-200 truncate">-- Chọn VĐV 1 --</span>
-            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 shrink-0"></i>
-          </button>
-          <button type="button" onclick="openPairSlotPicker(2)" class="w-full bg-[#090b0f] border border-white/10 hover:border-orange-500/40 rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between gap-2 text-xs">
-            <span id="pairSlot2Label" class="font-bold text-slate-200 truncate">-- Chọn VĐV 2 --</span>
-            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 shrink-0"></i>
-          </button>
-        </div>
+    <!-- 5. CHI TIẾT (CHỈ HIỂN THỊ KẾT QUẢ CÁC TRẬN ĐẤU ĐÃ XONG) -->
+    <section id="panelCompleted" class="pub-panel hidden space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h2 class="font-black text-orange-400 uppercase text-sm">Kết quả các trận đấu đã xong</h2>
+        <span id="completedCountBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">0 trận đã xong</span>
       </div>
-
-      <div class="sc-card rounded-2xl p-4 space-y-3">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <input id="searchPlayerInp" type="text" oninput="renderPlayersList()" placeholder="Tìm tên VĐV..." class="flex-1 bg-[#090b0f] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-orange-500" />
-          <div class="flex gap-1.5 shrink-0">
-            <button type="button" onclick="setGenderFilter('ALL')" data-g="ALL" class="g-pill px-3 py-1.5 rounded-full text-[11px] font-black bg-orange-500 text-slate-950">Tất cả</button>
-            <button type="button" onclick="setGenderFilter('Nam')" data-g="Nam" class="g-pill px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/[0.06] text-slate-300">Nam</button>
-            <button type="button" onclick="setGenderFilter('Nữ')" data-g="Nữ" class="g-pill px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/[0.06] text-slate-300">Nữ</button>
-          </div>
-        </div>
-        <div id="playersList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5"></div>
-      </div>
+      <div id="completedMatchesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5"></div>
     </section>
 
-    <!-- 7. QUẢN TRỊ NGAY TRONG KHUNG -->
+    <!-- 6. KHU VỰC QUẢN TRỊ (CHỈ DÀNH CHO BTC SAU KHI NHẬP PIN) -->
     <section id="panelAdmin" class="pub-panel hidden space-y-4">
+
+      <!-- CÀI ĐẶT THỂ THỨC + XUẤT EXCEL -->
       <div class="sc-card rounded-2xl p-4 space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h2 class="font-black text-orange-400 uppercase text-sm">Thể thức thi đấu của giải</h2>
+            <h2 class="font-black text-orange-400 uppercase text-sm">Quản trị giải đấu</h2>
             <p id="formatLockHint" class="text-[11px] text-slate-400 mt-0.5">Chọn Đồng đội hoặc Đôi. Nội dung còn lại sẽ ẩn hoàn toàn.</p>
           </div>
-          <button type="button" id="btnUnlockFormat" onclick="unlockFormatChoice()" class="hidden px-3 py-1.5 rounded-xl bg-white/[0.06] border border-white/15 text-amber-300 text-xs font-bold">
-            Đổi thể thức
-          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="exportTournamentExcel()" class="px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 text-xs font-black flex items-center gap-1">
+              <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Xuất Excel
+            </button>
+            <button type="button" id="btnUnlockFormat" onclick="unlockFormatChoice()" class="hidden px-3 py-1.5 rounded-xl bg-white/[0.06] border border-white/15 text-amber-300 text-xs font-bold">
+              Đổi thể thức
+            </button>
+          </div>
         </div>
 
         <div id="formatChooserGrid" class="grid grid-cols-2 gap-2.5">
@@ -442,6 +372,25 @@
         </div>
       </div>
 
+      <!-- CÔNG CỤ CHIA BẢNG & CHIA NHÁNH (CHỈ HIỆN TRONG QUẢN TRỊ) -->
+      <div class="sc-card rounded-2xl p-4 space-y-3">
+        <h3 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Chia bảng A–D & Sơ đồ nhánh Serie A / B</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+          <select id="groupCountSel" class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-amber-300 outline-none">
+            <option value="2">2 Bảng (A, B)</option>
+            <option value="4" selected>4 Bảng (A–D)</option>
+          </select>
+          <button type="button" onclick="autoDrawGroups()" class="fire-btn py-2 px-3 rounded-xl text-xs font-black text-white shadow">
+            Bốc thăm chia bảng
+          </button>
+          <select id="bracketTargetCourt" class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none"></select>
+          <button type="button" onclick="generateSeriesBrackets()" class="py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-black">
+            Tự chia Nhánh A & B
+          </button>
+        </div>
+      </div>
+
+      <!-- QUẢN LÝ ĐỒNG ĐỘI -->
       <div id="adminTeamSection" class="space-y-4">
         <div class="sc-card rounded-2xl p-4 space-y-3">
           <h3 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Thêm CLB Đồng đội & VĐV (Tên • Giới tính • Trình)</h3>
@@ -463,6 +412,7 @@
         <div id="adminClubsList" class="space-y-3"></div>
       </div>
 
+      <!-- QUẢN LÝ NỘI DUNG ĐÔI -->
       <div id="adminDoublesSection" class="hidden space-y-4">
         <div class="sc-card rounded-2xl p-4 space-y-3">
           <h3 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Thêm Cặp đôi (Tên • Giới tính • Trình)</h3>
@@ -489,12 +439,13 @@
         <div id="adminDoublesList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </div>
 
+      <!-- GÁN SÂN -->
       <div id="adminCourtAssignGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5"></div>
     </section>
 
   </main>
 
-  <!-- THANH TÁC VỤ KHÓA CỨNG DƯỚI ĐÁY TRÊN ĐIỆN THOẠI -->
+  <!-- THANH TÁC VỤ KHÓA CỨNG DƯỚI ĐÁY TRÊN ĐIỆN THOẠI (5 MỤC KHÁN GIẢ) -->
   <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-2.5 pb-2.5 pt-1 pointer-events-none flex justify-center">
     <nav id="mobileBottomDock" class="locked-bottom-dock pointer-events-auto relative w-full max-w-md rounded-full p-1 grid grid-cols-5 select-none">
       <div id="mobileBottomThumb" class="ios-bottom-thumb"></div>
@@ -514,9 +465,9 @@
         <i data-lucide="grid" class="w-4 h-4"></i>
         <span class="text-[9px] font-bold leading-none truncate max-w-full">Bảng</span>
       </button>
-      <button type="button" onclick="switchPubTab('bracket')" data-btab="bracket" class="mb-tab relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 text-slate-400">
-        <i data-lucide="git-branch" class="w-4 h-4"></i>
-        <span class="text-[9px] font-bold leading-none truncate max-w-full">Nhánh</span>
+      <button type="button" onclick="switchPubTab('completed')" data-btab="completed" class="mb-tab relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 text-slate-400">
+        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+        <span class="text-[9px] font-bold leading-none truncate max-w-full">Chi tiết</span>
       </button>
     </nav>
   </div>
@@ -542,7 +493,7 @@
     </div>
   </div>
 
-  <!-- POPUP CHI TIẾT TỶ SỐ TỪNG TRẬN / LỰA CHỌN / XÁC NHẬN -->
+  <!-- POPUP CHI TIẾT TỶ SỐ TỪNG TRẬN / XÁC NHẬN -->
   <div id="scModal" onclick="if(event.target === this) closeScModal()" class="hidden fixed inset-0 z-[9999] bg-[#090b0f]/90 backdrop-blur-md flex items-center justify-center p-4">
     <div class="w-full max-w-sm bg-[#12161f] border border-orange-500/40 rounded-2xl p-5 shadow-2xl space-y-3.5 max-h-[88dvh] flex flex-col">
       <div class="text-center space-y-1 shrink-0">
@@ -564,16 +515,15 @@
     import { createInitialMatchState } from './js/pickleball-engine.js';
     import * as AuthMod from './js/auth.js';
 
-    const BOTTOM_TABS = ['live', 'ties', 'standings', 'groups', 'bracket'];
-    const ALL_TABS = ['live', 'ties', 'standings', 'groups', 'bracket', 'players', 'admin'];
+    const BOTTOM_TABS = ['live', 'ties', 'standings', 'groups', 'completed'];
+    const ALL_TABS = ['live', 'ties', 'standings', 'groups', 'completed', 'admin'];
     const STORAGE_KEY = 'bd86_active_tab';
     const PANELS = {
       live: 'panelLive',
       ties: 'panelTies',
       standings: 'panelStandings',
       groups: 'panelGroups',
-      bracket: 'panelBracket',
-      players: 'panelPlayers',
+      completed: 'panelCompleted',
       admin: 'panelAdmin'
     };
 
@@ -600,11 +550,9 @@
       groupDraw: null, seriesBracket: null, customPlayers: {}
     };
     let selectedCourtFilter = 'ALL';
-    let activeGroupCat = 'ALL';
-    let genderFilter = 'ALL';
-    let selectedPair = { 1: null, 2: null };
     let draftClubPlayers = [];
     let formatUnlockedManually = false;
+    let isAdminSession = false;
     let highlightedTeamName = '';
     let pinResolver = null;
     let currentPinRole = 'admin';
@@ -615,14 +563,22 @@
     const dock = document.getElementById('mobileBottomDock');
     const thumb = document.getElementById('mobileBottomThumb');
 
+    function getVisibleBottomTabs() {
+      const fmt = getActiveFormat();
+      return BOTTOM_TABS.filter(t => !(fmt === 'doubles' && (t === 'ties' || t === 'standings')));
+    }
+
     function syncDockThumb(animate = true) {
       if (!dock || !thumb) return;
+      const visible = getVisibleBottomTabs();
+      dock.style.gridTemplateColumns = `repeat(${visible.length}, minmax(0, 1fr))`;
+
       const rect = dock.getBoundingClientRect();
-      if (!rect.width) return;
+      if (!rect.width || !visible.length) return;
       const pad = 4;
       const innerW = rect.width - pad * 2;
-      const step = innerW / BOTTOM_TABS.length;
-      const idx = BOTTOM_TABS.indexOf(currentTabKey);
+      const step = innerW / visible.length;
+      const idx = visible.indexOf(currentTabKey);
 
       thumb.style.width = `${step}px`;
       if (idx === -1) {
@@ -643,10 +599,11 @@
 
     dock.addEventListener('pointermove', (e) => {
       if (!draggingDock) return;
+      const visible = getVisibleBottomTabs();
       const rect = dock.getBoundingClientRect();
       const pad = 4;
       const innerW = rect.width - pad * 2;
-      const w = innerW / BOTTOM_TABS.length;
+      const w = innerW / visible.length;
       const rawX = e.clientX - rect.left - pad - w / 2;
       thumb.style.transform = `translateX(${Math.max(0, Math.min(innerW - w, rawX))}px)`;
     });
@@ -654,12 +611,13 @@
     dock.addEventListener('pointerup', (e) => {
       if (!draggingDock) return;
       draggingDock = false;
+      const visible = getVisibleBottomTabs();
       const rect = dock.getBoundingClientRect();
       const pad = 4;
       const innerW = rect.width - pad * 2;
       const relX = Math.max(0, Math.min(innerW - 1, e.clientX - rect.left - pad));
-      const idx = Math.min(BOTTOM_TABS.length - 1, Math.max(0, Math.floor((relX / innerW) * BOTTOM_TABS.length)));
-      window.switchPubTab(BOTTOM_TABS[idx]);
+      const idx = Math.min(visible.length - 1, Math.max(0, Math.floor((relX / innerW) * visible.length)));
+      window.switchPubTab(visible[idx]);
     });
 
     window.addEventListener('resize', () => syncDockThumb(false));
@@ -719,8 +677,11 @@
     }
 
     window.openAdminWithPin = async () => {
-      const ok = await verifyRoleAccess('admin');
-      if (!ok) return;
+      if (!isAdminSession) {
+        const ok = await verifyRoleAccess('admin');
+        if (!ok) return;
+        isAdminSession = true;
+      }
       window.switchPubTab('admin');
     };
 
@@ -769,7 +730,6 @@
       });
     }
 
-    // Xuất Excel tổng hợp giải đấu (.xlsx kèm fallback .csv)
     window.exportTournamentExcel = () => {
       const tourName = dataStore.settings?.name || 'Binh_Dan_1986';
       const standingsRows = [];
@@ -777,13 +737,8 @@
         const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
         if (cells.length >= 7) {
           standingsRows.push({
-            Hang: cells[0],
-            CLB_Doi: cells[1],
-            Tran: cells[2],
-            THB: cells[3],
-            HS_Hiep: cells[4],
-            HS_Diem: cells[5],
-            Diem: cells[6]
+            Hang: cells[0], CLB_Doi: cells[1], Tran: cells[2], THB: cells[3],
+            HS_Hiep: cells[4], HS_Diem: cells[5], Diem: cells[6]
           });
         }
       });
@@ -802,30 +757,15 @@
 
       const clubsExport = Object.values(dataStore.teams || {}).flatMap(c => {
         const list = c.rosterDetails || (c.roster || []).map(n => ({ name: n, gender: '', rating: '' }));
-        return list.map(p => ({
-          CLB: c.name,
-          TenVDV: p.name,
-          GioiTinh: p.gender || '',
-          Trinh: p.rating ?? ''
-        }));
+        return list.map(p => ({ CLB: c.name, TenVDV: p.name, GioiTinh: p.gender || '', Trinh: p.rating ?? '' }));
       });
 
       try {
         if (window.XLSX) {
           const wb = window.XLSX.utils.book_new();
-          if (standingsRows.length) {
-            window.XLSX.utils.book_append_sheet(wb, window.XLSX.utils.json_to_sheet(standingsRows), 'XepHang');
-          }
-          window.XLSX.utils.book_append_sheet(
-            wb,
-            window.XLSX.utils.json_to_sheet(matchesExport.length ? matchesExport : [{ ThongTin: 'Chua co tran dau' }]),
-            'ChiTietTran'
-          );
-          window.XLSX.utils.book_append_sheet(
-            wb,
-            window.XLSX.utils.json_to_sheet(clubsExport.length ? clubsExport : [{ ThongTin: 'Chua co danh sach VDV' }]),
-            'DanhSachVDV'
-          );
+          if (standingsRows.length) window.XLSX.utils.book_append_sheet(wb, window.XLSX.utils.json_to_sheet(standingsRows), 'XepHang');
+          window.XLSX.utils.book_append_sheet(wb, window.XLSX.utils.json_to_sheet(matchesExport.length ? matchesExport : [{ ThongTin: 'Chua co tran dau' }]), 'ChiTietTran');
+          window.XLSX.utils.book_append_sheet(wb, window.XLSX.utils.json_to_sheet(clubsExport.length ? clubsExport : [{ ThongTin: 'Chua co danh sach VDV' }]), 'DanhSachVDV');
           window.XLSX.writeFile(wb, `${tourName.replace(/\s+/g, '_')}_TongHop.xlsx`);
           showToast('Đã xuất file Excel (.xlsx)');
           return;
@@ -893,9 +833,8 @@
       openScModal({ title: `Chi tiết • ${court.name}`, bodyHtml: html });
     };
 
-    // Bấm vào ô trận trên cây sơ đồ nhánh -> mở chi tiết tỷ số từng lượt trận
     window.openBracketMatchDetailsModal = (seriesKey, roundIdx, matchIdx) => {
-      const scope = document.getElementById('bracketScopeSel')?.value || 'team';
+      const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
       const rounds = dataStore.seriesBracket?.[scope]?.[seriesKey] || [];
       const slot = rounds?.[roundIdx]?.[matchIdx];
       if (!slot) return;
@@ -912,7 +851,7 @@
         subRowsHtml = (relatedTie.matchIds || []).map((mId, i) => {
           const sm = dataStore.matches?.[mId];
           if (!sm) return '';
-          const winSide = sm.winner === 'A' ? sm.teamA.name : (sm.winner === 'B' ? sm.teamB.name : 'Đang/Chưa đấu');
+          const winSide = sm.winner === 'A' ? sm.teamA.name : (sm.winner === 'B' ? sm.teamB.name : 'Chưa xong');
           return `
             <div class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between gap-2">
               <div class="min-w-0">
@@ -933,7 +872,7 @@
       }
 
       const items = [];
-      if (slot.ready) {
+      if (isAdminSession && slot.ready) {
         items.push({
           label: 'THI ĐẤU NGAY TRÊN SÂN',
           active: true,
@@ -955,13 +894,10 @@
       });
     };
 
-    // Di chuột / chạm để sáng lên các trận đã đấu của đội
     window.highlightTeamJourney = (teamLabel) => {
       highlightedTeamName = teamLabel || '';
       const focusEl = document.getElementById('activeTeamFocusLabel');
-      if (focusEl) {
-        focusEl.textContent = highlightedTeamName ? `Đang soi nhánh: ${highlightedTeamName}` : '';
-      }
+      if (focusEl) focusEl.textContent = highlightedTeamName ? `Đang soi nhánh: ${highlightedTeamName}` : '';
 
       document.querySelectorAll('.sc-node-card').forEach(card => {
         if (!highlightedTeamName) {
@@ -988,8 +924,7 @@
           grp.classList.remove('connector-lit');
           return;
         }
-        const lit = Boolean(grp.querySelector('.sc-node-card.team-lit'));
-        grp.classList.toggle('connector-lit', lit);
+        grp.classList.toggle('connector-lit', Boolean(grp.querySelector('.sc-node-card.team-lit')));
       });
     };
 
@@ -1019,10 +954,10 @@
 
       document.getElementById('scFormatBadge').textContent = fmt === 'doubles'
         ? 'Nội dung Đôi'
-        : (fmt === 'team' ? 'Giải Đồng đội' : 'Thể thức tự do');
+        : (fmt === 'team' ? 'Giải Đồng đội' : 'Giải Pickleball');
       document.getElementById('scLiveCourtsPill').textContent = `${liveCount}/${courtsArr.length} sân live`;
       document.getElementById('scHeroMeta').textContent = fmt === 'doubles'
-        ? `${pairCount} cặp đôi • Chia bảng A–D & Nhánh Serie A/B`
+        ? `${pairCount} cặp đôi • Bảng A–D & Nhánh Serie A/B`
         : `${clubCount} CLB • 4 trận đôi (15đ) & Đơn quyết định (21đ)`;
     }
 
@@ -1038,7 +973,7 @@
             active ? 'bg-orange-500 text-slate-950 border-orange-400' : 'bg-white/[0.08] hover:bg-orange-500/20 border-white/15 text-amber-300'
           }`;
         } else {
-          btn.className = `desk-tab px-2.5 py-1.5 rounded-xl text-[11px] flex items-center gap-1 ${
+          btn.className = `desk-tab ${btn.classList.contains('nav-team-only') ? 'nav-team-only ' : ''}px-3 py-1.5 rounded-xl text-[11px] flex items-center gap-1 ${
             active ? 'font-black bg-orange-500 text-slate-950' : 'font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]'
           }`;
         }
@@ -1291,20 +1226,8 @@
       renderLiveAndAdminCourts();
     };
 
-    window.selectGroupCat = (cat) => {
-      activeGroupCat = cat;
-      document.querySelectorAll('.gcat-btn').forEach(b => {
-        b.className = `gcat-btn shrink-0 px-3 py-1.5 rounded-full text-xs ${
-          b.dataset.gcat === cat ? 'font-black bg-orange-500 text-slate-950' : 'font-semibold bg-white/[0.06] text-slate-300'
-        }`;
-      });
-      renderGroups();
-    };
-
     window.autoDrawGroups = async () => {
-      const pool = activeGroupCat === 'ALL'
-        ? Object.values(dataStore.doublesTeams || {})
-        : Object.values(dataStore.doublesTeams || {}).filter(p => (p.pairType || 'Đôi Nam') === activeGroupCat);
+      const pool = Object.values(dataStore.doublesTeams || {});
       const numGroups = Number(document.getElementById('groupCountSel').value) || 4;
       if (pool.length < numGroups) return showToast(`Cần ít nhất ${numGroups} cặp đôi`);
 
@@ -1317,14 +1240,13 @@
       letters.forEach(l => { groups[l] = []; });
       shuffled.forEach((p, idx) => { groups[letters[idx % numGroups]].push(p); });
 
-      await set(ref(db, 'groupDraw'), { category: activeGroupCat, letters, groups, updatedAt: Date.now() });
+      await set(ref(db, 'groupDraw'), { category: 'ALL', letters, groups, updatedAt: Date.now() });
       showToast('Đã chia bảng thành công');
     };
 
     function buildMultiRoundTree(entries, keyPrefix) {
       if (!entries.length) return [];
       const rounds = [];
-
       const round1 = [];
       for (let i = 0; i < entries.length; i += 2) {
         const t1 = entries[i] || null;
@@ -1360,12 +1282,11 @@
         prevCount = nextCount;
         rIdx++;
       }
-
       return rounds;
     }
 
     window.generateSeriesBrackets = async () => {
-      const scope = document.getElementById('bracketScopeSel').value || 'team';
+      const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
       let serieAEntries = [];
       let serieBEntries = [];
 
@@ -1442,18 +1363,16 @@
         });
       });
 
-      if (changed) {
-        await set(ref(db, 'seriesBracket'), nextSb);
-      }
+      if (changed) await set(ref(db, 'seriesBracket'), nextSb);
     }
 
     window.playBracketMatchNow = async (seriesKey, roundIdx, matchIdx) => {
-      const scope = document.getElementById('bracketScopeSel').value || 'team';
+      const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
       const tree = dataStore.seriesBracket?.[scope]?.[seriesKey];
       const slot = tree?.[roundIdx]?.[matchIdx];
       if (!slot || !slot.ready) return showToast('Chưa đủ 2 đội để thi đấu');
 
-      const cId = document.getElementById('bracketTargetCourt').value || Object.keys(dataStore.courts || {})[0] || 'court_1';
+      const cId = document.getElementById('bracketTargetCourt')?.value || Object.keys(dataStore.courts || {})[0] || 'court_1';
       const mId = `br_${scope}_${seriesKey}_${roundIdx}_${matchIdx}_${Date.now().toString().slice(-4)}`;
       const isTeam = scope === 'team';
 
@@ -1461,7 +1380,7 @@
         id: mId,
         stage: 'knockout',
         isDreambreaker: isTeam,
-        category: `${isTeam ? 'Đồng đội • Đơn 21đ (Đổi VĐV mỗi 4đ, đổi sân 11đ)' : 'Đôi'} • ${seriesKey === 'serieA' ? 'Serie A' : 'Serie B'} • ${slot.round}`,
+        category: `${isTeam ? 'Đồng đội • Đơn 21đ' : 'Đôi'} • ${seriesKey === 'serieA' ? 'Serie A' : 'Serie B'} • ${slot.round}`,
         targetScore: isTeam ? 21 : 15,
         switchPoint: isTeam ? 11 : 8,
         winByTwo: true,
@@ -1493,18 +1412,18 @@
       showToast('Đã cập nhật sân');
     };
 
-    window.renderBracketTrees = () => {
-      const scope = document.getElementById('bracketScopeSel')?.value || 'team';
+    function renderBracketTrees() {
+      const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
       const block = dataStore.seriesBracket?.[scope] || {};
       renderBracketTree('treeSerieA', block.serieA, 'serieA');
       renderBracketTree('treeSerieB', block.serieB, 'serieB');
       if (highlightedTeamName) window.highlightTeamJourney(highlightedTeamName);
-    };
+    }
 
     function renderBracketTree(containerId, rounds, seriesKey) {
       const el = document.getElementById(containerId);
       if (!rounds || !rounds.length) {
-        el.innerHTML = '<p class="text-xs text-slate-400">Chưa có sơ đồ nhánh. Bấm "Tự chia Nhánh A & B" ở trên.</p>';
+        el.innerHTML = '<p class="text-xs text-slate-400">Chưa có sơ đồ nhánh cho giải này.</p>';
         return;
       }
 
@@ -1562,6 +1481,42 @@
             </div>
           </div>`;
       }).join('');
+    }
+
+    function renderCompletedMatches() {
+      const done = Object.values(dataStore.matches || {}).filter(m => m.status === 'finished');
+      document.getElementById('completedCountBadge').textContent = `${done.length} trận đã xong`;
+
+      document.getElementById('completedMatchesGrid').innerHTML = done.map(m => {
+        const winA = m.winner === 'A' || (m.teamA?.score > m.teamB?.score);
+        const winB = m.winner === 'B' || (m.teamB?.score > m.teamA?.score);
+        const pA = (m.teamA?.players || []).filter(Boolean).join(' / ');
+        const pB = (m.teamB?.players || []).filter(Boolean).join(' / ');
+
+        return `
+          <div class="sc-card rounded-2xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
+              <span class="text-[11px] font-black text-orange-400 truncate">${(m.category || 'Trận đấu').split('(')[0]}</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 shrink-0">ĐÃ XONG</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <div class="text-xs font-bold truncate ${winA ? 'text-emerald-400' : 'text-white'}">${m.teamA?.name || 'Đội A'}</div>
+                  ${pA ? `<div class="text-[10px] text-slate-400 truncate">${pA}</div>` : ''}
+                </div>
+                <span class="sc-score-pill ${winA ? 'win-pill' : ''}">${m.teamA?.score ?? 0}</span>
+              </div>
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <div class="text-xs font-bold truncate ${winB ? 'text-emerald-400' : 'text-white'}">${m.teamB?.name || 'Đội B'}</div>
+                  ${pB ? `<div class="text-[10px] text-slate-400 truncate">${pB}</div>` : ''}
+                </div>
+                <span class="sc-score-pill ${winB ? 'win-pill' : ''}">${m.teamB?.score ?? 0}</span>
+              </div>
+            </div>
+          </div>`;
+      }).join('') || '<p class="text-xs text-slate-400 col-span-full text-center py-8">Chưa có trận đấu nào hoàn thành.</p>';
     }
 
     function renderLiveAndAdminCourts() {
@@ -1653,20 +1608,10 @@
     }
 
     function renderGroups() {
-      const allPairs = Object.values(dataStore.doublesTeams || {});
-      const pool = activeGroupCat === 'ALL' ? allPairs : allPairs.filter(p => (p.pairType || 'Đôi Nam') === activeGroupCat);
-      document.getElementById('poolCount').textContent = pool.length;
-      document.getElementById('unassignedList').innerHTML = pool.map(p => `
-        <div class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between gap-2">
-          <span class="font-bold text-white truncate">${p.name}</span>
-          <span class="text-[10px] text-amber-300 font-black">${Number(p.totalRating || 0).toFixed(1)}</span>
-        </div>
-      `).join('');
-
       const draw = dataStore.groupDraw;
       const grid = document.getElementById('groupsGrid');
       if (!draw || !draw.groups) {
-        grid.innerHTML = '<div class="sc-card rounded-2xl p-5 text-center col-span-full text-xs text-slate-400">Chưa chia bảng đấu.</div>';
+        grid.innerHTML = '<div class="sc-card rounded-2xl p-5 text-center col-span-full text-xs text-slate-400">Chưa có bảng đấu.</div>';
         return;
       }
       grid.innerHTML = (draw.letters || Object.keys(draw.groups)).map(letter => {
@@ -1687,61 +1632,6 @@
             </div>
           </div>`;
       }).join('');
-    }
-
-    function collectAllPlayers() {
-      const map = new Map();
-      const push = (name, gender = 'Nam', rating = 2.5, club = '') => {
-        const clean = (name || '').trim();
-        if (!clean) return;
-        const k = clean.toLowerCase();
-        const prev = map.get(k);
-        map.set(k, { name: clean, gender: gender || prev?.gender || 'Nam', rating: Number(rating) || prev?.rating || 2.5, club: club || prev?.club || '' });
-      };
-      Object.values(dataStore.teams || {}).forEach(t => (t.rosterDetails || []).forEach(p => push(p.name, p.gender, p.rating, t.name)));
-      Object.values(dataStore.doublesTeams || {}).forEach(d => (d.playerDetails || []).forEach(p => push(p.name, p.gender, p.rating, d.pairType || '')));
-      Object.values(dataStore.customPlayers || {}).forEach(p => push(p.name, p.gender, p.rating, p.club));
-      return Array.from(map.values()).sort((a, b) => b.rating - a.rating);
-    }
-
-    window.setGenderFilter = (g) => {
-      genderFilter = g;
-      document.querySelectorAll('.g-pill').forEach(b => {
-        b.className = `g-pill px-3 py-1.5 rounded-full text-[11px] ${b.dataset.g === g ? 'bg-orange-500 text-slate-950 font-black' : 'bg-white/[0.06] text-slate-300 font-semibold'}`;
-      });
-      renderPlayersList();
-    };
-
-    window.openPairSlotPicker = (slot) => {
-      const pool = collectAllPlayers();
-      openScModal({
-        title: `Chọn VĐV ${slot}`,
-        items: pool.map(p => ({
-          label: `${p.name} (${p.gender} • ${p.rating.toFixed(1)})`,
-          active: selectedPair[slot]?.name === p.name,
-          onClick: () => {
-            selectedPair[slot] = p;
-            const p1 = selectedPair[1], p2 = selectedPair[2];
-            document.getElementById('pairSlot1Label').textContent = p1 ? `${p1.name} (${p1.rating.toFixed(1)})` : '-- Chọn VĐV 1 --';
-            document.getElementById('pairSlot2Label').textContent = p2 ? `${p2.name} (${p2.rating.toFixed(1)})` : '-- Chọn VĐV 2 --';
-            document.getElementById('pairCalcBadge').textContent = `Tổng: ${((p1?.rating || 0) + (p2?.rating || 0)).toFixed(1)}`;
-          }
-        }))
-      });
-    };
-
-    function renderPlayersList() {
-      const q = (document.getElementById('searchPlayerInp').value || '').trim().toLowerCase();
-      const list = collectAllPlayers().filter(p => (genderFilter === 'ALL' || p.gender === genderFilter) && (!q || p.name.toLowerCase().includes(q) || (p.club || '').toLowerCase().includes(q)));
-      document.getElementById('playersList').innerHTML = list.map(p => `
-        <div class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 flex items-center justify-between gap-2">
-          <div class="min-w-0">
-            <div class="font-bold text-xs text-white truncate">${p.name}</div>
-            <div class="text-[10px] text-slate-400 truncate">${p.gender}${p.club ? ` • ${p.club}` : ''}</div>
-          </div>
-          <span class="px-2 py-0.5 rounded-lg bg-orange-500/15 text-amber-300 font-black text-xs tabular-nums">${p.rating.toFixed(1)}</span>
-        </div>
-      `).join('');
     }
 
     onValue(ref(db, '/'), async (snap) => {
@@ -1770,7 +1660,7 @@
       renderAdminRosters();
       renderLiveAndAdminCourts();
       renderGroups();
-      renderPlayersList();
+      renderCompletedMatches();
       renderBracketTrees();
 
       const tiesArr = Object.values(dataStore.ties || {}).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
