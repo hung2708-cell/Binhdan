@@ -27,7 +27,6 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Khóa cứng thanh tác vụ trên máy tính & điện thoại */
     .locked-top-bar {
       position: fixed;
       top: 0;
@@ -116,7 +115,7 @@
         </div>
         <div class="min-w-0">
           <div class="font-black text-xs uppercase tracking-wider text-orange-400 truncate">Bính Dần 1986</div>
-          <div id="pubTourName" class="text-[10px] text-slate-400 truncate max-w-[160px]">Giải Pickleball</div>
+          <div id="pubTourName" class="text-[10px] text-slate-400 truncate max-w-[150px]">SportConnect</div>
         </div>
       </div>
 
@@ -129,20 +128,23 @@
         <button type="button" onclick="switchPubTab('standings')" data-tab="standings" class="desk-tab nav-team-only px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Xếp hạng</button>
         <button type="button" onclick="switchPubTab('groups')" data-tab="groups" class="desk-tab px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Bảng A–D</button>
         <button type="button" onclick="switchPubTab('bracket')" data-tab="bracket" class="desk-tab px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Sơ đồ nhánh</button>
-        <button type="button" onclick="switchPubTab('matches')" data-tab="matches" class="desk-tab px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Chi tiết trận</button>
         <button type="button" onclick="switchPubTab('players')" data-tab="players" class="desk-tab px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Điểm trình</button>
       </nav>
 
-      <!-- NÚT QUẢN TRỊ GIỮ NGUYÊN TRONG KHUNG -->
-      <button type="button" onclick="openInFrameAdmin()" data-tab="admin" class="desk-tab shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-black bg-white/[0.08] hover:bg-orange-500/20 border border-white/15 text-amber-300 flex items-center gap-1">
-        <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Quản trị
-      </button>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" onclick="openRefereeWithPin()" class="px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 text-slate-200 flex items-center gap-1">
+          <i data-lucide="gavel" class="w-3.5 h-3.5 text-orange-400"></i> <span class="hidden sm:inline">Trọng tài</span>
+        </button>
+        <button type="button" onclick="openAdminWithPin()" data-tab="admin" class="desk-tab px-3 py-1.5 rounded-xl text-[11px] font-black bg-white/[0.08] hover:bg-orange-500/20 border border-white/15 text-amber-300 flex items-center gap-1">
+          <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Quản trị
+        </button>
+      </div>
     </div>
   </header>
 
   <main class="max-w-7xl mx-auto p-3.5 sm:p-4 lg:p-6 space-y-4">
 
-    <!-- 1. SÂN LIVE -->
+    <!-- 1. SÂN LIVE + LỌC SÂN + XEM CHI TIẾT NGAY TẠI SÂN -->
     <section id="panelLive" class="pub-panel space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-black text-orange-400 uppercase text-sm flex items-center gap-2">
@@ -163,7 +165,7 @@
       <div id="tiesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-3.5"></div>
     </section>
 
-    <!-- 3. BẢNG XẾP HẠNG -->
+    <!-- 3. BẢNG XẾP HẠNG (3 • 2 • 1 • 0 + HIỆU SỐ +- ) -->
     <section id="panelStandings" class="pub-panel hidden space-y-2.5">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-black text-orange-400 uppercase text-sm">Bảng xếp hạng Đồng đội (3 • 2 • 1 • 0)</h2>
@@ -215,12 +217,12 @@
       </div>
     </section>
 
-    <!-- 5. SƠ ĐỒ NHÁNH CHO CẢ ĐỒNG ĐỘI VÀ NỘI DUNG ĐÔI -->
+    <!-- 5. SƠ ĐỒ NHÁNH ĐỒNG ĐỘI & ĐÔI -->
     <section id="panelBracket" class="pub-panel hidden space-y-4">
       <div class="sc-card rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 class="font-black text-orange-400 uppercase text-sm">Sơ đồ nhánh Đồng đội & Nội dung Đôi</h2>
-          <p class="text-[11px] text-slate-400 mt-0.5">Nhất & Nhì các bảng vào <b>Serie A</b> • Ba & Tư các bảng vào <b>Serie B</b> • Tự ghép cặp & thi đấu ngay khi đủ đội</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Nhất & Nhì vào <b>Serie A</b> • Ba & Tư vào <b>Serie B</b> • Tự ghép cặp & thi đấu ngay khi đủ đội</p>
         </div>
         <div class="flex flex-wrap items-center gap-2 shrink-0">
           <select id="bracketScopeSel" onchange="renderBracketTrees()" class="bg-[#090b0f] border border-white/10 rounded-xl px-2.5 py-2 text-xs font-bold text-white outline-none">
@@ -249,16 +251,7 @@
       </div>
     </section>
 
-    <!-- 6. CHI TIẾT CÁC TRẬN ĐẤU -->
-    <section id="panelMatches" class="pub-panel hidden space-y-3">
-      <div class="flex items-center justify-between">
-        <h2 class="font-black text-orange-400 uppercase text-sm">Chi tiết các trận đấu</h2>
-        <span id="matchDetailCount" class="text-xs text-slate-400 font-semibold">0 trận</span>
-      </div>
-      <div id="matchDetailsList" class="grid grid-cols-1 md:grid-cols-2 gap-3.5"></div>
-    </section>
-
-    <!-- 7. ĐIỂM TRÌNH VĐV -->
+    <!-- 6. ĐIỂM TRÌNH VĐV -->
     <section id="panelPlayers" class="pub-panel hidden space-y-4">
       <div class="sc-card rounded-2xl p-4 space-y-3">
         <div class="flex items-center justify-between gap-2">
@@ -292,7 +285,7 @@
       </div>
     </section>
 
-    <!-- 8. KHU VỰC QUẢN TRỊ NGAY TRONG KHUNG -->
+    <!-- 7. QUẢN TRỊ NGAY TRONG KHUNG (KHÓA THỂ THỨC + SỬA/XÓA CLB & VĐV) -->
     <section id="panelAdmin" class="pub-panel hidden space-y-4">
       <div class="sc-card rounded-2xl p-4 space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2">
@@ -322,6 +315,7 @@
         </div>
       </div>
 
+      <!-- QUẢN LÝ ĐỒNG ĐỘI: THÊM / SỬA / XÓA CLB & VĐV -->
       <div id="adminTeamSection" class="space-y-4">
         <div class="sc-card rounded-2xl p-4 space-y-3">
           <h3 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Thêm CLB Đồng đội & VĐV (Tên • Giới tính • Trình)</h3>
@@ -343,6 +337,7 @@
         <div id="adminClubsList" class="space-y-3"></div>
       </div>
 
+      <!-- QUẢN LÝ NỘI DUNG ĐÔI: THÊM / XÓA CẶP ĐÔI -->
       <div id="adminDoublesSection" class="hidden space-y-4">
         <div class="sc-card rounded-2xl p-4 space-y-3">
           <h3 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Thêm Cặp đôi (Tên • Giới tính • Trình)</h3>
@@ -374,9 +369,9 @@
 
   </main>
 
-  <!-- THANH TÁC VỤ KHÓA CỨNG DƯỚI ĐÁY TRÊN ĐIỆN THOẠI -->
+  <!-- THANH TÁC VỤ KHÓA CỨNG DƯỚI ĐÁY TRÊN ĐIỆN THOẠI (5 MỤC GỌN KIỂU SPORTCONNECT) -->
   <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-2.5 pb-2.5 pt-1 pointer-events-none flex justify-center">
-    <nav id="mobileBottomDock" class="locked-bottom-dock pointer-events-auto relative w-full max-w-md rounded-full p-1 grid grid-cols-6 select-none">
+    <nav id="mobileBottomDock" class="locked-bottom-dock pointer-events-auto relative w-full max-w-md rounded-full p-1 grid grid-cols-5 select-none">
       <div id="mobileBottomThumb" class="ios-bottom-thumb"></div>
       <button type="button" onclick="switchPubTab('live')" data-btab="live" class="mb-tab relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 text-orange-400">
         <svg class="w-4 h-4"><use href="#icon-pickleball"></use></svg>
@@ -398,11 +393,28 @@
         <i data-lucide="git-branch" class="w-4 h-4"></i>
         <span class="text-[9px] font-bold leading-none truncate max-w-full">Nhánh</span>
       </button>
-      <button type="button" onclick="switchPubTab('matches')" data-btab="matches" class="mb-tab relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 text-slate-400">
-        <i data-lucide="list-checks" class="w-4 h-4"></i>
-        <span class="text-[9px] font-bold leading-none truncate max-w-full">Chi tiết</span>
-      </button>
     </nav>
+  </div>
+
+  <!-- POPUP NHẬP MẬT KHẨU (PIN) QUẢN TRỊ / TRỌNG TÀI -->
+  <div id="pinModal" class="hidden fixed inset-0 z-[10001] bg-[#090b0f]/92 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/40 rounded-2xl p-6 text-center shadow-2xl space-y-4">
+      <div class="w-12 h-12 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center">
+        <svg class="w-6 h-6"><use href="#icon-pickleball"></use></svg>
+      </div>
+      <div>
+        <h2 id="pinModalTitle" class="font-black text-orange-400 uppercase text-sm tracking-wide">XÁC THỰC MẬT KHẨU</h2>
+        <p id="pinModalSub" class="text-xs text-slate-400 mt-1">Nhập mã PIN để tiếp tục</p>
+      </div>
+      <input id="pinInput" type="password" inputmode="numeric" maxlength="10" placeholder="••••" class="w-full bg-[#090b0f] border border-white/15 focus:border-orange-500 rounded-xl px-4 py-3 text-center text-lg font-black tracking-[0.35em] text-white outline-none" />
+      <p id="pinErrMsg" class="hidden text-xs text-red-400 font-bold">Mã PIN không đúng</p>
+      <button type="button" onclick="submitPinCheck()" class="fire-btn w-full py-3 rounded-xl text-white font-black text-sm shadow-lg active:scale-95 transition">
+        XÁC NHẬN
+      </button>
+      <button type="button" onclick="closePinModal()" class="block w-full text-xs text-slate-400 hover:text-white pt-1 font-semibold">
+        Hủy bỏ
+      </button>
+    </div>
   </div>
 
   <!-- POPUP CHI TIẾT NGAY TẠI SÂN / LỰA CHỌN / XÁC NHẬN -->
@@ -423,12 +435,12 @@
   <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden bg-orange-600 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xl"></div>
 
   <script type="module">
-    import { db, ref, set, update, onValue } from './js/firebase-config.js';
+    import { db, ref, set, update, onValue, remove } from './js/firebase-config.js';
     import { createInitialMatchState } from './js/pickleball-engine.js';
-    import { requirePin } from './js/auth.js';
+    import * as AuthMod from './js/auth.js';
 
-    const BOTTOM_TABS = ['live', 'ties', 'standings', 'groups', 'bracket', 'matches'];
-    const ALL_TABS = ['live', 'ties', 'standings', 'groups', 'bracket', 'matches', 'players', 'admin'];
+    const BOTTOM_TABS = ['live', 'ties', 'standings', 'groups', 'bracket'];
+    const ALL_TABS = ['live', 'ties', 'standings', 'groups', 'bracket', 'players', 'admin'];
     const STORAGE_KEY = 'bd86_active_tab';
     const PANELS = {
       live: 'panelLive',
@@ -436,7 +448,6 @@
       standings: 'panelStandings',
       groups: 'panelGroups',
       bracket: 'panelBracket',
-      matches: 'panelMatches',
       players: 'panelPlayers',
       admin: 'panelAdmin'
     };
@@ -454,14 +465,13 @@
     function persistTab(tab) {
       try { localStorage.setItem(STORAGE_KEY, tab); } catch (e) {}
       try {
-        if (window.location.hash !== `#tab=${tab}`) {
-          history.replaceState(null, '', `#tab=${tab}`);
-        }
+        if (window.location.hash !== `#tab=${tab}`) history.replaceState(null, '', `#tab=${tab}`);
       } catch (e) {}
     }
 
     let dataStore = {
-      settings: { format: '' }, teams: {}, doublesTeams: {}, ties: {}, courts: {}, matches: {},
+      settings: { format: '', adminPin: '1986', refereePin: '1986' },
+      teams: {}, doublesTeams: {}, ties: {}, courts: {}, matches: {},
       groupDraw: null, seriesBracket: null, customPlayers: {}
     };
     let selectedCourtFilter = 'ALL';
@@ -470,7 +480,8 @@
     let selectedPair = { 1: null, 2: null };
     let draftClubPlayers = [];
     let formatUnlockedManually = false;
-    let adminUnlocked = false;
+    let pinResolver = null;
+    let currentPinRole = 'admin';
     let modalResolver = null;
     let currentTabKey = getSavedTab();
     let draggingDock = false;
@@ -527,6 +538,58 @@
       setTimeout(() => t.classList.add('hidden'), 2200);
     }
 
+    // Nhập mật khẩu PIN cho Quản trị & Trọng tài
+    function requestRolePin(role) {
+      return new Promise((resolve) => {
+        currentPinRole = role;
+        pinResolver = resolve;
+        document.getElementById('pinModalTitle').textContent = role === 'admin' ? 'MẬT KHẨU QUẢN TRỊ' : 'MẬT KHẨU TRỌNG TÀI';
+        document.getElementById('pinModalSub').textContent = role === 'admin' ? 'Nhập mã PIN quản trị giải đấu' : 'Nhập mã PIN trọng tài sân';
+        const inp = document.getElementById('pinInput');
+        inp.value = '';
+        document.getElementById('pinErrMsg').classList.add('hidden');
+        document.getElementById('pinModal').classList.remove('hidden');
+        setTimeout(() => inp.focus(), 80);
+      });
+    }
+
+    window.closePinModal = () => {
+      document.getElementById('pinModal').classList.add('hidden');
+      if (pinResolver) { const fn = pinResolver; pinResolver = null; fn(false); }
+    };
+
+    window.submitPinCheck = async () => {
+      const entered = (document.getElementById('pinInput').value || '').trim();
+      const expected = currentPinRole === 'admin'
+        ? (dataStore.settings?.adminPin || '1986')
+        : (dataStore.settings?.refereePin || '1986');
+
+      if (entered && entered === String(expected)) {
+        document.getElementById('pinModal').classList.add('hidden');
+        const fn = pinResolver;
+        pinResolver = null;
+        if (fn) fn(true);
+      } else {
+        document.getElementById('pinErrMsg').classList.remove('hidden');
+      }
+    };
+
+    window.openAdminWithPin = async () => {
+      const ok = await requestRolePin('admin');
+      if (!ok) return;
+      if (typeof AuthMod.requirePin === 'function') {
+        try { await AuthMod.requirePin('admin'); } catch (e) {}
+      }
+      window.switchPubTab('admin');
+    };
+
+    window.openRefereeWithPin = async () => {
+      const ok = await requestRolePin('referee');
+      if (!ok) return;
+      const firstCourt = Object.keys(dataStore.courts || {})[0] || 'court_1';
+      window.location.href = `referee.html?court=${firstCourt}`;
+    };
+
     function openScModal({ title = 'Chi tiết', desc = '', bodyHtml = '', items = [] }) {
       document.getElementById('scModalTitle').textContent = title;
       const descEl = document.getElementById('scModalDesc');
@@ -538,9 +601,11 @@
       items.forEach(it => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = it.active
-          ? 'w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-xs shadow active:scale-95 transition text-center'
-          : 'w-full py-2.5 px-3 rounded-xl bg-[#090b0f] border border-white/10 text-slate-100 font-semibold text-xs hover:border-orange-500/40 active:scale-95 transition text-center';
+        btn.className = it.danger
+          ? 'w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 text-white font-black text-xs shadow active:scale-95 transition text-center'
+          : (it.active
+            ? 'w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-xs shadow active:scale-95 transition text-center'
+            : 'w-full py-2.5 px-3 rounded-xl bg-[#090b0f] border border-white/10 text-slate-100 font-semibold text-xs hover:border-orange-500/40 active:scale-95 transition text-center');
         btn.textContent = it.label;
         btn.onclick = () => { closeScModal(); it.onClick(); };
         body.appendChild(btn);
@@ -553,12 +618,12 @@
       if (modalResolver) { const fn = modalResolver; modalResolver = null; fn(false); }
     };
 
-    function scConfirm(title, message, confirmText = 'XÁC NHẬN') {
+    function scConfirm(title, message, confirmText = 'XÁC NHẬN', danger = false) {
       return new Promise((resolve) => {
         modalResolver = resolve;
         openScModal({
           title, desc: message,
-          items: [{ label: confirmText, active: true, onClick: () => { modalResolver = null; resolve(true); } }]
+          items: [{ label: confirmText, active: !danger, danger, onClick: () => { modalResolver = null; resolve(true); } }]
         });
       });
     }
@@ -746,6 +811,29 @@
       showToast('Đã lưu CLB');
     };
 
+    // Xóa CLB
+    window.deleteClubItem = async (clubId, clubName) => {
+      const ok = await scConfirm('Xóa CLB', `Xóa CLB "${clubName}" khỏi giải đấu?`, 'XÓA CLB', true);
+      if (!ok) return;
+      await remove(ref(db, `teams/${clubId}`));
+      showToast('Đã xóa CLB');
+    };
+
+    // Xóa 1 VĐV trong CLB
+    window.deleteClubMemberItem = async (clubId, memberIdx, plName) => {
+      const ok = await scConfirm('Xóa VĐV', `Xóa VĐV "${plName}" khỏi CLB?`, 'XÓA VĐV', true);
+      if (!ok) return;
+      const club = dataStore.teams?.[clubId];
+      const details = [...(club?.rosterDetails || [])];
+      details.splice(memberIdx, 1);
+      await update(ref(db, `teams/${clubId}`), {
+        rosterDetails: details,
+        roster: details.map(x => x.name)
+      });
+      showToast('Đã xóa VĐV');
+    };
+
+    // Sửa thông tin VĐV trong CLB
     window.editClubMemberModal = (clubId, memberIdx) => {
       const club = dataStore.teams?.[clubId];
       const details = club?.rosterDetails || [];
@@ -806,25 +894,38 @@
       showToast('Đã lưu cặp đôi');
     };
 
+    // Xóa cặp đôi VĐV
+    window.deleteDoublesItem = async (dblId, dblName) => {
+      const ok = await scConfirm('Xóa cặp đôi', `Xóa cặp đôi "${dblName}"?`, 'XÓA CẶP', true);
+      if (!ok) return;
+      await remove(ref(db, `doublesTeams/${dblId}`));
+      showToast('Đã xóa cặp đôi');
+    };
+
     function renderAdminRosters() {
       const clubs = Object.values(dataStore.teams || {});
       document.getElementById('adminClubsList').innerHTML = clubs.map(c => {
         const list = c.rosterDetails || (c.roster || []).map(n => ({ name: n, gender: 'Nam', rating: 2.5 }));
         return `
           <div class="sc-card rounded-2xl p-3.5 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-black text-xs text-orange-400 uppercase">${c.name}</span>
-              <span class="text-[10px] text-slate-400">${list.length} VĐV</span>
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-black text-xs text-orange-400 uppercase truncate">${c.name}</span>
+              <button type="button" onclick="deleteClubItem('${c.id}', '${c.name.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-400 text-[10px] font-black shrink-0">
+                Xóa CLB
+              </button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
               ${list.map((p, idx) => `
-                <button type="button" onclick="editClubMemberModal('${c.id}', ${idx})" class="bg-[#090b0f] hover:border-orange-500/40 border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between text-xs text-left">
-                  <span class="font-bold text-white truncate">${p.name}</span>
-                  <span class="text-[10px] shrink-0 ml-2">
-                    <span class="${p.gender === 'Nữ' ? 'text-pink-300' : 'text-sky-300'} font-bold">${p.gender || 'Nam'}</span>
-                    • <b class="text-amber-300">${Number(p.rating || 2.5).toFixed(1)}</b>
-                  </span>
-                </button>
+                <div class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs">
+                  <button type="button" onclick="editClubMemberModal('${c.id}', ${idx})" class="flex-1 min-w-0 flex items-center justify-between text-left pr-1">
+                    <span class="font-bold text-white truncate">${p.name}</span>
+                    <span class="text-[10px] shrink-0 ml-2">
+                      <span class="${p.gender === 'Nữ' ? 'text-pink-300' : 'text-sky-300'} font-bold">${p.gender || 'Nam'}</span>
+                      • <b class="text-amber-300">${Number(p.rating || 2.5).toFixed(1)}</b>
+                    </span>
+                  </button>
+                  <button type="button" onclick="deleteClubMemberItem('${c.id}', ${idx}, '${p.name.replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 font-black text-xs px-1 shrink-0" title="Xóa VĐV">✕</button>
+                </div>
               `).join('')}
             </div>
           </div>`;
@@ -835,9 +936,12 @@
         const pDetails = d.playerDetails || [];
         return `
           <div class="sc-card rounded-2xl p-3.5 space-y-1.5">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-2">
               <span class="font-black text-xs text-white truncate">${d.name}</span>
-              <span class="text-[10px] px-2 py-0.5 rounded bg-orange-500/20 text-amber-300 font-bold">${d.pairType || 'Đôi'} • ${Number(d.totalRating || 0).toFixed(1)}</span>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <span class="text-[10px] px-2 py-0.5 rounded bg-orange-500/20 text-amber-300 font-bold">${d.pairType || 'Đôi'} • ${Number(d.totalRating || 0).toFixed(1)}</span>
+                <button type="button" onclick="deleteDoublesItem('${d.id}', '${d.name.replace(/'/g, "\\'")}')" class="text-red-400 font-black text-xs px-1">✕</button>
+              </div>
             </div>
             <div class="text-[11px] text-slate-400">
               ${pDetails.map(p => `${p.name} (${p.gender} • ${Number(p.rating).toFixed(1)})`).join(' — ')}
@@ -851,14 +955,6 @@
       currentTabKey = tab;
       persistTab(tab);
       applyTabVisibilityOnly();
-    };
-
-    window.openInFrameAdmin = async () => {
-      if (!adminUnlocked) {
-        try { await requirePin('admin'); } catch (e) {}
-        adminUnlocked = true;
-      }
-      window.switchPubTab('admin');
     };
 
     window.selectCourtFilter = (cId) => {
@@ -1119,40 +1215,6 @@
       `).join('');
     }
 
-    function renderMatchDetails() {
-      const list = Object.values(dataStore.matches || {});
-      document.getElementById('matchDetailCount').textContent = `${list.length} trận`;
-      document.getElementById('matchDetailsList').innerHTML = list.map(m => {
-        const pA = (m.teamA?.players || []).filter(Boolean).join(' / ') || 'Chưa rõ VĐV';
-        const pB = (m.teamB?.players || []).filter(Boolean).join(' / ') || 'Chưa rõ VĐV';
-        const courtName = m.courtId && dataStore.courts?.[m.courtId]?.name ? dataStore.courts[m.courtId].name : 'Chưa gán sân';
-        const histCount = Array.isArray(m.history) ? m.history.length : 0;
-
-        return `
-          <div class="sc-card rounded-2xl p-4 space-y-2.5">
-            <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
-              <span class="text-xs font-black text-orange-400 truncate">${m.category || 'Trận đấu'}</span>
-              <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-amber-300 font-bold shrink-0">${courtName}</span>
-            </div>
-            <div class="grid grid-cols-3 items-center text-center gap-2">
-              <div class="text-left min-w-0">
-                <div class="text-xs font-bold text-white truncate">${m.teamA?.name || 'Đội A'}</div>
-                <div class="text-[10px] text-slate-400 truncate">${pA}</div>
-              </div>
-              <div class="text-lg font-black text-orange-400 tabular-nums">${m.teamA?.score ?? 0} - ${m.teamB?.score ?? 0}</div>
-              <div class="text-right min-w-0">
-                <div class="text-xs font-bold text-white truncate">${m.teamB?.name || 'Đội B'}</div>
-                <div class="text-[10px] text-slate-400 truncate">${pB}</div>
-              </div>
-            </div>
-            <div class="flex items-center justify-between text-[10px] text-slate-400 pt-1">
-              <span>Trạng thái: <b class="text-slate-200">${m.status === 'finished' ? 'Hoàn thành' : (m.status === 'live' ? 'Đang đấu' : 'Chờ')}</b></span>
-              <span>Lượt ghi nhận: ${histCount}</span>
-            </div>
-          </div>`;
-      }).join('') || '<p class="text-xs text-slate-400 col-span-full text-center py-6">Chưa có trận đấu nào.</p>';
-    }
-
     function renderGroups() {
       const allPairs = Object.values(dataStore.doublesTeams || {});
       const pool = activeGroupCat === 'ALL' ? allPairs : allPairs.filter(p => (p.pairType || 'Đôi Nam') === activeGroupCat);
@@ -1248,7 +1310,7 @@
     onValue(ref(db, '/'), (snap) => {
       const d = snap.val() || {};
       dataStore = {
-        settings: d.settings || { format: '' },
+        settings: { format: '', adminPin: '1986', refereePin: '1986', ...(d.settings || {}) },
         teams: d.teams || {},
         doublesTeams: d.doublesTeams || {},
         ties: d.ties || {},
@@ -1268,7 +1330,6 @@
       renderAdminRosters();
       renderLiveAndAdminCourts();
       renderGroups();
-      renderMatchDetails();
       renderPlayersList();
       renderBracketTrees();
 
