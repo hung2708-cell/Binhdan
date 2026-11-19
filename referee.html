@@ -93,7 +93,7 @@
   </div>
 
   <!-- BÀN CHẤM ĐIỂM CHÍNH -->
-  <main id="refereeBoard" class="hidden flex-1 min-h-0 flex flex-col justify-between gap-2 landscape:grid landscape:grid-cols-12 landscape:gap-3">
+  <main id="refereeBoard" class="hidden flex-1 min-h-0 flex flex-col justify-between gap-2 landscape:grid landscape:grid-cols-12 landscape:gap-2.5">
 
     <!-- THANH ĐỒNG ĐỘI -->
     <div id="tieWrapper" class="hidden shrink-0 landscape:col-span-12 flex flex-col landscape:flex-row landscape:items-center gap-1.5">
@@ -105,39 +105,39 @@
       <div id="tieSubMatchesBar" class="flex gap-1.5 overflow-x-auto no-scrollbar flex-1"></div>
     </div>
 
-    <!-- CỘT TRÁI (XOAY NGANG): BẢNG ĐIỂM + SÂN 2D -->
-    <div class="flex flex-col gap-2.5 landscape:gap-2 landscape:col-span-7 landscape:h-full landscape:min-h-0 landscape:justify-center">
+    <!-- CỘT TRÁI (XOAY NGANG): BẢNG ĐIỂM + SÂN 2D GIÃN TRỌN CHIỀU CAO -->
+    <div class="flex flex-col gap-2.5 landscape:gap-2 landscape:col-span-7 landscape:h-full landscape:min-h-0 landscape:justify-between">
 
       <!-- CẢNH BÁO -->
-      <div id="alertBanner" class="hidden shrink-0 rounded-xl px-3 py-1.5 text-center font-black text-[11px] uppercase tracking-wide"></div>
+      <div id="alertBanner" class="hidden shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase tracking-wide"></div>
 
       <!-- BẢNG ĐIỂM -->
-      <div class="sc-card shrink-0 rounded-2xl p-2 flex items-center justify-between gap-2">
+      <div class="sc-card shrink-0 rounded-2xl p-2 landscape:p-1.5 flex items-center justify-between gap-2">
         <div class="flex-1 flex items-center gap-1.5 min-w-0">
           <button onclick="handleSubtractPoint('A')" class="btn-tap w-7 h-7 rounded-full bg-white/[0.06] hover:bg-red-500/20 text-gray-400 hover:text-red-400 font-bold text-base flex items-center justify-center shrink-0">−</button>
           <div class="flex-1 text-center min-w-0">
             <div id="nameA" class="text-[11px] font-semibold text-gray-300 truncate">Đội A</div>
-            <div id="scoreA" class="text-3xl font-black text-white tabular-nums leading-none mt-1">0</div>
+            <div id="scoreA" class="text-3xl landscape:text-2xl font-black text-white tabular-nums leading-none mt-1 landscape:mt-0.5">0</div>
           </div>
         </div>
 
-        <div class="px-3.5 py-1.5 rounded-xl bg-black/50 border border-orange-500/30 text-center shrink-0">
+        <div class="px-3.5 py-1.5 landscape:py-1 rounded-xl bg-black/50 border border-orange-500/30 text-center shrink-0">
           <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Đọc điểm</div>
-          <div id="callScore" class="text-lg font-black text-orange-500 tabular-nums leading-tight">0 - 0 - 2</div>
+          <div id="callScore" class="text-lg landscape:text-base font-black text-orange-500 tabular-nums leading-tight">0 - 0 - 2</div>
           <div id="modeBadge" class="text-[9px] text-amber-200/60 font-medium">Side-out • 15đ</div>
         </div>
 
         <div class="flex-1 flex items-center gap-1.5 min-w-0">
           <div class="flex-1 text-center min-w-0">
             <div id="nameB" class="text-[11px] font-semibold text-gray-300 truncate">Đội B</div>
-            <div id="scoreB" class="text-3xl font-black text-white tabular-nums leading-none mt-1">0</div>
+            <div id="scoreB" class="text-3xl landscape:text-2xl font-black text-white tabular-nums leading-none mt-1 landscape:mt-0.5">0</div>
           </div>
           <button onclick="handleSubtractPoint('B')" class="btn-tap w-7 h-7 rounded-full bg-white/[0.06] hover:bg-red-500/20 text-gray-400 hover:text-red-400 font-bold text-base flex items-center justify-center shrink-0">−</button>
         </div>
       </div>
 
-      <!-- SƠ ĐỒ SÂN PICKLEBALL 2D SẠCH SẼ (KHÔNG MŨI TÊN) -->
-      <div id="court2DWrapper" class="space-y-1.5 landscape:flex-1 landscape:min-h-0 landscape:flex landscape:flex-col">
+      <!-- SƠ ĐỒ SÂN PICKLEBALL 2D -->
+      <div id="court2DWrapper" class="space-y-1.5 landscape:space-y-1 landscape:flex-1 landscape:min-h-0 landscape:flex landscape:flex-col">
         <div class="flex justify-between items-center text-[10px] px-1 shrink-0">
           <span class="font-bold text-gray-400 uppercase tracking-wider">Sân 2D</span>
           <span id="serveHint" class="font-semibold text-amber-300 truncate max-w-[75%] text-right">Đội A giao #2</span>
@@ -145,7 +145,6 @@
 
         <div class="relative w-full aspect-[2.1/1] landscape:aspect-auto landscape:flex-1 landscape:min-h-0 rounded-xl overflow-hidden">
           <div class="court-surface w-full h-full">
-            <!-- NỬA SÂN TRÁI (ĐỘI A) -->
             <div class="grid grid-rows-2 divide-y divide-white/55 h-full">
               <div id="boxA1" class="relative flex items-center px-2">
                 <div id="pillA1" class="player-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]">
@@ -161,12 +160,10 @@
               </div>
             </div>
 
-            <!-- KHU VỰC BẾP (NVZ) + LƯỚI DỌC -->
             <div class="kitchen-zone-v h-full flex items-center justify-center relative">
               <div class="h-full border-l-2 border-dashed border-white/85"></div>
             </div>
 
-            <!-- NỬA SÂN PHẢI (ĐỘI B) -->
             <div class="grid grid-rows-2 divide-y divide-white/55 h-full">
               <div id="boxB0" class="relative flex items-center px-2">
                 <div id="pillB0" class="player-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]">
@@ -194,33 +191,33 @@
     </div>
 
     <!-- CỘT PHẢI (XOAY NGANG): THIẾT LẬP + CỤM NÚT ĐIỀU KHIỂN -->
-    <div class="shrink-0 flex flex-col gap-2 landscape:col-span-5 landscape:h-full landscape:min-h-0 landscape:justify-between">
+    <div class="shrink-0 flex flex-col gap-2 landscape:gap-1.5 landscape:col-span-5 landscape:h-full landscape:min-h-0 landscape:justify-between">
 
       <!-- THIẾT LẬP TRƯỚC TRẬN (0-0) -->
       <div id="preMatchSetup" class="sc-card shrink-0 rounded-2xl p-1 grid grid-cols-4 gap-1 text-[10px]">
-        <button onclick="openCoinTossModal()" class="btn-tap py-2 px-1 rounded-xl bg-amber-500/15 text-amber-300 font-bold flex flex-col items-center justify-center gap-0.5">
+        <button onclick="openCoinTossModal()" class="btn-tap py-2 landscape:py-1.5 px-1 rounded-xl bg-amber-500/15 text-amber-300 font-bold flex flex-col items-center justify-center gap-0.5">
           <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="9" fill="rgba(251,191,36,0.2)" />
             <text x="12" y="15.5" text-anchor="middle" font-size="8" font-weight="900" fill="#fbbf24" stroke="none">86</text>
           </svg>
           <span class="truncate max-w-full">Bốc thăm</span>
         </button>
-        <button onclick="openTeamServePicker()" class="btn-tap py-2 px-1 rounded-xl bg-white/[0.04] text-orange-300 font-semibold flex flex-col items-center justify-center leading-tight">
+        <button onclick="openTeamServePicker()" class="btn-tap py-2 landscape:py-1.5 px-1 rounded-xl bg-white/[0.04] text-orange-300 font-semibold flex flex-col items-center justify-center leading-tight">
           <span class="text-[8px] text-gray-400">Đội giao</span>
           <span id="lblPickTeam" class="truncate max-w-full mt-0.5">Đội A</span>
         </button>
-        <button onclick="openRolePicker('server')" class="btn-tap py-2 px-1 rounded-xl bg-white/[0.04] text-amber-200 font-semibold flex flex-col items-center justify-center leading-tight">
+        <button onclick="openRolePicker('server')" class="btn-tap py-2 landscape:py-1.5 px-1 rounded-xl bg-white/[0.04] text-amber-200 font-semibold flex flex-col items-center justify-center leading-tight">
           <span class="text-[8px] text-gray-400">Giao bóng</span>
           <span id="lblPickServer" class="truncate max-w-full mt-0.5">-</span>
         </button>
-        <button onclick="openRolePicker('receiver')" class="btn-tap py-2 px-1 rounded-xl bg-white/[0.04] text-emerald-300 font-semibold flex flex-col items-center justify-center leading-tight">
+        <button onclick="openRolePicker('receiver')" class="btn-tap py-2 landscape:py-1.5 px-1 rounded-xl bg-white/[0.04] text-emerald-300 font-semibold flex flex-col items-center justify-center leading-tight">
           <span class="text-[8px] text-gray-400">Đỡ bóng</span>
           <span id="lblPickReceiver" class="truncate max-w-full mt-0.5">-</span>
         </button>
       </div>
 
       <!-- NÚT BẤM CHÍNH (SIDE-OUT) -->
-      <div id="sideoutControls" class="flex flex-col gap-2 landscape:flex-1 landscape:min-h-0">
+      <div id="sideoutControls" class="flex flex-col gap-2 landscape:gap-1.5 landscape:flex-1 landscape:min-h-0">
         <button onclick="handlePointServing()" class="btn-tap w-full py-4 landscape:flex-1 landscape:py-2 rounded-2xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-base tracking-wide shadow-lg shadow-orange-600/25">
           +1 ĐIỂM (<span id="btnServingName">ĐỘI GIAO</span>)
         </button>
@@ -299,7 +296,9 @@
       <button id="btnGoNextMatch" onclick="goNextTieMatch()" class="hidden btn-tap w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-sm shadow-lg">
         CHUYỂN SANG TRẬN TIẾP THEO →
       </button>
-      <button onclick="closeNextMatchModal()" class="block w-full text-xs text-gray-400 hover:text-white font-semibold">Đóng</button>
+      <button onclick="closeNextMatchModal()" class="block w-full text-xs text-gray-400 hover:text-white font-semibold">
+        Đóng
+      </button>
     </div>
   </div>
 
@@ -819,16 +818,16 @@
       const banner = document.getElementById('alertBanner');
       if (alerts.winner) {
         banner.textContent = `🏆 KẾT THÚC! ${alerts.winner === 'A' ? m.teamA.name : m.teamB.name} THẮNG!`;
-        banner.className = 'shrink-0 rounded-xl px-3 py-1.5 text-center font-black text-[11px] uppercase bg-emerald-500 text-black';
+        banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-emerald-500 text-black';
       } else if (alerts.isRotatePair) {
         banner.textContent = `🔄 ĐỦ 4 ĐIỂM! ĐỔI CẶP VĐV SỐ ${alerts.currentPairSlot} VÀO SÂN`;
-        banner.className = 'shrink-0 rounded-xl px-3 py-1.5 text-center font-black text-[11px] uppercase bg-amber-400 text-black animate-pulse';
+        banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-amber-400 text-black animate-pulse';
       } else if (shouldSwitch) {
         banner.textContent = `⇄ ĐẾN ĐIỂM ĐỔI SÂN (${swPoint}Đ)! Bấm "Đổi sân"`;
-        banner.className = 'shrink-0 rounded-xl px-3 py-1.5 text-center font-black text-[11px] uppercase bg-amber-400 text-black';
+        banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-amber-400 text-black';
       } else if (alerts.isGamePoint) {
         banner.textContent = `🔥 GAME POINT CHO ${alerts.gamePointTeam === 'A' ? m.teamA.name : m.teamB.name}`;
-        banner.className = 'shrink-0 rounded-xl px-3 py-1.5 text-center font-black text-[11px] uppercase bg-red-600 text-white animate-pulse';
+        banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-red-600 text-white animate-pulse';
       } else {
         banner.className = 'hidden';
       }
