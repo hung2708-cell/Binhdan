@@ -3,36 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Bính Dần Pickleball - Live Score</title>
+  <title>Bính Dần 1986 Pickleball - Live Score</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background: #090b0f; color: #f3f4f6; font-family: system-ui, -apple-system, sans-serif; }
-    .bd-card { background: #131720; border: 1px solid rgba(249, 115, 22, 0.25); }
-    .live-dot { box-shadow: 0 0 8px #10b981; }
+    body {
+      background-color: #0c0908;
+      background-image:
+        radial-gradient(circle at 15% 0%, rgba(234, 88, 12, 0.16), transparent 45%),
+        radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.08), transparent 40%);
+      color: #f5f0eb;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .fire-card {
+      background: linear-gradient(145deg, #17110e 0%, #110d0b 100%);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+    }
+    .fire-banner {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.18) 0%, rgba(249, 115, 22, 0.12) 55%, rgba(16, 185, 129, 0.1) 100%);
+      border: 1px solid rgba(249, 115, 22, 0.45);
+    }
+    .fire-gradient-text {
+      background: linear-gradient(90deg, #fbbf24, #f97316, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .live-dot { box-shadow: 0 0 10px #10b981; }
   </style>
 </head>
 <body class="min-h-screen pb-12">
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-30 bg-[#0d1017]/95 backdrop-blur border-b border-orange-500/30 px-4 py-3">
+  <header class="sticky top-0 z-30 bg-[#0c0908]/95 backdrop-blur border-b border-orange-500/35 px-4 py-2.5">
     <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
       <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-700 p-0.5 flex items-center justify-center overflow-hidden shrink-0">
-          <img id="pubLogo" src="" class="hidden w-full h-full object-cover rounded-[10px]" alt="Logo" />
-          <span id="pubLogoFallback" class="font-black text-black text-sm">BD</span>
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 via-orange-600 to-red-700 p-[2px] shrink-0 shadow-lg shadow-orange-600/25">
+          <img id="pubLogo" src="logo.jpg" onerror="this.style.display='none'; document.getElementById('pubLogoFallback').style.display='flex';" class="w-full h-full object-cover rounded-[10px] bg-black" alt="Bính Dần Pickleball" />
+          <div id="pubLogoFallback" style="display:none;" class="w-full h-full rounded-[10px] bg-[#17110e] items-center justify-center font-black text-orange-400 text-sm">86</div>
         </div>
         <div class="min-w-0">
-          <h1 class="font-black text-orange-500 text-sm sm:text-base uppercase tracking-wide truncate">Bính Dần Pickleball</h1>
-          <p id="pubTourName" class="text-xs text-gray-400 truncate">Đang tải dữ liệu giải đấu...</p>
+          <h1 class="font-black text-sm sm:text-base uppercase tracking-wider truncate fire-gradient-text">
+            CLB Bính Dần 1986
+          </h1>
+          <p id="pubTourName" class="text-xs text-amber-200/70 truncate">Đang tải dữ liệu giải đấu...</p>
         </div>
       </div>
-      <a href="admin.html" class="shrink-0 text-xs font-bold px-3 py-1.5 rounded-xl bg-white/10 text-gray-300 hover:bg-orange-500/20 hover:text-orange-400">
+      <a href="admin.html" class="shrink-0 text-xs font-bold px-3 py-1.5 rounded-xl bg-orange-500/15 border border-orange-500/35 text-orange-300 hover:bg-orange-500 hover:text-black transition">
         Quản trị
       </a>
     </div>
   </header>
 
   <main class="max-w-5xl mx-auto p-4 space-y-6">
+
+    <!-- HERO BANNER BÍNH DẦN 1986 -->
+    <section class="fire-banner rounded-2xl p-4 flex items-center gap-4">
+      <img id="heroLogo" src="logo.jpg" onerror="this.style.display='none'" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-orange-500/70 shadow-lg shadow-orange-600/30 shrink-0 bg-black" alt="Logo Bính Dần" />
+      <div class="min-w-0">
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 text-[10px] font-black uppercase tracking-wider mb-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          Lư Trung Hỏa • 1986
+        </div>
+        <h2 id="heroTourName" class="font-black text-base sm:text-xl text-white uppercase leading-tight truncate">
+          Giải Pickleball Bính Dần Open
+        </h2>
+        <p class="text-xs text-amber-200/75 mt-0.5">Cập nhật tỷ số trực tiếp từng điểm • Kết nối OBS Livestream</p>
+      </div>
+    </section>
 
     <!-- KHU VỰC SÂN ĐANG ĐẤU (LIVE) -->
     <section class="space-y-3">
@@ -41,10 +79,12 @@
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 live-dot animate-pulse"></span>
           Tỷ số trực tiếp các sân
         </h2>
-        <span id="liveCountBadge" class="text-[11px] font-bold text-gray-400">0 sân đang đấu</span>
+        <span id="liveCountBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+          0 sân đang đấu
+        </span>
       </div>
       <div id="liveCourtsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div class="bd-card rounded-2xl p-6 text-center text-xs text-gray-500 col-span-full">
+        <div class="fire-card rounded-2xl p-6 text-center text-xs text-amber-200/50 col-span-full">
           Đang kết nối tỷ số trực tiếp...
         </div>
       </div>
@@ -52,14 +92,14 @@
 
     <!-- TABS: LỊCH THI ĐẤU, BẢNG XẾP HẠNG & NHÁNH ĐẤU -->
     <section class="space-y-3">
-      <div class="flex gap-2 border-b border-gray-800 pb-2 overflow-x-auto">
-        <button id="btnTabMatches" onclick="switchPubTab('matches')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-orange-500 text-black">
+      <div class="flex gap-2 border-b border-orange-500/20 pb-2 overflow-x-auto">
+        <button id="btnTabMatches" onclick="switchPubTab('matches')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-gradient-to-r from-orange-500 to-red-600 text-white shadow">
           Lịch & Kết quả
         </button>
-        <button id="btnTabStandings" onclick="switchPubTab('standings')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400">
+        <button id="btnTabStandings" onclick="switchPubTab('standings')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60">
           Bảng xếp hạng
         </button>
-        <button id="btnTabBracket" onclick="switchPubTab('bracket')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400">
+        <button id="btnTabBracket" onclick="switchPubTab('bracket')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60">
           Nhánh đấu
         </button>
       </div>
@@ -68,9 +108,9 @@
       <div id="panelMatches" class="space-y-2.5"></div>
 
       <!-- BẢNG XẾP HẠNG TỰ ĐỘNG -->
-      <div id="panelStandings" class="hidden bd-card rounded-2xl overflow-hidden">
+      <div id="panelStandings" class="hidden fire-card rounded-2xl overflow-hidden">
         <table class="w-full text-left text-xs">
-          <thead class="bg-orange-500/15 text-orange-400 uppercase">
+          <thead class="bg-gradient-to-r from-orange-600/25 to-red-600/15 text-amber-300 uppercase">
             <tr>
               <th class="py-2.5 px-3">#</th>
               <th class="py-2.5 px-2">Đội</th>
@@ -79,7 +119,7 @@
               <th class="py-2.5 px-3 text-right">Hiệu số</th>
             </tr>
           </thead>
-          <tbody id="standingsBody" class="divide-y divide-gray-800"></tbody>
+          <tbody id="standingsBody" class="divide-y divide-orange-500/15"></tbody>
         </table>
       </div>
 
@@ -102,8 +142,8 @@
         const isActive = t === tab;
         document.getElementById(panelIds[t]).classList.toggle('hidden', !isActive);
         document.getElementById(btnIds[t]).className = isActive
-          ? 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-orange-500 text-black'
-          : 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400';
+          ? 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-gradient-to-r from-orange-500 to-red-600 text-white shadow'
+          : 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60';
       });
     };
 
@@ -114,13 +154,17 @@
       const matches = data.matches || {};
       const teams = data.teams || {};
 
-      // Header
-      document.getElementById('pubTourName').textContent = settings.name || 'Giải Pickleball Bính Dần Open';
+      // Cập nhật tên giải & logo (ưu tiên ảnh upload từ Admin, nếu không dùng logo.jpg mặc định)
+      const tourName = settings.name || 'Giải Pickleball Bính Dần Open 2026';
+      document.getElementById('pubTourName').textContent = tourName;
+      document.getElementById('heroTourName').textContent = tourName;
+
       if (settings.logo) {
-        const img = document.getElementById('pubLogo');
-        img.src = settings.logo;
-        img.classList.remove('hidden');
-        document.getElementById('pubLogoFallback').classList.add('hidden');
+        document.getElementById('pubLogo').src = settings.logo;
+        document.getElementById('pubLogo').style.display = 'block';
+        document.getElementById('pubLogoFallback').style.display = 'none';
+        document.getElementById('heroLogo').src = settings.logo;
+        document.getElementById('heroLogo').style.display = 'block';
       }
 
       // 1. Render Live Courts
@@ -133,12 +177,12 @@
 
         if (!m) {
           return `
-            <div class="bd-card rounded-2xl p-4 opacity-60">
+            <div class="fire-card rounded-2xl p-4 opacity-60">
               <div class="flex justify-between items-center mb-2">
-                <span class="font-black text-xs text-gray-400 uppercase">${c.name}</span>
-                <span class="text-[10px] px-2 py-0.5 rounded-full bg-gray-800 text-gray-500 font-bold">TRỐNG</span>
+                <span class="font-black text-xs text-amber-200/60 uppercase">${c.name}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-amber-200/40 font-bold">TRỐNG</span>
               </div>
-              <p class="text-xs text-gray-500 text-center py-4">Đang chờ trận đấu tiếp theo</p>
+              <p class="text-xs text-amber-200/40 text-center py-4">Đang chờ trận đấu tiếp theo</p>
             </div>`;
         }
 
@@ -147,10 +191,10 @@
         const isDone = m.status === 'finished';
 
         return `
-          <div class="bd-card rounded-2xl overflow-hidden shadow-lg">
-            <div class="bg-gradient-to-r from-orange-600/25 to-transparent px-3.5 py-2 border-b border-orange-500/20 flex items-center justify-between">
-              <span class="font-black text-xs text-orange-400 uppercase">${c.name}</span>
-              <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isDone ? 'bg-gray-700 text-gray-200' : 'bg-emerald-500/20 text-emerald-400'}">
+          <div class="fire-card rounded-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-red-600/25 via-orange-600/20 to-transparent px-3.5 py-2 border-b border-orange-500/25 flex items-center justify-between">
+              <span class="font-black text-xs text-amber-300 uppercase">${c.name}</span>
+              <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isDone ? 'bg-white/10 text-gray-300' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
                 ${isDone ? 'KẾT THÚC' : '● LIVE'}
               </span>
             </div>
@@ -158,18 +202,18 @@
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2 min-w-0 pr-2">
                   <span class="text-sm font-bold truncate ${m.winner === 'A' ? 'text-emerald-400' : 'text-white'}">${m.teamA.name}</span>
-                  ${!isDone && isA ? `<span class="text-[10px] text-orange-400 font-black">${dots}</span>` : ''}
+                  ${!isDone && isA ? `<span class="text-[10px] text-amber-400 font-black">${dots}</span>` : ''}
                 </div>
-                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg ${isA ? 'bg-orange-500 text-black' : 'bg-white/10 text-white'}">
+                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg ${isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">
                   ${m.teamA.score}
                 </span>
               </div>
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2 min-w-0 pr-2">
                   <span class="text-sm font-bold truncate ${m.winner === 'B' ? 'text-emerald-400' : 'text-white'}">${m.teamB.name}</span>
-                  ${!isDone && !isA ? `<span class="text-[10px] text-orange-400 font-black">${dots}</span>` : ''}
+                  ${!isDone && !isA ? `<span class="text-[10px] text-amber-400 font-black">${dots}</span>` : ''}
                 </div>
-                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg ${!isA ? 'bg-orange-500 text-black' : 'bg-white/10 text-white'}">
+                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg ${!isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">
                   ${m.teamB.score}
                 </span>
               </div>
@@ -177,28 +221,28 @@
           </div>`;
       }).join('');
 
-      document.getElementById('liveCourtsGrid').innerHTML = courtsHtml || '<p class="text-xs text-gray-500">Chưa có sân nào.</p>';
+      document.getElementById('liveCourtsGrid').innerHTML = courtsHtml || '<p class="text-xs text-amber-200/50">Chưa có sân nào.</p>';
       document.getElementById('liveCountBadge').textContent = `${activeCount} sân đang đấu`;
 
       // 2. Render Matches List
       const matchesArr = Object.values(matches);
       document.getElementById('panelMatches').innerHTML = matchesArr.map(m => {
         const badge = m.status === 'finished'
-          ? '<span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold">XONG</span>'
+          ? '<span class="text-[10px] px-2 py-0.5 rounded bg-white/10 text-gray-300 font-bold">XONG</span>'
           : (m.status === 'live'
             ? '<span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">LIVE</span>'
             : '<span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 font-bold">CHỜ</span>');
 
         return `
-          <div class="bd-card rounded-xl px-3.5 py-3 flex items-center justify-between gap-2">
-            <div class="w-2/5 text-xs sm:text-sm font-bold truncate ${m.winner === 'A' ? 'text-emerald-400' : 'text-gray-200'}">${m.teamA.name}</div>
+          <div class="fire-card rounded-xl px-3.5 py-3 flex items-center justify-between gap-2">
+            <div class="w-2/5 text-xs sm:text-sm font-bold truncate ${m.winner === 'A' ? 'text-emerald-400' : 'text-amber-50'}">${m.teamA.name}</div>
             <div class="flex flex-col items-center shrink-0">
               <span class="text-sm font-black text-orange-400">${m.teamA.score} - ${m.teamB.score}</span>
               ${badge}
             </div>
-            <div class="w-2/5 text-xs sm:text-sm font-bold truncate text-right ${m.winner === 'B' ? 'text-emerald-400' : 'text-gray-200'}">${m.teamB.name}</div>
+            <div class="w-2/5 text-xs sm:text-sm font-bold truncate text-right ${m.winner === 'B' ? 'text-emerald-400' : 'text-amber-50'}">${m.teamB.name}</div>
           </div>`;
-      }).join('') || '<p class="text-xs text-gray-500 text-center py-6">Chưa có lịch thi đấu.</p>';
+      }).join('') || '<p class="text-xs text-amber-200/50 text-center py-6">Chưa có lịch thi đấu.</p>';
 
       // 3. Tính Bảng Xếp Hạng tự động
       const stats = {};
@@ -221,14 +265,14 @@
 
       const ranked = Object.values(stats).sort((a, b) => b.wins - a.wins || b.diff - a.diff);
       document.getElementById('standingsBody').innerHTML = ranked.map((r, i) => `
-        <tr class="hover:bg-white/5">
-          <td class="py-2.5 px-3 font-black ${i < 2 ? 'text-orange-400' : 'text-gray-500'}">${i + 1}</td>
+        <tr class="hover:bg-orange-500/5">
+          <td class="py-2.5 px-3 font-black ${i < 2 ? 'text-amber-400' : 'text-amber-200/40'}">${i + 1}</td>
           <td class="py-2.5 px-2 font-bold text-white">${r.name}</td>
-          <td class="py-2.5 px-2 text-center text-gray-400">${r.played}</td>
+          <td class="py-2.5 px-2 text-center text-amber-200/60">${r.played}</td>
           <td class="py-2.5 px-2 text-center font-black text-emerald-400">${r.wins}</td>
-          <td class="py-2.5 px-3 text-right font-bold ${r.diff >= 0 ? 'text-gray-200' : 'text-red-400'}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
+          <td class="py-2.5 px-3 text-right font-bold ${r.diff >= 0 ? 'text-amber-200' : 'text-red-400'}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
         </tr>
-      `).join('') || '<tr><td colspan="5" class="py-6 text-center text-gray-500">Chưa có dữ liệu xếp hạng.</td></tr>';
+      `).join('') || '<tr><td colspan="5" class="py-6 text-center text-amber-200/50">Chưa có dữ liệu xếp hạng.</td></tr>';
 
       // 4. Render Sơ đồ nhánh đấu
       document.getElementById('panelBracket').innerHTML = renderBracketHTML(matches);
