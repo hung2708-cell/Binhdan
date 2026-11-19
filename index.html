@@ -301,11 +301,16 @@
       </div>
     </section>
 
-    <!-- 4. BẢNG (CHỈ XEM BẢNG A–D & SƠ ĐỒ NHÁNH SERIE A / B CHO KHÁN GIẢ) -->
+    <!-- 4. BẢNG (CHỈ XEM BẢNG A–D, LỊCH XEN KẼ & SƠ ĐỒ NHÁNH SERIE A / B) -->
     <section id="panelGroups" class="pub-panel hidden space-y-4">
       <div class="space-y-3">
         <h2 class="font-black text-orange-400 uppercase text-sm">Bảng đấu A–D</h2>
         <div id="groupsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+
+      <div id="schedulePreviewCard" class="hidden sc-card rounded-2xl p-4 space-y-2.5">
+        <h3 class="font-black text-orange-400 uppercase text-xs tracking-wider">Lịch thi đấu vòng bảng (Xen kẽ chống đánh liên tục)</h3>
+        <div id="schedulePreviewList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs"></div>
       </div>
 
       <div class="sc-card rounded-2xl p-4 space-y-3">
@@ -372,22 +377,19 @@
         </div>
       </div>
 
-      <!-- CÔNG CỤ CHIA BẢNG & CHIA NHÁNH (CHỈ HIỆN TRONG QUẢN TRỊ) -->
+      <!-- CÔNG CỤ CHIA BẢNG THÔNG MINH & KHUNG SƠ ĐỒ NHÁNH CHỜ KẾT QUẢ -->
       <div class="sc-card rounded-2xl p-4 space-y-3">
-        <h3 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Chia bảng A–D & Sơ đồ nhánh Serie A / B</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-          <select id="groupCountSel" class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-amber-300 outline-none">
-            <option value="2">2 Bảng (A, B)</option>
-            <option value="4" selected>4 Bảng (A–D)</option>
-          </select>
-          <button type="button" onclick="autoDrawGroups()" class="fire-btn py-2 px-3 rounded-xl text-xs font-black text-white shadow">
-            Bốc thăm chia bảng
+        <h3 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Chia bảng tự động & Sơ đồ nhánh chờ kết quả</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <button type="button" onclick="autoDrawGroups()" class="fire-btn py-2.5 px-3 rounded-xl text-xs font-black text-white shadow">
+            Tự chia bảng & Xếp lịch
           </button>
           <select id="bracketTargetCourt" class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none"></select>
-          <button type="button" onclick="generateSeriesBrackets()" class="py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-black">
-            Tự chia Nhánh A & B
+          <button type="button" onclick="generateSeriesBrackets()" class="py-2.5 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-black">
+            Tạo khung nhánh A & B
           </button>
         </div>
+        <p class="text-[11px] text-slate-400">* Hệ thống tự tính số bảng hợp lý (3–4 đội/bảng), xếp lịch xen kẽ tránh đánh liên tục và chỉ tự điền đội vào nhánh khi vòng bảng có kết quả.</p>
       </div>
 
       <!-- QUẢN LÝ ĐỒNG ĐỘI -->
@@ -1226,22 +1228,50 @@
       renderLiveAndAdminCourts();
     };
 
+    // 1. TỰ ĐỘNG CHIA BẢNG HỢP LÝ & XẾP LỊCH XEN KẼ CHỐNG ĐÁNH LIÊN TỤC
     window.autoDrawGroups = async () => {
-      const pool = Object.values(dataStore.doublesTeams || {});
-      const numGroups = Number(document.getElementById('groupCountSel').value) || 4;
-      if (pool.length < numGroups) return showToast(`Cần ít nhất ${numGroups} cặp đôi`);
+      const isTeam = getActiveFormat() === 'team';
+      const pool = isTeam ? Object.values(dataStore.teams || {}) : Object.values(dataStore.doublesTeams || {});
+      if (pool.length < 3) return showToast('Cần ít nhất 3 đội/cặp để chia bảng');
 
-      const ok = await scConfirm('Bốc thăm chia bảng', `Chia ${pool.length} cặp đôi thành ${numGroups} bảng?`, 'BỐC THĂM');
+      const optimalGroups = pool.length <= 5 ? 1 : (pool.length <= 8 ? 2 : (pool.length <= 12 ? 3 : 4));
+      const ok = await scConfirm(
+        'Chia bảng & Xếp lịch thông minh',
+        `Tự chia ${pool.length} đội vào ${optimalGroups} bảng và xếp lịch xen kẽ tránh đánh liên tục?`,
+        'THỰC HIỆN'
+      );
       if (!ok) return;
 
       const shuffled = [...pool].sort(() => Math.random() - 0.5);
-      const letters = ['A', 'B', 'C', 'D'].slice(0, numGroups);
+      const letters = ['A', 'B', 'C', 'D'].slice(0, optimalGroups);
       const groups = {};
       letters.forEach(l => { groups[l] = []; });
-      shuffled.forEach((p, idx) => { groups[letters[idx % numGroups]].push(p); });
+      shuffled.forEach((item, idx) => { groups[letters[idx % optimalGroups]].push(item); });
 
-      await set(ref(db, 'groupDraw'), { category: 'ALL', letters, groups, updatedAt: Date.now() });
-      showToast('Đã chia bảng thành công');
+      const roundBuckets = {};
+      letters.forEach(letter => {
+        const arr = [...groups[letter]];
+        if (arr.length % 2 === 1) arr.push(null);
+        const n = arr.length;
+        for (let r = 0; r < n - 1; r++) {
+          if (!roundBuckets[r]) roundBuckets[r] = [];
+          for (let i = 0; i < n / 2; i++) {
+            const a = arr[i], b = arr[n - 1 - i];
+            if (a && b) roundBuckets[r].push({ group: letter, teamA: a.name, teamB: b.name });
+          }
+          arr.splice(1, 0, arr.pop());
+        }
+      });
+
+      const orderedSchedule = Object.values(roundBuckets).flat();
+      await set(ref(db, 'groupDraw'), {
+        category: isTeam ? 'team' : 'doubles',
+        letters,
+        groups,
+        schedule: orderedSchedule,
+        updatedAt: Date.now()
+      });
+      showToast(`Đã chia ${optimalGroups} bảng & xếp ${orderedSchedule.length} trận xen kẽ`);
     };
 
     function buildMultiRoundTree(entries, keyPrefix) {
@@ -1254,9 +1284,13 @@
         round1.push({
           id: `${keyPrefix}_r0_m${i / 2}`,
           round: 'Vòng 1',
-          team1: t1 ? `${t1.name} (${t1.group}#${t1.rank})` : 'Chờ đội',
-          team2: t2 ? `${t2.name} (${t2.group}#${t2.rank})` : 'Chờ đội',
-          ready: Boolean(t1 && t2),
+          team1: t1 ? t1.name : 'Chờ đội',
+          team2: t2 ? t2.name : 'Chờ đội',
+          group1: t1?.group || '',
+          rank1: t1?.rank || 0,
+          group2: t2?.group || '',
+          rank2: t2?.rank || 0,
+          ready: false,
           matchId: ''
         });
       }
@@ -1285,45 +1319,35 @@
       return rounds;
     }
 
+    // 2. TẠO KHUNG SƠ ĐỒ NHÁNH CHỜ KẾT QUẢ (KHÔNG ĐIỀN SẴN ĐỘI THEO THỨ TỰ)
     window.generateSeriesBrackets = async () => {
       const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
-      let serieAEntries = [];
-      let serieBEntries = [];
+      const draw = dataStore.groupDraw;
+      const letters = draw?.letters || ['A', 'B'];
 
-      if (scope === 'team') {
-        const tiesArr = Object.values(dataStore.ties || {});
-        const clubNames = Object.values(dataStore.teams || {}).map(t => t.name);
-        const rankList = clubNames.length ? clubNames : Array.from(new Set(tiesArr.flatMap(t => [t.teamAName, t.teamBName]).filter(Boolean)));
-        rankList.forEach((name, idx) => {
-          const item = { name, group: 'ĐĐ', rank: idx + 1 };
-          if (idx % 4 === 0 || idx % 4 === 1) serieAEntries.push(item);
-          else serieBEntries.push(item);
-        });
-      } else {
-        const draw = dataStore.groupDraw;
-        if (!draw || !draw.groups) return showToast('Hãy chia bảng trước khi chia nhánh A/B');
-        const letters = draw.letters || Object.keys(draw.groups);
-        letters.forEach(letter => {
-          (draw.groups[letter] || []).forEach((item, idx) => {
-            const entry = { name: item.name || `Đôi ${idx + 1}`, group: letter, rank: idx + 1 };
-            if (idx === 0 || idx === 1) serieAEntries.push(entry);
-            else if (idx === 2 || idx === 3) serieBEntries.push(entry);
-          });
-        });
+      const slotsA = [];
+      const slotsB = [];
+      for (let i = 0; i < letters.length; i += 2) {
+        const g1 = letters[i], g2 = letters[i + 1] || letters[0];
+        slotsA.push({ name: `Chờ Nhất Bảng ${g1}`, group: g1, rank: 1 });
+        slotsA.push({ name: `Chờ Nhì Bảng ${g2}`, group: g2, rank: 2 });
+        slotsB.push({ name: `Chờ Hạng 3 Bảng ${g1}`, group: g1, rank: 3 });
+        slotsB.push({ name: `Chờ Hạng 4 Bảng ${g2}`, group: g2, rank: 4 });
       }
 
       const prev = dataStore.seriesBracket || {};
       await set(ref(db, 'seriesBracket'), {
         ...prev,
         [scope]: {
-          serieA: buildMultiRoundTree(serieAEntries, `${scope}_a`),
-          serieB: buildMultiRoundTree(serieBEntries, `${scope}_b`)
+          serieA: buildMultiRoundTree(slotsA, `${scope}_a`),
+          serieB: buildMultiRoundTree(slotsB, `${scope}_b`)
         },
         updatedAt: Date.now()
       });
-      showToast(`Đã cập nhật cây sơ đồ ${scope === 'team' ? 'Đồng đội' : 'Đôi'}`);
+      showToast('Đã tạo khung sơ đồ chờ kết quả vòng bảng');
     };
 
+    // Tự động đẩy đội thắng xuyên suốt mọi vòng khi trận kết thúc
     async function syncBracketWinnersIfNeeded() {
       const sb = dataStore.seriesBracket;
       const matches = dataStore.matches || {};
@@ -1610,10 +1634,15 @@
     function renderGroups() {
       const draw = dataStore.groupDraw;
       const grid = document.getElementById('groupsGrid');
+      const schedCard = document.getElementById('schedulePreviewCard');
+      const schedList = document.getElementById('schedulePreviewList');
+
       if (!draw || !draw.groups) {
         grid.innerHTML = '<div class="sc-card rounded-2xl p-5 text-center col-span-full text-xs text-slate-400">Chưa có bảng đấu.</div>';
+        schedCard.classList.add('hidden');
         return;
       }
+
       grid.innerHTML = (draw.letters || Object.keys(draw.groups)).map(letter => {
         const list = draw.groups[letter] || [];
         return `
@@ -1623,15 +1652,28 @@
               <span class="text-[11px] text-slate-400">${list.length} đội</span>
             </div>
             <div class="p-3.5 space-y-2">
-              ${list.map((pair, i) => `
+              ${list.map((item, i) => `
                 <div class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between text-xs">
-                  <span class="font-bold text-white truncate">#${i + 1} • ${pair.name}</span>
-                  <span class="text-[10px] font-black text-emerald-400">${i < 2 ? 'Nhánh Serie A' : 'Nhánh Serie B'}</span>
+                  <span class="font-bold text-white truncate">#${i + 1} • ${item.name}</span>
+                  <span class="text-[10px] text-slate-400 font-semibold">Vòng bảng</span>
                 </div>
               `).join('')}
             </div>
           </div>`;
       }).join('');
+
+      const sched = draw.schedule || [];
+      if (sched.length) {
+        schedCard.classList.remove('hidden');
+        schedList.innerHTML = sched.map((s, idx) => `
+          <div class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between gap-2">
+            <span class="text-[10px] font-black text-amber-300 shrink-0">B${s.group} #${idx + 1}</span>
+            <span class="font-bold text-white truncate text-right">${s.teamA} vs ${s.teamB}</span>
+          </div>
+        `).join('');
+      } else {
+        schedCard.classList.add('hidden');
+      }
     }
 
     onValue(ref(db, '/'), async (snap) => {
