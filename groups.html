@@ -61,7 +61,7 @@
     <section class="space-y-2">
       <div class="flex items-center justify-between">
         <span class="text-[11px] font-black uppercase text-amber-300/80">Chọn nội dung thi đấu</span>
-        <button id="btnAddCatToggle" onclick="addCategoryPrompt()" class="hidden text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-600/25 border border-emerald-500/40 text-emerald-400">
+        <button id="btnAddCatToggle" onclick="openAddCatModal()" class="hidden text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-600/25 border border-emerald-500/40 text-emerald-400">
           + Thêm nội dung
         </button>
       </div>
@@ -107,6 +107,26 @@
     <section id="groupsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></section>
 
   </main>
+
+  <!-- MODAL THÊM NỘI DUNG MỚI (KIỂU KHUNG NHẬP MẬT KHẨU) -->
+  <div id="addCatModal" onclick="if(event.target === this) closeAddCatModal()" class="hidden fixed inset-0 z-[9999] bg-[#0c0908]/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-[#17110e] border border-orange-500/40 rounded-2xl p-6 text-center shadow-2xl space-y-4">
+      <div class="w-12 h-12 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl">🏆</div>
+      <div>
+        <h2 class="font-black text-orange-400 uppercase text-sm tracking-wide">Thêm nội dung mới</h2>
+        <p class="text-xs text-amber-200/60 mt-1">VD: Đôi Nữ 4.5, Đơn Nam Open...</p>
+      </div>
+      <input id="inpNewCatName" type="text" placeholder="Nhập tên nội dung..."
+        class="w-full text-center text-sm font-bold bg-[#0c0908] border border-gray-700 focus:border-orange-500 rounded-xl py-3 px-3 text-white outline-none" />
+      <p id="catModalError" class="hidden text-xs text-red-400 font-bold">Vui lòng nhập tên nội dung!</p>
+      <button onclick="confirmAddCategory()" class="fire-btn w-full py-3 rounded-xl text-white font-black text-sm shadow-lg">
+        TẠO NỘI DUNG
+      </button>
+      <button onclick="closeAddCatModal()" class="block w-full text-xs text-gray-400 hover:text-white pt-1 font-semibold">
+        Hủy bỏ
+      </button>
+    </div>
+  </div>
 
   <!-- FLOATING LIQUID GLASS NAV -->
   <div class="fixed bottom-3 left-3 right-3 z-40 flex justify-center pointer-events-none">
@@ -168,7 +188,6 @@
       categories = data.categories || {};
       allMatches = data.matches || {};
 
-      // Tự tạo 2 nội dung mẫu nếu Firebase chưa có nội dung nào
       if (Object.keys(categories).length === 0) {
         set(ref(db, 'categories'), {
           cat_nam55: { id: 'cat_nam55', name: 'Đôi Nam 5.5', teams: [], groups: {} },
@@ -188,14 +207,38 @@
       updateAdminUI();
     };
 
-    window.addCategoryPrompt = async () => {
-      const name = prompt('Nhập tên nội dung mới (VD: Đôi Nữ 4.5, Đơn Nam Open):');
-      if (!name || !name.trim()) return;
-      const id = `cat_${Date.now()}`;
-      await set(ref(db, `categories/${id}`), { id, name: name.trim(), teams: [], groups: {} });
-      activeCatId = id;
-      showToast(`Đã tạo nội dung: ${name.trim()}`);
+    // Modal thêm nội dung mới (thay thế prompt mặc định)
+    window.openAddCatModal = () => {
+      const modal = document.getElementById('addCatModal');
+      const input = document.getElementById('inpNewCatName');
+      document.getElementById('catModalError').classList.add('hidden');
+      input.value = '';
+      modal.classList.remove('hidden');
+      setTimeout(() => input.focus(), 100);
     };
+
+    window.closeAddCatModal = () => {
+      document.getElementById('addCatModal').classList.add('hidden');
+    };
+
+    window.confirmAddCategory = async () => {
+      const input = document.getElementById('inpNewCatName');
+      const name = input.value.trim();
+      if (!name) {
+        document.getElementById('catModalError').classList.remove('hidden');
+        input.focus();
+        return;
+      }
+      const id = `cat_${Date.now()}`;
+      await set(ref(db, `categories/${id}`), { id, name, teams: [], groups: {} });
+      activeCatId = id;
+      closeAddCatModal();
+      showToast(`Đã tạo nội dung: ${name}`);
+    };
+
+    document.getElementById('inpNewCatName').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') window.confirmAddCategory();
+    });
 
     window.deleteCurrentCategory = async () => {
       if (!activeCatId || !confirm('Xóa nội dung này và các bảng đấu của nó?')) return;
@@ -229,13 +272,11 @@
       showToast('Đã nạp 8 cặp đôi mẫu!');
     };
 
-    // Bốc thăm ngẫu nhiên chia bảng A, B, C, D
     window.drawRandomGroups = async () => {
       const cat = categories[activeCatId];
       const list = [...(cat.teams || [])];
       if (list.length < 2) return showToast('Cần ít nhất 2 đội để chia bảng!');
 
-      // Trộn ngẫu nhiên Fisher-Yates
       for (let i = list.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [list[i], list[j]] = [list[j], list[i]];
@@ -255,7 +296,6 @@
       showToast(`🎲 Đã bốc thăm chia ${numGroups} bảng!`);
     };
 
-    // Sinh lịch vòng tròn cho từng bảng và đẩy vào Firebase matches/
     window.generateGroupMatches = async () => {
       const cat = categories[activeCatId];
       const groups = cat.groups || {};
@@ -301,7 +341,6 @@
     function renderAll() {
       const catArr = Object.values(categories);
 
-      // 1. Render Category Tabs
       document.getElementById('categoryTabs').innerHTML = catArr.map(c => `
         <button onclick="selectCategory('${c.id}')" class="shrink-0 px-3.5 py-2 rounded-xl text-xs font-black uppercase transition ${c.id === activeCatId ? 'fire-btn text-white shadow' : 'bg-white/5 text-amber-200/60 border border-orange-500/20'}">
           ${c.name}
@@ -311,7 +350,6 @@
       const cat = categories[activeCatId];
       if (!cat) return;
 
-      // 2. Render Admin Team Chips
       const teams = cat.teams || [];
       document.getElementById('catTeamsChips').innerHTML = teams.map((t, i) => `
         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0c0908] border border-orange-500/25 text-[11px] font-semibold text-amber-100">
@@ -320,7 +358,6 @@
         </span>
       `).join('') || '<span class="text-[11px] text-gray-500">Chưa có cặp đôi nào trong nội dung này.</span>';
 
-      // 3. Render Groups & Auto Standings per Group
       const groups = cat.groups || {};
       const groupKeys = Object.keys(groups).sort();
 
@@ -337,7 +374,6 @@
         const stats = {};
         gTeams.forEach(name => { stats[name] = { name, played: 0, wins: 0, diff: 0 }; });
 
-        // Lấy các trận thuộc nội dung & bảng này
         const gMatches = Object.values(allMatches).filter(m => m.categoryId === activeCatId && m.groupName === gName);
         gMatches.filter(m => m.status === 'finished').forEach(m => {
           if (stats[m.teamA.name]) {
