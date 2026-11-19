@@ -766,7 +766,7 @@
           const sm = dataStore.matches?.[id];
           if (!sm) return '';
           if (idx === 4 && tie.stage !== 'knockout') return '';
-          const stText = sm.status === 'finished' ? 'FT' : (sm.status === 'live' ? '● LIVE' : 'Chờ');
+          const stText = sm.status === 'finished' ? 'Đã xong' : (sm.status === 'live' ? '● LIVE' : 'Chờ');
           const stColor = sm.status === 'finished' ? 'text-emerald-400' : (sm.status === 'live' ? 'text-orange-400' : 'text-slate-500');
           return `
             <div class="sc-subcard rounded-xl p-2.5 space-y-1.5">
