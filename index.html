@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Bính Dần 1986 Pickleball - Giải Đấu & Sơ Đồ</title>
+  <title>Bính Dần 1986 Pickleball - SportConnect</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -11,15 +11,19 @@
     body {
       background-color: #090b0f;
       background-image:
-        radial-gradient(circle at 15% 0%, rgba(249, 115, 22, 0.14), transparent 45%),
-        radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.07), transparent 40%);
+        radial-gradient(circle at 12% 0%, rgba(249, 115, 22, 0.14), transparent 45%),
+        radial-gradient(circle at 88% 8%, rgba(16, 185, 129, 0.07), transparent 40%);
       color: #f8fafc;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     .sc-card {
       background: #12161f;
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.36);
+    }
+    .sc-hero {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.14) 0%, rgba(18, 22, 31, 0.96) 55%, rgba(16, 185, 129, 0.06) 100%);
+      border: 1px solid rgba(249, 115, 22, 0.28);
     }
     .fire-btn { background: linear-gradient(135deg, #f97316, #dc2626); }
     .fire-btn:active { transform: scale(0.97); }
@@ -44,7 +48,7 @@
       left: 10px;
       right: 10px;
       z-index: 50;
-      background: rgba(18, 22, 31, 0.88);
+      background: rgba(18, 22, 31, 0.9);
       backdrop-filter: blur(28px) saturate(200%);
       -webkit-backdrop-filter: blur(28px) saturate(200%);
       border: 1px solid rgba(255, 255, 255, 0.16);
@@ -68,7 +72,7 @@
       flex-direction: column;
       justify-content: space-around;
       gap: 14px;
-      min-width: 230px;
+      min-width: 232px;
       position: relative;
     }
     .bracket-match {
@@ -144,7 +148,31 @@
 
   <main class="max-w-7xl mx-auto p-3.5 sm:p-4 lg:p-6 space-y-4">
 
-    <!-- 1. SÂN LIVE + LỌC SÂN + XEM CHI TIẾT NGAY TẠI SÂN -->
+    <!-- THẺ TÓM TẮT GIẢI CHUẨN SPORTCONNECT -->
+    <section class="sc-hero rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <img src="logo.jpg" onerror="this.style.display='none'" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-orange-500/50 bg-black shrink-0" alt="Logo" />
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="scFormatBadge" class="px-2 py-0.5 rounded-full bg-orange-500/20 border border-orange-500/35 text-amber-300 text-[10px] font-black uppercase">Đang tải</span>
+            <span id="scLiveCourtsPill" class="px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">0 sân live</span>
+          </div>
+          <h1 id="scHeroTitle" class="font-black text-sm sm:text-lg text-white uppercase truncate mt-1">Giải Pickleball Bính Dần 1986</h1>
+          <p id="scHeroMeta" class="text-[11px] text-slate-400 truncate">SportConnect • Sẵn sàng thi đấu</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="switchPubTab('players')" class="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 text-[11px] font-bold text-slate-200">
+          Điểm trình VĐV
+        </button>
+        <button type="button" onclick="switchPubTab('bracket')" class="fire-btn px-3 py-1.5 rounded-xl text-[11px] font-black text-white shadow">
+          Sơ đồ nhánh
+        </button>
+      </div>
+    </section>
+
+    <!-- 1. SÂN LIVE -->
     <section id="panelLive" class="pub-panel space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-black text-orange-400 uppercase text-sm flex items-center gap-2">
@@ -165,7 +193,7 @@
       <div id="tiesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-3.5"></div>
     </section>
 
-    <!-- 3. BẢNG XẾP HẠNG (3 • 2 • 1 • 0 + HIỆU SỐ +- ) -->
+    <!-- 3. BẢNG XẾP HẠNG -->
     <section id="panelStandings" class="pub-panel hidden space-y-2.5">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-black text-orange-400 uppercase text-sm">Bảng xếp hạng Đồng đội (3 • 2 • 1 • 0)</h2>
@@ -217,12 +245,12 @@
       </div>
     </section>
 
-    <!-- 5. SƠ ĐỒ NHÁNH ĐỒNG ĐỘI & ĐÔI (TỰ ĐẨY ĐỘI THẮNG LÊN VÒNG SAU) -->
+    <!-- 5. SƠ ĐỒ NHÁNH NHIỀU VÒNG ĐỒNG ĐỘI & ĐÔI -->
     <section id="panelBracket" class="pub-panel hidden space-y-4">
       <div class="sc-card rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 class="font-black text-orange-400 uppercase text-sm">Sơ đồ nhánh Đồng đội & Nội dung Đôi</h2>
-          <p class="text-[11px] text-slate-400 mt-0.5">Nhất & Nhì vào <b>Serie A</b> • Ba & Tư vào <b>Serie B</b> • Tự đẩy đội thắng lên vòng sau & đấu ngay khi đủ đội</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Nhất & Nhì vào <b>Serie A</b> • Ba & Tư vào <b>Serie B</b> • Tự đẩy đội thắng xuyên suốt các vòng & đấu ngay khi đủ đội</p>
         </div>
         <div class="flex flex-wrap items-center gap-2 shrink-0">
           <select id="bracketScopeSel" onchange="renderBracketTrees()" class="bg-[#090b0f] border border-white/10 rounded-xl px-2.5 py-2 text-xs font-bold text-white outline-none">
@@ -394,7 +422,7 @@
     </nav>
   </div>
 
-  <!-- POPUP MẬT KHẨU DỰ PHÒNG (KHI js/auth.js KHÔNG CUNG CẤP requirePin) -->
+  <!-- POPUP MẬT KHẨU DỰ PHÒNG -->
   <div id="pinModal" class="hidden fixed inset-0 z-[10001] bg-[#090b0f]/92 backdrop-blur-md flex items-center justify-center p-4">
     <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/40 rounded-2xl p-6 text-center shadow-2xl space-y-4">
       <div class="w-12 h-12 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center">
@@ -703,6 +731,22 @@
       );
     }
 
+    function updateEventOverviewStrip() {
+      const fmt = getActiveFormat();
+      const clubCount = Object.keys(dataStore.teams || {}).length;
+      const pairCount = Object.keys(dataStore.doublesTeams || {}).length;
+      const courtsArr = Object.values(dataStore.courts || {});
+      const liveCount = courtsArr.filter(c => c.activeMatchId && dataStore.matches?.[c.activeMatchId]?.status !== 'finished').length;
+
+      document.getElementById('scFormatBadge').textContent = fmt === 'doubles'
+        ? 'Nội dung Đôi'
+        : (fmt === 'team' ? 'Giải Đồng đội' : 'Thể thức tự do');
+      document.getElementById('scLiveCourtsPill').textContent = `${liveCount}/${courtsArr.length} sân live`;
+      document.getElementById('scHeroMeta').textContent = fmt === 'doubles'
+        ? `${pairCount} cặp đôi • Chia bảng A–D & Nhánh Serie A/B`
+        : `${clubCount} CLB • 4 trận đôi (15đ) & Đơn quyết định (21đ)`;
+    }
+
     function applyTabVisibilityOnly() {
       Object.entries(PANELS).forEach(([k, id]) => {
         document.getElementById(id).classList.toggle('hidden', k !== currentTabKey);
@@ -998,6 +1042,50 @@
       showToast('Đã chia bảng thành công');
     };
 
+    // Xây dựng cây sơ đồ nhiều vòng (Vòng 1 -> Bán kết -> Chung kết)
+    function buildMultiRoundTree(entries, keyPrefix) {
+      if (!entries.length) return [];
+      const rounds = [];
+
+      const round1 = [];
+      for (let i = 0; i < entries.length; i += 2) {
+        const t1 = entries[i] || null;
+        const t2 = entries[i + 1] || null;
+        round1.push({
+          id: `${keyPrefix}_r0_m${i / 2}`,
+          round: 'Vòng 1',
+          team1: t1 ? `${t1.name} (${t1.group}#${t1.rank})` : 'Chờ đội',
+          team2: t2 ? `${t2.name} (${t2.group}#${t2.rank})` : 'Chờ đội',
+          ready: Boolean(t1 && t2),
+          matchId: ''
+        });
+      }
+      rounds.push(round1);
+
+      let prevCount = round1.length;
+      let rIdx = 1;
+      while (prevCount > 1) {
+        const nextCount = Math.ceil(prevCount / 2);
+        const label = nextCount === 1 ? 'Chung kết' : (nextCount === 2 ? 'Bán kết' : `Vòng ${rIdx + 1}`);
+        const curRound = [];
+        for (let m = 0; m < nextCount; m++) {
+          curRound.push({
+            id: `${keyPrefix}_r${rIdx}_m${m}`,
+            round: label,
+            team1: 'Chờ đội thắng',
+            team2: m * 2 + 1 < prevCount ? 'Chờ đội thắng' : 'Miễn đấu',
+            ready: false,
+            matchId: ''
+          });
+        }
+        rounds.push(curRound);
+        prevCount = nextCount;
+        rIdx++;
+      }
+
+      return rounds;
+    }
+
     window.generateSeriesBrackets = async () => {
       const scope = document.getElementById('bracketScopeSel').value || 'team';
       let serieAEntries = [];
@@ -1025,47 +1113,19 @@
         });
       }
 
-      const buildTree = (entries, keyPrefix) => {
-        const r1 = [];
-        for (let i = 0; i < entries.length; i += 2) {
-          const t1 = entries[i] || null;
-          const t2 = entries[i + 1] || null;
-          r1.push({
-            id: `${keyPrefix}_r1_${i / 2 + 1}`,
-            round: 'Vòng 1',
-            team1: t1 ? `${t1.name} (${t1.group}#${t1.rank})` : 'Chờ đội',
-            team2: t2 ? `${t2.name} (${t2.group}#${t2.rank})` : 'Chờ đội',
-            ready: Boolean(t1 && t2),
-            matchId: ''
-          });
-        }
-        const r2 = [];
-        for (let i = 0; i < r1.length; i += 2) {
-          r2.push({
-            id: `${keyPrefix}_r2_${i / 2 + 1}`,
-            round: r1.length <= 2 ? 'Chung kết' : 'Bán kết',
-            team1: 'Chờ đội thắng',
-            team2: 'Chờ đội thắng',
-            ready: false,
-            matchId: ''
-          });
-        }
-        return [r1, r2].filter(r => r.length > 0);
-      };
-
       const prev = dataStore.seriesBracket || {};
       await set(ref(db, 'seriesBracket'), {
         ...prev,
         [scope]: {
-          serieA: buildTree(serieAEntries, `${scope}_a`),
-          serieB: buildTree(serieBEntries, `${scope}_b`)
+          serieA: buildMultiRoundTree(serieAEntries, `${scope}_a`),
+          serieB: buildMultiRoundTree(serieBEntries, `${scope}_b`)
         },
         updatedAt: Date.now()
       });
       showToast(`Đã cập nhật cây sơ đồ ${scope === 'team' ? 'Đồng đội' : 'Đôi'}`);
     };
 
-    // Tự động đẩy đội thắng từ Vòng 1 lên vòng tiếp theo khi trận đấu hoàn tất
+    // Tự động đẩy đội thắng xuyên suốt mọi vòng của cây sơ đồ
     async function syncBracketWinnersIfNeeded() {
       const sb = dataStore.seriesBracket;
       const matches = dataStore.matches || {};
@@ -1079,28 +1139,29 @@
           const rounds = nextSb?.[scope]?.[seriesKey];
           if (!Array.isArray(rounds) || rounds.length < 2) return;
 
-          rounds[0].forEach((slot, mIdx) => {
-            const m = slot.matchId ? matches[slot.matchId] : null;
-            if (!m || m.status !== 'finished' || !m.winner) return;
+          for (let r = 0; r < rounds.length - 1; r++) {
+            rounds[r].forEach((slot, mIdx) => {
+              const m = slot.matchId ? matches[slot.matchId] : null;
+              if (!m || m.status !== 'finished' || !m.winner) return;
 
-            const winnerName = m.winner === 'A' ? m.teamA?.name : m.teamB?.name;
-            if (!winnerName) return;
+              const winnerName = m.winner === 'A' ? m.teamA?.name : m.teamB?.name;
+              if (!winnerName) return;
 
-            const targetRoundIdx = 1;
-            const targetMatchIdx = Math.floor(mIdx / 2);
-            const targetSlot = rounds[targetRoundIdx]?.[targetMatchIdx];
-            if (!targetSlot) return;
+              const targetSlot = rounds[r + 1]?.[Math.floor(mIdx / 2)];
+              if (!targetSlot) return;
 
-            const field = (mIdx % 2 === 0) ? 'team1' : 'team2';
-            if (targetSlot[field] !== winnerName) {
-              targetSlot[field] = winnerName;
-              targetSlot.ready = Boolean(
-                targetSlot.team1 && !targetSlot.team1.startsWith('Chờ') &&
-                targetSlot.team2 && !targetSlot.team2.startsWith('Chờ')
-              );
-              changed = true;
-            }
-          });
+              const field = (mIdx % 2 === 0) ? 'team1' : 'team2';
+              if (targetSlot[field] !== winnerName) {
+                targetSlot[field] = winnerName;
+                targetSlot.ready = Boolean(
+                  targetSlot.team1 && !targetSlot.team1.startsWith('Chờ') &&
+                  targetSlot.team2 && !targetSlot.team2.startsWith('Chờ') &&
+                  targetSlot.team2 !== 'Miễn đấu'
+                );
+                changed = true;
+              }
+            });
+          }
         });
       });
 
@@ -1123,7 +1184,7 @@
         id: mId,
         stage: 'knockout',
         isDreambreaker: isTeam,
-        category: `${isTeam ? 'Đồng đội • Đơn 21đ (Đổi VĐV mỗi 4đ, đổi sân 11đ)' : 'Đôi'} • ${seriesKey === 'serieA' ? 'Serie A' : 'Serie B'}`,
+        category: `${isTeam ? 'Đồng đội • Đơn 21đ (Đổi VĐV mỗi 4đ, đổi sân 11đ)' : 'Đôi'} • ${seriesKey === 'serieA' ? 'Serie A' : 'Serie B'} • ${slot.round}`,
         targetScore: isTeam ? 21 : 15,
         switchPoint: isTeam ? 11 : 8,
         winByTwo: true,
@@ -1171,17 +1232,23 @@
       el.innerHTML = rounds.map((matchesInRound, rIdx) => `
         <div class="bracket-col">
           <div class="text-[10px] font-black uppercase text-orange-400">${matchesInRound[0]?.round || `Vòng ${rIdx + 1}`}</div>
-          ${matchesInRound.map((m, mIdx) => `
-            <div class="bracket-match space-y-2">
-              <div class="text-xs font-bold text-white truncate">${m.team1}</div>
-              <div class="border-t border-white/10 pt-1.5 text-xs font-bold text-white truncate">${m.team2}</div>
-              ${m.ready ? `
-                <button type="button" onclick="playBracketMatchNow('${seriesKey}', ${rIdx}, ${mIdx})" class="fire-btn w-full py-1.5 rounded-lg text-[10px] font-black text-white flex items-center justify-center gap-1">
-                  <svg class="w-3 h-3"><use href="#icon-pickleball"></use></svg> Thi đấu ngay
-                </button>
-              ` : `<div class="text-[10px] text-slate-500 text-center">Chờ đủ đội</div>`}
-            </div>
-          `).join('')}
+          ${matchesInRound.map((m, mIdx) => {
+            const liveM = m.matchId ? dataStore.matches?.[m.matchId] : null;
+            const scoreBadge = liveM ? `<span class="text-[10px] font-black text-emerald-400 tabular-nums">${liveM.teamA.score}-${liveM.teamB.score}</span>` : '';
+            return `
+              <div class="bracket-match space-y-2">
+                <div class="flex items-center justify-between gap-1 text-xs font-bold text-white">
+                  <span class="truncate">${m.team1}</span>
+                  ${scoreBadge}
+                </div>
+                <div class="border-t border-white/10 pt-1.5 text-xs font-bold text-white truncate">${m.team2}</div>
+                ${m.ready ? `
+                  <button type="button" onclick="playBracketMatchNow('${seriesKey}', ${rIdx}, ${mIdx})" class="fire-btn w-full py-1.5 rounded-lg text-[10px] font-black text-white flex items-center justify-center gap-1">
+                    <svg class="w-3 h-3"><use href="#icon-pickleball"></use></svg> Thi đấu ngay
+                  </button>
+                ` : `<div class="text-[10px] text-slate-500 text-center">Chờ đủ đội</div>`}
+              </div>`;
+          }).join('')}
         </div>
       `).join('');
     }
@@ -1382,10 +1449,12 @@
 
       const tourName = dataStore.settings.name || 'Giải Pickleball Bính Dần 1986';
       document.getElementById('pubTourName').textContent = tourName;
+      document.getElementById('scHeroTitle').textContent = tourName;
       const qTour = document.getElementById('quickTourName');
       if (qTour && document.activeElement !== qTour) qTour.value = tourName;
 
       await syncBracketWinnersIfNeeded();
+      updateEventOverviewStrip();
       applyFormatVisibility();
       renderAdminRosters();
       renderLiveAndAdminCourts();
