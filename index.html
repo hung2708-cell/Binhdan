@@ -59,7 +59,7 @@
       border-radius: 9999px;
       background: linear-gradient(135deg, rgba(249, 115, 22, 0.44), rgba(220, 38, 38, 0.28));
       box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.34), 0 4px 14px rgba(249, 115, 22, 0.3);
-      transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+      transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.2s ease;
       pointer-events: none;
     }
 
@@ -68,7 +68,7 @@
       flex-direction: column;
       justify-content: space-around;
       gap: 14px;
-      min-width: 225px;
+      min-width: 230px;
       position: relative;
     }
     .bracket-match {
@@ -217,12 +217,12 @@
       </div>
     </section>
 
-    <!-- 5. SƠ ĐỒ NHÁNH ĐỒNG ĐỘI & ĐÔI -->
+    <!-- 5. SƠ ĐỒ NHÁNH ĐỒNG ĐỘI & ĐÔI (TỰ ĐẨY ĐỘI THẮNG LÊN VÒNG SAU) -->
     <section id="panelBracket" class="pub-panel hidden space-y-4">
       <div class="sc-card rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 class="font-black text-orange-400 uppercase text-sm">Sơ đồ nhánh Đồng đội & Nội dung Đôi</h2>
-          <p class="text-[11px] text-slate-400 mt-0.5">Nhất & Nhì vào <b>Serie A</b> • Ba & Tư vào <b>Serie B</b> • Tự ghép cặp & thi đấu ngay khi đủ đội</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Nhất & Nhì vào <b>Serie A</b> • Ba & Tư vào <b>Serie B</b> • Tự đẩy đội thắng lên vòng sau & đấu ngay khi đủ đội</p>
         </div>
         <div class="flex flex-wrap items-center gap-2 shrink-0">
           <select id="bracketScopeSel" onchange="renderBracketTrees()" class="bg-[#090b0f] border border-white/10 rounded-xl px-2.5 py-2 text-xs font-bold text-white outline-none">
@@ -285,7 +285,7 @@
       </div>
     </section>
 
-    <!-- 7. QUẢN TRỊ NGAY TRONG KHUNG (KHÓA THỂ THỨC + SỬA/XÓA CLB & VĐV) -->
+    <!-- 7. QUẢN TRỊ NGAY TRONG KHUNG -->
     <section id="panelAdmin" class="pub-panel hidden space-y-4">
       <div class="sc-card rounded-2xl p-4 space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2">
@@ -315,7 +315,6 @@
         </div>
       </div>
 
-      <!-- QUẢN LÝ ĐỒNG ĐỘI: THÊM / SỬA / XÓA CLB & VĐV -->
       <div id="adminTeamSection" class="space-y-4">
         <div class="sc-card rounded-2xl p-4 space-y-3">
           <h3 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Thêm CLB Đồng đội & VĐV (Tên • Giới tính • Trình)</h3>
@@ -337,7 +336,6 @@
         <div id="adminClubsList" class="space-y-3"></div>
       </div>
 
-      <!-- QUẢN LÝ NỘI DUNG ĐÔI: THÊM / XÓA CẶP ĐÔI -->
       <div id="adminDoublesSection" class="hidden space-y-4">
         <div class="sc-card rounded-2xl p-4 space-y-3">
           <h3 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Thêm Cặp đôi (Tên • Giới tính • Trình)</h3>
@@ -369,7 +367,7 @@
 
   </main>
 
-  <!-- THANH TÁC VỤ KHÓA CỨNG DƯỚI ĐÁY TRÊN ĐIỆN THOẠI (5 MỤC GỌN KIỂU SPORTCONNECT) -->
+  <!-- THANH TÁC VỤ KHÓA CỨNG DƯỚI ĐÁY TRÊN ĐIỆN THOẠI -->
   <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-2.5 pb-2.5 pt-1 pointer-events-none flex justify-center">
     <nav id="mobileBottomDock" class="locked-bottom-dock pointer-events-auto relative w-full max-w-md rounded-full p-1 grid grid-cols-5 select-none">
       <div id="mobileBottomThumb" class="ios-bottom-thumb"></div>
@@ -396,7 +394,7 @@
     </nav>
   </div>
 
-  <!-- POPUP NHẬP MẬT KHẨU (PIN) QUẢN TRỊ / TRỌNG TÀI -->
+  <!-- POPUP MẬT KHẨU DỰ PHÒNG (KHI js/auth.js KHÔNG CUNG CẤP requirePin) -->
   <div id="pinModal" class="hidden fixed inset-0 z-[10001] bg-[#090b0f]/92 backdrop-blur-md flex items-center justify-center p-4">
     <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/40 rounded-2xl p-6 text-center shadow-2xl space-y-4">
       <div class="w-12 h-12 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center">
@@ -496,15 +494,22 @@
       const pad = 4;
       const innerW = rect.width - pad * 2;
       const step = innerW / BOTTOM_TABS.length;
+      const idx = BOTTOM_TABS.indexOf(currentTabKey);
+
       thumb.style.width = `${step}px`;
-      thumb.style.transition = animate ? 'transform 0.28s cubic-bezier(0.32, 0.72, 0, 1)' : 'none';
-      const idx = Math.max(0, BOTTOM_TABS.indexOf(currentTabKey));
+      if (idx === -1) {
+        thumb.style.opacity = '0.22';
+        return;
+      }
+      thumb.style.opacity = '1';
+      thumb.style.transition = animate ? 'transform 0.28s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.2s ease' : 'none';
       thumb.style.transform = `translateX(${idx * step}px)`;
     }
 
     dock.addEventListener('pointerdown', (e) => {
       draggingDock = true;
       dock.setPointerCapture(e.pointerId);
+      thumb.style.opacity = '1';
       thumb.style.transition = 'none';
     });
 
@@ -538,8 +543,7 @@
       setTimeout(() => t.classList.add('hidden'), 2200);
     }
 
-    // Nhập mật khẩu PIN cho Quản trị & Trọng tài
-    function requestRolePin(role) {
+    function requestFallbackPin(role) {
       return new Promise((resolve) => {
         currentPinRole = role;
         pinResolver = resolve;
@@ -558,7 +562,7 @@
       if (pinResolver) { const fn = pinResolver; pinResolver = null; fn(false); }
     };
 
-    window.submitPinCheck = async () => {
+    window.submitPinCheck = () => {
       const entered = (document.getElementById('pinInput').value || '').trim();
       const expected = currentPinRole === 'admin'
         ? (dataStore.settings?.adminPin || '1986')
@@ -574,17 +578,26 @@
       }
     };
 
-    window.openAdminWithPin = async () => {
-      const ok = await requestRolePin('admin');
-      if (!ok) return;
+    async function verifyRoleAccess(role) {
       if (typeof AuthMod.requirePin === 'function') {
-        try { await AuthMod.requirePin('admin'); } catch (e) {}
+        try {
+          await AuthMod.requirePin(role);
+          return true;
+        } catch (err) {
+          return false;
+        }
       }
+      return await requestFallbackPin(role);
+    }
+
+    window.openAdminWithPin = async () => {
+      const ok = await verifyRoleAccess('admin');
+      if (!ok) return;
       window.switchPubTab('admin');
     };
 
     window.openRefereeWithPin = async () => {
-      const ok = await requestRolePin('referee');
+      const ok = await verifyRoleAccess('referee');
       if (!ok) return;
       const firstCourt = Object.keys(dataStore.courts || {})[0] || 'court_1';
       window.location.href = `referee.html?court=${firstCourt}`;
@@ -713,7 +726,7 @@
           btn.dataset.btab === currentTabKey ? 'text-orange-400' : 'text-slate-400'
         }`;
       });
-      syncDockThumb(false);
+      syncDockThumb(true);
     }
 
     function applyFormatVisibility() {
@@ -811,7 +824,6 @@
       showToast('Đã lưu CLB');
     };
 
-    // Xóa CLB
     window.deleteClubItem = async (clubId, clubName) => {
       const ok = await scConfirm('Xóa CLB', `Xóa CLB "${clubName}" khỏi giải đấu?`, 'XÓA CLB', true);
       if (!ok) return;
@@ -819,21 +831,16 @@
       showToast('Đã xóa CLB');
     };
 
-    // Xóa 1 VĐV trong CLB
     window.deleteClubMemberItem = async (clubId, memberIdx, plName) => {
       const ok = await scConfirm('Xóa VĐV', `Xóa VĐV "${plName}" khỏi CLB?`, 'XÓA VĐV', true);
       if (!ok) return;
       const club = dataStore.teams?.[clubId];
       const details = [...(club?.rosterDetails || [])];
       details.splice(memberIdx, 1);
-      await update(ref(db, `teams/${clubId}`), {
-        rosterDetails: details,
-        roster: details.map(x => x.name)
-      });
+      await update(ref(db, `teams/${clubId}`), { rosterDetails: details, roster: details.map(x => x.name) });
       showToast('Đã xóa VĐV');
     };
 
-    // Sửa thông tin VĐV trong CLB
     window.editClubMemberModal = (clubId, memberIdx) => {
       const club = dataStore.teams?.[clubId];
       const details = club?.rosterDetails || [];
@@ -894,7 +901,6 @@
       showToast('Đã lưu cặp đôi');
     };
 
-    // Xóa cặp đôi VĐV
     window.deleteDoublesItem = async (dblId, dblName) => {
       const ok = await scConfirm('Xóa cặp đôi', `Xóa cặp đôi "${dblName}"?`, 'XÓA CẶP', true);
       if (!ok) return;
@@ -1029,7 +1035,8 @@
             round: 'Vòng 1',
             team1: t1 ? `${t1.name} (${t1.group}#${t1.rank})` : 'Chờ đội',
             team2: t2 ? `${t2.name} (${t2.group}#${t2.rank})` : 'Chờ đội',
-            ready: Boolean(t1 && t2)
+            ready: Boolean(t1 && t2),
+            matchId: ''
           });
         }
         const r2 = [];
@@ -1039,7 +1046,8 @@
             round: r1.length <= 2 ? 'Chung kết' : 'Bán kết',
             team1: 'Chờ đội thắng',
             team2: 'Chờ đội thắng',
-            ready: false
+            ready: false,
+            matchId: ''
           });
         }
         return [r1, r2].filter(r => r.length > 0);
@@ -1057,9 +1065,54 @@
       showToast(`Đã cập nhật cây sơ đồ ${scope === 'team' ? 'Đồng đội' : 'Đôi'}`);
     };
 
+    // Tự động đẩy đội thắng từ Vòng 1 lên vòng tiếp theo khi trận đấu hoàn tất
+    async function syncBracketWinnersIfNeeded() {
+      const sb = dataStore.seriesBracket;
+      const matches = dataStore.matches || {};
+      if (!sb) return;
+
+      let changed = false;
+      const nextSb = JSON.parse(JSON.stringify(sb));
+
+      ['team', 'doubles'].forEach(scope => {
+        ['serieA', 'serieB'].forEach(seriesKey => {
+          const rounds = nextSb?.[scope]?.[seriesKey];
+          if (!Array.isArray(rounds) || rounds.length < 2) return;
+
+          rounds[0].forEach((slot, mIdx) => {
+            const m = slot.matchId ? matches[slot.matchId] : null;
+            if (!m || m.status !== 'finished' || !m.winner) return;
+
+            const winnerName = m.winner === 'A' ? m.teamA?.name : m.teamB?.name;
+            if (!winnerName) return;
+
+            const targetRoundIdx = 1;
+            const targetMatchIdx = Math.floor(mIdx / 2);
+            const targetSlot = rounds[targetRoundIdx]?.[targetMatchIdx];
+            if (!targetSlot) return;
+
+            const field = (mIdx % 2 === 0) ? 'team1' : 'team2';
+            if (targetSlot[field] !== winnerName) {
+              targetSlot[field] = winnerName;
+              targetSlot.ready = Boolean(
+                targetSlot.team1 && !targetSlot.team1.startsWith('Chờ') &&
+                targetSlot.team2 && !targetSlot.team2.startsWith('Chờ')
+              );
+              changed = true;
+            }
+          });
+        });
+      });
+
+      if (changed) {
+        await set(ref(db, 'seriesBracket'), nextSb);
+      }
+    }
+
     window.playBracketMatchNow = async (seriesKey, roundIdx, matchIdx) => {
       const scope = document.getElementById('bracketScopeSel').value || 'team';
-      const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
+      const tree = dataStore.seriesBracket?.[scope]?.[seriesKey];
+      const slot = tree?.[roundIdx]?.[matchIdx];
       if (!slot || !slot.ready) return showToast('Chưa đủ 2 đội để thi đấu');
 
       const cId = document.getElementById('bracketTargetCourt').value || Object.keys(dataStore.courts || {})[0] || 'court_1';
@@ -1082,9 +1135,15 @@
       m.status = 'live';
       m.courtId = cId;
 
+      const updatedTree = JSON.parse(JSON.stringify(dataStore.seriesBracket?.[scope] || {}));
+      if (updatedTree[seriesKey]?.[roundIdx]?.[matchIdx]) {
+        updatedTree[seriesKey][roundIdx][matchIdx].matchId = mId;
+      }
+
       await update(ref(db, '/'), {
         [`matches/${mId}`]: m,
-        [`courts/${cId}/activeMatchId`]: mId
+        [`courts/${cId}/activeMatchId`]: mId,
+        [`seriesBracket/${scope}`]: updatedTree
       });
       showToast(`Đã đẩy trận ra ${dataStore.courts[cId]?.name || cId}`);
       window.switchPubTab('live');
@@ -1307,7 +1366,7 @@
       `).join('');
     }
 
-    onValue(ref(db, '/'), (snap) => {
+    onValue(ref(db, '/'), async (snap) => {
       const d = snap.val() || {};
       dataStore = {
         settings: { format: '', adminPin: '1986', refereePin: '1986', ...(d.settings || {}) },
@@ -1326,6 +1385,7 @@
       const qTour = document.getElementById('quickTourName');
       if (qTour && document.activeElement !== qTour) qTour.value = tourName;
 
+      await syncBracketWinnersIfNeeded();
       applyFormatVisibility();
       renderAdminRosters();
       renderLiveAndAdminCourts();
