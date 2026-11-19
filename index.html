@@ -27,7 +27,7 @@
     }
     .live-dot { box-shadow: 0 0 10px #10b981; }
     .ios-glass-nav {
-      background: rgba(18, 22, 31, 0.78);
+      background: rgba(18, 22, 31, 0.82);
       backdrop-filter: blur(24px) saturate(190%);
       -webkit-backdrop-filter: blur(24px) saturate(190%);
       border: 1px solid rgba(255, 255, 255, 0.14);
@@ -48,9 +48,9 @@
     }
   </style>
 </head>
-<body class="min-h-screen pb-28 lg:pb-8">
+<body class="min-h-screen pb-28">
 
-  <!-- HEADER -->
+  <!-- HEADER GỌN GÀNG CHO CẢ MÁY TÍNH VÀ ĐIỆN THOẠI -->
   <header class="sticky top-0 z-30 bg-[#090b0f]/90 backdrop-blur-md border-b border-white/10 px-3.5 py-2.5">
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-2.5 min-w-0">
@@ -62,15 +62,6 @@
           <p id="pubTourName" class="text-[11px] text-slate-400 truncate">Đang tải dữ liệu...</p>
         </div>
       </div>
-
-      <!-- MENU ĐIỀU HƯỚNG TRÊN MÁY TÍNH -->
-      <nav class="hidden lg:flex items-center gap-1.5">
-        <button onclick="switchPubTab('live')" data-tab="live" class="desk-tab px-3.5 py-1.5 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/40">Sân Live</button>
-        <button onclick="switchPubTab('ties')" data-tab="ties" class="desk-tab px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.06]">Lượt đấu</button>
-        <button onclick="switchPubTab('standings')" data-tab="standings" class="desk-tab px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.06]">Xếp hạng</button>
-        <a href="groups.html" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Bảng đấu A–D</a>
-        <a href="players.html" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Điểm trình</a>
-      </nav>
 
       <a href="admin.html" class="whitespace-nowrap shrink-0 text-[11px] px-3 py-1.5 rounded-full bg-white/[0.06] border border-white/10 text-slate-200 font-semibold">
         Quản trị
@@ -158,7 +149,7 @@
 
   </main>
 
-  <!-- MOBILE FLOATING LIQUID GLASS SLIDER NAV -->
+  <!-- THANH ĐIỀU HƯỚNG NỔI DƯỚI CÙNG CHO ĐIỆN THOẠI -->
   <div class="lg:hidden fixed bottom-3 left-3 right-3 z-40 flex justify-center pointer-events-none">
     <nav id="pubIosNav" class="ios-glass-nav pointer-events-auto relative w-full max-w-md rounded-full p-1.5 grid grid-cols-3 select-none">
       <div id="pubIosPill" class="ios-pill"></div>
@@ -174,6 +165,18 @@
         <i data-lucide="trophy" class="w-5 h-5"></i>
         <span class="text-[10px] font-bold leading-none">Xếp hạng</span>
       </button>
+    </nav>
+  </div>
+
+  <!-- THANH ĐIỀU HƯỚNG NỔI DƯỚI CÙNG CHO MÁY TÍNH -->
+  <div class="hidden lg:flex fixed bottom-4 left-4 right-4 z-40 justify-center pointer-events-none">
+    <nav class="ios-glass-nav pointer-events-auto rounded-full px-2.5 py-1.5 flex items-center gap-1.5">
+      <button onclick="switchPubTab('live')" data-tab="live" class="desk-tab px-4 py-2 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/40">Sân Live</button>
+      <button onclick="switchPubTab('ties')" data-tab="ties" class="desk-tab px-4 py-2 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Lượt đấu</button>
+      <button onclick="switchPubTab('standings')" data-tab="standings" class="desk-tab px-4 py-2 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Xếp hạng</button>
+      <span class="h-4 w-px bg-white/15 mx-1"></span>
+      <a href="groups.html" class="px-4 py-2 rounded-full text-xs font-semibold text-slate-200 hover:text-orange-400 hover:bg-white/[0.06]">Bảng đấu A–D</a>
+      <a href="players.html" class="px-4 py-2 rounded-full text-xs font-semibold text-slate-200 hover:text-orange-400 hover:bg-white/[0.06]">Điểm trình</a>
     </nav>
   </div>
 
@@ -203,8 +206,8 @@
       });
       document.querySelectorAll('.desk-tab').forEach(b => {
         b.className = b.dataset.tab === tab
-          ? 'desk-tab px-3.5 py-1.5 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/40'
-          : 'desk-tab px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.06]';
+          ? 'desk-tab px-4 py-2 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/40'
+          : 'desk-tab px-4 py-2 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]';
       });
     };
 
