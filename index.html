@@ -622,7 +622,6 @@
       setTimeout(() => t.classList.add('hidden'), 2200);
     }
 
-    // Lấy tên VĐV hiển thị rõ ràng cho từng bên
     function formatPlayersSide(teamObj) {
       const raw = Array.isArray(teamObj?.players) ? teamObj.players : Object.values(teamObj?.players || {});
       const clean = raw.map(s => (s || '').trim()).filter(Boolean);
@@ -784,33 +783,35 @@
       showToast('Đã xuất file bảng tính (.csv)');
     };
 
-    // CHI TIẾT NGAY TẠI SÂN — GHI RÕ NỘI DUNG & TÊN VĐV CỦA 2 ĐỘI MỖI BÊN
     window.openCourtDetailModal = (cId) => {
       const court = dataStore.courts?.[cId];
       const match = court?.activeMatchId ? dataStore.matches?.[court.activeMatchId] : null;
-      if (!court || !match) return showToast('Sân hiện đang trống');
+      const tieId = court?.activeTieId || match?.tieId || '';
+      const tie = tieId ? dataStore.ties?.[tieId] : null;
+      if (!court || (!match && !tie)) return showToast('Sân hiện đang trống');
 
-      const pA = formatPlayersSide(match.teamA);
-      const pB = formatPlayersSide(match.teamB);
-
-      let html = `
-        <div class="bg-[#090b0f] border border-orange-500/30 rounded-xl p-3 space-y-2.5">
-          <div class="text-[11px] font-black text-orange-400 uppercase">${match.category || 'Trận đấu'}</div>
-          <div class="grid grid-cols-11 items-center gap-1.5">
-            <div class="col-span-5 text-left min-w-0">
-              <div class="font-black text-white truncate">${match.teamA.name}</div>
-              <div class="text-[10px] text-amber-200/90 mt-0.5 leading-snug">${pA}</div>
+      let html = '';
+      if (match) {
+        const pA = formatPlayersSide(match.teamA);
+        const pB = formatPlayersSide(match.teamB);
+        html += `
+          <div class="bg-[#090b0f] border border-orange-500/30 rounded-xl p-3 space-y-2.5">
+            <div class="text-[11px] font-black text-orange-400 uppercase">${match.category || 'Trận đấu'}</div>
+            <div class="grid grid-cols-11 items-center gap-1.5">
+              <div class="col-span-5 text-left min-w-0">
+                <div class="font-black text-white truncate">${match.teamA.name}</div>
+                <div class="text-[10px] text-amber-200/90 mt-0.5 leading-snug">${pA}</div>
+              </div>
+              <div class="col-span-1 text-center font-black text-orange-400 tabular-nums text-sm">${match.teamA.score}-${match.teamB.score}</div>
+              <div class="col-span-5 text-right min-w-0">
+                <div class="font-black text-white truncate">${match.teamB.name}</div>
+                <div class="text-[10px] text-amber-200/90 mt-0.5 leading-snug">${pB}</div>
+              </div>
             </div>
-            <div class="col-span-1 text-center font-black text-orange-400 tabular-nums text-sm">${match.teamA.score}-${match.teamB.score}</div>
-            <div class="col-span-5 text-right min-w-0">
-              <div class="font-black text-white truncate">${match.teamB.name}</div>
-              <div class="text-[10px] text-amber-200/90 mt-0.5 leading-snug">${pB}</div>
-            </div>
-          </div>
-        </div>`;
+          </div>`;
+      }
 
-      if (match.tieId && dataStore.ties?.[match.tieId]) {
-        const tie = dataStore.ties[match.tieId];
+      if (tie) {
         const subNames = ['Trận 1: Đôi Nữ', 'Trận 2: Đôi Nam', 'Trận 3: Đôi Nam Nữ 1', 'Trận 4: Đôi Nam Nữ 2', 'Trận 5: Đơn 21đ'];
         const rows = (tie.matchIds || []).map((id, idx) => {
           const sm = dataStore.matches?.[id];
@@ -953,7 +954,7 @@
       const clubCount = Object.keys(dataStore.teams || {}).length;
       const pairCount = Object.keys(dataStore.doublesTeams || {}).length;
       const courtsArr = Object.values(dataStore.courts || {});
-      const liveCount = courtsArr.filter(c => c.activeMatchId && dataStore.matches?.[c.activeMatchId]?.status !== 'finished').length;
+      const liveCount = courtsArr.filter(c => (c.activeMatchId && dataStore.matches?.[c.activeMatchId]?.status !== 'finished') || c.activeTieId).length;
 
       document.getElementById('scFormatBadge').textContent = fmt === 'doubles'
         ? 'Nội dung Đôi'
@@ -1229,7 +1230,6 @@
       renderLiveAndAdminCourts();
     };
 
-    // 1. TỰ ĐỘNG CHIA BẢNG HỢP LÝ & TẠO TOÀN BỘ TRẬN VÒNG BẢNG XEN KẼ (CHƯA CHIA NHÁNH)
     window.autoDrawGroups = async () => {
       const isTeam = getActiveFormat() === 'team';
       const pool = isTeam ? Object.values(dataStore.teams || {}) : Object.values(dataStore.doublesTeams || {});
@@ -1249,7 +1249,6 @@
       letters.forEach(l => { groups[l] = []; });
       shuffled.forEach((item, idx) => { groups[letters[idx % optimalGroups]].push(item); });
 
-      // Xếp lịch vòng tròn Berger từng bảng rồi xen kẽ giữa các bảng
       const roundBuckets = {};
       letters.forEach(letter => {
         const arr = [...groups[letter]];
@@ -1267,7 +1266,7 @@
 
       const orderedSchedule = Object.values(roundBuckets).flat();
       const updates = {
-        seriesBracket: null, // Chưa chia nhánh cho đến khi đấu xong vòng bảng
+        seriesBracket: null,
         groupDraw: {
           category: isTeam ? 'team' : 'doubles',
           letters,
@@ -1362,7 +1361,6 @@
       return rounds;
     }
 
-    // 2. TỰ ĐỘNG KIỂM TRA VÒNG BẢNG XONG -> TỰ CHIA NHÁNH SERIE A & SERIE B
     async function autoGenerateBracketWhenGroupStageDone() {
       const draw = dataStore.groupDraw;
       if (!draw || !draw.groups) return;
@@ -1382,7 +1380,6 @@
         return;
       }
 
-      // Đã đấu xong toàn bộ vòng bảng -> nếu chưa có sơ đồ nhánh thì tự động tính hạng từng bảng & chia Serie A / Serie B
       if (!dataStore.seriesBracket?.[scope]) {
         const serieAEntries = [];
         const serieBEntries = [];
@@ -1502,16 +1499,69 @@
       await update(ref(db, '/'), {
         [`matches/${mId}`]: m,
         [`courts/${cId}/activeMatchId`]: mId,
+        [`courts/${cId}/activeTieId`]: '',
         [`seriesBracket/${scope}`]: updatedTree
       });
       showToast(`Đã đẩy trận ra ${dataStore.courts[cId]?.name || cId}`);
       window.switchPubTab('live');
     };
 
-    window.assignCourtInFrame = async (cId, mId) => {
-      await update(ref(db, `courts/${cId}`), { activeMatchId: mId });
-      if (mId) await update(ref(db, `matches/${mId}`), { courtId: cId, status: 'live' });
-      showToast('Đã cập nhật sân');
+    // GÁN SÂN CHUẨN: 1 SÂN = 1 CẶP CLB (ĐỒNG ĐỘI) HOẶC 1 TRẬN ĐÔI (KHÔNG TRÙNG SÂN)
+    window.assignCourtInFrame = async (cId, selectedId) => {
+      const isTeam = getActiveFormat() === 'team';
+      const courts = dataStore.courts || {};
+      const updates = {};
+
+      if (!selectedId) {
+        updates[`courts/${cId}/activeMatchId`] = '';
+        updates[`courts/${cId}/activeTieId`] = '';
+        await update(ref(db, '/'), updates);
+        showToast('Đã giải phóng sân');
+        return;
+      }
+
+      if (isTeam) {
+        const tie = dataStore.ties?.[selectedId];
+        if (!tie) return;
+        const matchIds = tie.matchIds || [];
+        const activeMId =
+          matchIds.find(id => dataStore.matches?.[id]?.status === 'live') ||
+          matchIds.find(id => dataStore.matches?.[id]?.status !== 'finished') ||
+          matchIds[0] || '';
+
+        Object.entries(courts).forEach(([otherId, otherCourt]) => {
+          if (otherId !== cId && (otherCourt.activeTieId === selectedId || matchIds.includes(otherCourt.activeMatchId))) {
+            updates[`courts/${otherId}/activeTieId`] = '';
+            updates[`courts/${otherId}/activeMatchId`] = '';
+          }
+        });
+
+        updates[`courts/${cId}/activeTieId`] = selectedId;
+        updates[`courts/${cId}/activeMatchId`] = activeMId;
+        if (activeMId) {
+          updates[`matches/${activeMId}/courtId`] = cId;
+          if (dataStore.matches?.[activeMId]?.status === 'waiting') {
+            updates[`matches/${activeMId}/status`] = 'live';
+          }
+        }
+        await update(ref(db, '/'), updates);
+        showToast(`Đã gán ${tie.teamAName} vs ${tie.teamBName} vào ${courts[cId]?.name || cId}`);
+      } else {
+        Object.entries(courts).forEach(([otherId, otherCourt]) => {
+          if (otherId !== cId && otherCourt.activeMatchId === selectedId) {
+            updates[`courts/${otherId}/activeMatchId`] = '';
+            updates[`courts/${otherId}/activeTieId`] = '';
+          }
+        });
+        updates[`courts/${cId}/activeTieId`] = '';
+        updates[`courts/${cId}/activeMatchId`] = selectedId;
+        updates[`matches/${selectedId}/courtId`] = cId;
+        if (dataStore.matches?.[selectedId]?.status === 'waiting') {
+          updates[`matches/${selectedId}/status`] = 'live';
+        }
+        await update(ref(db, '/'), updates);
+        showToast(`Đã gán trận vào ${courts[cId]?.name || cId}`);
+      }
     };
 
     function renderBracketTrees() {
@@ -1585,7 +1635,6 @@
       }).join('');
     }
 
-    // CHI TIẾT CÁC TRẬN ĐÃ XONG — GHI RÕ NỘI DUNG + TÊN VĐV 2 ĐỘI MỖI BÊN
     function renderCompletedMatches() {
       const done = Object.values(dataStore.matches || {}).filter(m => m.status === 'finished');
       document.getElementById('completedCountBadge').textContent = `${done.length} trận đã xong`;
@@ -1617,10 +1666,12 @@
       }).join('') || '<p class="text-xs text-slate-400 col-span-full text-center py-8">Chưa có trận đấu nào hoàn thành.</p>';
     }
 
+    // HIỂN THỊ SÂN LIVE: 1 SÂN = 2 CLB + TỪNG NỘI DUNG THI ĐẤU BÊN TRONG
     function renderLiveAndAdminCourts() {
       const courts = dataStore.courts || {};
       const matches = dataStore.matches || {};
       const ties = dataStore.ties || {};
+      const isTeam = getActiveFormat() === 'team';
 
       document.getElementById('courtFilterBar').innerHTML = `
         <button type="button" onclick="selectCourtFilter('ALL')" class="shrink-0 px-2.5 py-1 rounded-full text-[11px] ${
@@ -1637,9 +1688,14 @@
       if (brCourtSel && brCourtSel.innerHTML !== courtOpts) brCourtSel.innerHTML = courtOpts;
 
       const entries = Object.entries(courts).filter(([cId]) => selectedCourtFilter === 'ALL' || selectedCourtFilter === cId);
+      const subShortLabels = ['Đôi Nữ', 'Đôi Nam', 'Nam Nữ 1', 'Nam Nữ 2', 'Đơn 21đ'];
+
       document.getElementById('liveCourtsGrid').innerHTML = entries.map(([cId, c]) => {
         const m = c.activeMatchId ? matches[c.activeMatchId] : null;
-        if (!m) {
+        const tieId = c.activeTieId || m?.tieId || '';
+        const tie = tieId ? ties[tieId] : null;
+
+        if (!m && !tie) {
           return `
             <div class="sc-card rounded-2xl p-4 opacity-70">
               <div class="flex justify-between items-center mb-2">
@@ -1650,25 +1706,62 @@
             </div>`;
         }
 
-        let tieBadge = '';
-        if (m.tieId && ties[m.tieId]) {
+        if (tie) {
+          const subMatches = (tie.matchIds || []).map(id => matches[id]).filter(Boolean);
           let wA = 0, wB = 0;
-          (ties[m.tieId].matchIds || []).forEach(id => {
-            if (matches[id]?.winner === 'A') wA++;
-            if (matches[id]?.winner === 'B') wB++;
+          subMatches.forEach(sm => {
+            if (sm.winner === 'A') wA++;
+            if (sm.winner === 'B') wB++;
           });
-          tieBadge = `<span class="text-[10px] font-black px-2 py-0.5 rounded bg-orange-500/20 text-amber-300">TỔNG ${wA}-${wB}</span>`;
+          const allDone = subMatches.length >= 4 && subMatches.every(sm => sm.status === 'finished');
+
+          return `
+            <div class="sc-card rounded-2xl overflow-hidden">
+              <div class="bg-white/[0.04] px-3.5 py-2 border-b border-white/10 flex items-center justify-between gap-2">
+                <span class="font-black text-xs text-amber-300 uppercase truncate">${c.name}</span>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button type="button" onclick="openCourtDetailModal('${cId}')" class="px-2 py-0.5 rounded-full bg-orange-500/20 hover:bg-orange-500/35 text-orange-300 text-[10px] font-black">Chi tiết</button>
+                  <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${allDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${allDone ? 'XONG' : '● LIVE'}</span>
+                </div>
+              </div>
+
+              <div class="px-3.5 pt-3 pb-2.5 border-b border-white/10 flex items-center justify-between gap-2">
+                <span class="font-black text-sm text-white truncate flex-1">${tie.teamAName}</span>
+                <span class="px-2.5 py-1 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-sm tabular-nums shrink-0 shadow">${wA} - ${wB}</span>
+                <span class="font-black text-sm text-white truncate flex-1 text-right">${tie.teamBName}</span>
+              </div>
+
+              <div class="p-3 space-y-1.5">
+                ${subMatches.map((sm, idx) => {
+                  const isCurrent = sm.id === c.activeMatchId && sm.status !== 'finished';
+                  const stBadge = sm.status === 'finished'
+                    ? '<span class="text-[9px] text-emerald-400 font-bold">Xong</span>'
+                    : (isCurrent ? '<span class="text-[9px] text-orange-400 font-black">● Đang đánh</span>' : '<span class="text-[9px] text-slate-500">Chờ</span>');
+                  return `
+                    <div class="rounded-xl px-2.5 py-1.5 flex items-center justify-between gap-2 text-xs ${
+                      isCurrent ? 'bg-orange-500/15 border border-orange-500/40' : 'bg-[#090b0f] border border-white/[0.06]'
+                    }">
+                      <div class="min-w-0">
+                        <div class="flex items-center gap-1.5">
+                          <span class="font-bold text-slate-200 truncate">${subShortLabels[idx] || `Trận ${idx + 1}`}</span>
+                          ${stBadge}
+                        </div>
+                        <div class="text-[10px] text-slate-400 truncate">${formatPlayersSide(sm.teamA)} vs ${formatPlayersSide(sm.teamB)}</div>
+                      </div>
+                      <span class="font-black tabular-nums shrink-0 ${isCurrent ? 'text-orange-400 text-sm' : 'text-slate-200'}">${sm.teamA.score} - ${sm.teamB.score}</span>
+                    </div>`;
+                }).join('')}
+              </div>
+            </div>`;
         }
 
         const isA = m.servingTeam === 'A';
         const isDone = m.status === 'finished';
-
         return `
           <div class="sc-card rounded-2xl overflow-hidden">
             <div class="bg-white/[0.04] px-3.5 py-2 border-b border-white/10 flex items-center justify-between gap-2">
               <span class="font-black text-xs text-amber-300 uppercase truncate">${c.name}</span>
               <div class="flex items-center gap-1.5 shrink-0">
-                ${tieBadge}
                 <button type="button" onclick="openCourtDetailModal('${cId}')" class="px-2 py-0.5 rounded-full bg-orange-500/20 hover:bg-orange-500/35 text-orange-300 text-[10px] font-black">Chi tiết</button>
                 <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${isDone ? 'XONG' : '● LIVE'}</span>
               </div>
@@ -1693,16 +1786,24 @@
           </div>`;
       }).join('');
 
-      const allMatches = Object.values(matches);
-      document.getElementById('adminCourtAssignGrid').innerHTML = Object.entries(courts).map(([cId, c]) => `
-        <div class="sc-card rounded-2xl p-3.5 space-y-2.5">
-          <div class="font-black text-xs text-orange-400 uppercase">${c.name}</div>
-          <select onchange="assignCourtInFrame('${cId}', this.value)" class="w-full bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 text-xs outline-none">
-            <option value="">-- Trống sân --</option>
-            ${allMatches.map(m => `<option value="${m.id}" ${c.activeMatchId === m.id ? 'selected' : ''}>${m.category} (${m.teamA.score}-${m.teamB.score})</option>`).join('')}
-          </select>
-        </div>
-      `).join('');
+      const allTiesArr = Object.values(ties);
+      const dblMatchesArr = Object.values(matches).filter(m => !m.tieId);
+
+      document.getElementById('adminCourtAssignGrid').innerHTML = Object.entries(courts).map(([cId, c]) => {
+        const curVal = isTeam ? (c.activeTieId || matches[c.activeMatchId]?.tieId || '') : (c.activeMatchId || '');
+        const optionsHtml = isTeam
+          ? allTiesArr.map(t => `<option value="${t.id}" ${curVal === t.id ? 'selected' : ''}>${t.teamAName} vs ${t.teamBName} (${t.stage === 'knockout' ? 'Vòng trong' : 'Vòng bảng'})</option>`).join('')
+          : dblMatchesArr.map(m => `<option value="${m.id}" ${curVal === m.id ? 'selected' : ''}>${m.category} (${m.teamA.name} vs ${m.teamB.name})</option>`).join('');
+
+        return `
+          <div class="sc-card rounded-2xl p-3.5 space-y-2.5">
+            <div class="font-black text-xs text-orange-400 uppercase">${c.name}</div>
+            <select onchange="assignCourtInFrame('${cId}', this.value)" class="w-full bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 text-xs outline-none">
+              <option value="">-- Trống sân --</option>
+              ${optionsHtml}
+            </select>
+          </div>`;
+      }).join('');
     }
 
     function renderGroups() {
