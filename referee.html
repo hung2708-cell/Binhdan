@@ -42,9 +42,17 @@
     }
     .player-pill {
       transition: all 0.25s cubic-bezier(0.32, 0.72, 0, 1);
-      background: rgba(10, 8, 7, 0.82);
+      background: rgba(10, 8, 7, 0.84);
       border: 1px solid rgba(255, 255, 255, 0.16);
       backdrop-filter: blur(6px);
+    }
+    .pill-serve {
+      border-color: rgba(250, 204, 21, 0.85);
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.32);
+    }
+    .pill-receive {
+      border-color: rgba(52, 211, 153, 0.8);
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.28);
     }
     @keyframes dotBlink {
       0%, 100% { transform: scale(1); opacity: 1; }
@@ -72,7 +80,7 @@
     </button>
     <span id="matchCategory" class="text-xs text-gray-300 truncate flex-1 text-center font-semibold">Đang tải...</span>
     <button id="btnSound" onclick="toggleSound()" class="btn-tap w-8 h-8 rounded-full bg-white/[0.06] border border-white/10 text-orange-400 flex items-center justify-center shrink-0">
-      <i id="soundIcon" data-lucide="volume-2" class="w-4 h-4"></i>
+      <i data-lucide="volume-2" class="w-4 h-4"></i>
     </button>
     <a href="admin.html" class="btn-tap text-[11px] px-3 py-1.5 rounded-full bg-white/[0.06] border border-white/10 text-gray-300 font-semibold shrink-0">Admin</a>
   </header>
@@ -103,9 +111,8 @@
       <!-- CẢNH BÁO -->
       <div id="alertBanner" class="hidden shrink-0 rounded-xl px-3 py-1.5 text-center font-black text-[11px] uppercase tracking-wide"></div>
 
-      <!-- BẢNG ĐIỂM TINH TẾ -->
+      <!-- BẢNG ĐIỂM -->
       <div class="sc-card shrink-0 rounded-2xl p-2 flex items-center justify-between gap-2">
-        <!-- ĐỘI A -->
         <div class="flex-1 flex items-center gap-1.5 min-w-0">
           <button onclick="handleSubtractPoint('A')" class="btn-tap w-7 h-7 rounded-full bg-white/[0.06] hover:bg-red-500/20 text-gray-400 hover:text-red-400 font-bold text-base flex items-center justify-center shrink-0">−</button>
           <div class="flex-1 text-center min-w-0">
@@ -114,14 +121,12 @@
           </div>
         </div>
 
-        <!-- ĐỌC ĐIỂM GIỮA -->
         <div class="px-3.5 py-1.5 rounded-xl bg-black/50 border border-orange-500/30 text-center shrink-0">
           <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Đọc điểm</div>
           <div id="callScore" class="text-lg font-black text-orange-500 tabular-nums leading-tight">0 - 0 - 2</div>
           <div id="modeBadge" class="text-[9px] text-amber-200/60 font-medium">Side-out • 15đ</div>
         </div>
 
-        <!-- ĐỘI B -->
         <div class="flex-1 flex items-center gap-1.5 min-w-0">
           <div class="flex-1 text-center min-w-0">
             <div id="nameB" class="text-[11px] font-semibold text-gray-300 truncate">Đội B</div>
@@ -131,7 +136,7 @@
         </div>
       </div>
 
-      <!-- SƠ ĐỒ SÂN PICKLEBALL 2D GỌN GÀNG (KHÔNG THỪA KHOẢNG TRỐNG) -->
+      <!-- SƠ ĐỒ SÂN PICKLEBALL 2D SẠCH SẼ (KHÔNG MŨI TÊN) -->
       <div id="court2DWrapper" class="space-y-1.5 landscape:flex-1 landscape:min-h-0 landscape:flex landscape:flex-col">
         <div class="flex justify-between items-center text-[10px] px-1 shrink-0">
           <span class="font-bold text-gray-400 uppercase tracking-wider">Sân 2D</span>
@@ -143,20 +148,20 @@
             <!-- NỬA SÂN TRÁI (ĐỘI A) -->
             <div class="grid grid-rows-2 divide-y divide-white/55 h-full">
               <div id="boxA1" class="relative flex items-center px-2">
-                <div class="player-pill relative z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]">
+                <div id="pillA1" class="player-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]">
                   <span id="dotA1" class="w-2.5 h-2.5 rounded-full bg-sky-400 shrink-0"></span>
                   <span id="pA1" class="text-[11px] text-white font-semibold truncate">-</span>
                 </div>
               </div>
               <div id="boxA0" class="relative flex items-center px-2">
-                <div class="player-pill relative z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]">
+                <div id="pillA0" class="player-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]">
                   <span id="dotA0" class="w-2.5 h-2.5 rounded-full bg-sky-400 shrink-0"></span>
                   <span id="pA0" class="text-[11px] text-white font-semibold truncate">-</span>
                 </div>
               </div>
             </div>
 
-            <!-- KHU VỰC BẾP (NVZ) + LƯỚI DỌC SẠCH SẼ -->
+            <!-- KHU VỰC BẾP (NVZ) + LƯỚI DỌC -->
             <div class="kitchen-zone-v h-full flex items-center justify-center relative">
               <div class="h-full border-l-2 border-dashed border-white/85"></div>
             </div>
@@ -164,31 +169,19 @@
             <!-- NỬA SÂN PHẢI (ĐỘI B) -->
             <div class="grid grid-rows-2 divide-y divide-white/55 h-full">
               <div id="boxB0" class="relative flex items-center px-2">
-                <div class="player-pill relative z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]">
+                <div id="pillB0" class="player-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]">
                   <span id="dotB0" class="w-2.5 h-2.5 rounded-full bg-rose-400 shrink-0"></span>
                   <span id="pB0" class="text-[11px] text-white font-semibold truncate">-</span>
                 </div>
               </div>
               <div id="boxB1" class="relative flex items-center px-2">
-                <div class="player-pill relative z-20 flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]">
+                <div id="pillB1" class="player-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]">
                   <span id="dotB1" class="w-2.5 h-2.5 rounded-full bg-rose-400 shrink-0"></span>
                   <span id="pB1" class="text-[11px] text-white font-semibold truncate">-</span>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- MŨI TÊN CHÉO PHÁT BÓNG THANH MẢNH -->
-          <svg id="serveSvg" viewBox="0 0 300 140" preserveAspectRatio="none" class="absolute inset-0 w-full h-full pointer-events-none z-10">
-            <defs>
-              <marker id="serveArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                <path d="M0,0.5 L0,5.5 L5.5,3 z" fill="#facc15" />
-              </marker>
-            </defs>
-            <line id="serveLine" x1="88" y1="100" x2="212" y2="40"
-              stroke="#facc15" stroke-width="1.8" stroke-dasharray="5 4" stroke-linecap="round"
-              marker-end="url(#serveArrow)" opacity="0.9" />
-          </svg>
         </div>
       </div>
 
@@ -200,7 +193,7 @@
       </div>
     </div>
 
-    <!-- CỘT PHẢI (XOAY NGANG): THIẾT LẬP + CỤM NÚT ĐIỀU KHIỂN TINH TẾ -->
+    <!-- CỘT PHẢI (XOAY NGANG): THIẾT LẬP + CỤM NÚT ĐIỀU KHIỂN -->
     <div class="shrink-0 flex flex-col gap-2 landscape:col-span-5 landscape:h-full landscape:min-h-0 landscape:justify-between">
 
       <!-- THIẾT LẬP TRƯỚC TRẬN (0-0) -->
@@ -242,7 +235,7 @@
         <button onclick="handleRallyPoint('B')" class="btn-tap py-4 landscape:py-2 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-black text-base shadow-lg">+1 ĐỘI B</button>
       </div>
 
-      <!-- THANH TIỆN ÍCH ĐỒNG BỘ ICON SẮC NÉT -->
+      <!-- THANH TIỆN ÍCH -->
       <div class="shrink-0 grid grid-cols-4 gap-1.5">
         <button onclick="handleUndo()" class="btn-tap py-2.5 landscape:py-1.5 rounded-xl bg-white/[0.05] border border-white/[0.07] text-gray-300 font-semibold text-[10px] flex flex-col items-center justify-center gap-1">
           <i data-lucide="undo-2" class="w-4 h-4 text-gray-300"></i>
@@ -748,39 +741,34 @@
           setPos('boxA1', receiverBox === 'boxA1' ? 'justify-start' : 'justify-end');
         }
 
-        const dotStyle = (boxId, defaultColor) => {
-          if (m.status !== 'finished' && boxId === serverBox) return 'w-2.5 h-2.5 rounded-full bg-amber-400 blink-serve shrink-0';
-          if (m.status !== 'finished' && boxId === receiverBox) return 'w-2.5 h-2.5 rounded-full bg-emerald-400 blink-receive shrink-0';
-          if (boxId === netPartnerBox) return 'w-2.5 h-2.5 rounded-full bg-cyan-400 shrink-0';
-          return `w-2.5 h-2.5 rounded-full ${defaultColor} shrink-0`;
+        const styleSlot = (slotKey, defaultColor) => {
+          const boxId = `box${slotKey}`;
+          const dotEl = document.getElementById(`dot${slotKey}`);
+          const pillEl = document.getElementById(`pill${slotKey}`);
+          if (m.status !== 'finished' && boxId === serverBox) {
+            dotEl.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 blink-serve shrink-0';
+            pillEl.className = 'player-pill pill-serve flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]';
+          } else if (m.status !== 'finished' && boxId === receiverBox) {
+            dotEl.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 blink-receive shrink-0';
+            pillEl.className = 'player-pill pill-receive flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]';
+          } else if (boxId === netPartnerBox) {
+            dotEl.className = 'w-2.5 h-2.5 rounded-full bg-cyan-400 shrink-0';
+            pillEl.className = 'player-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]';
+          } else {
+            dotEl.className = `w-2.5 h-2.5 rounded-full ${defaultColor} shrink-0`;
+            pillEl.className = 'player-pill flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-[92%]';
+          }
         };
 
-        document.getElementById('dotA0').className = dotStyle('boxA0', 'bg-sky-400');
-        document.getElementById('dotA1').className = dotStyle('boxA1', 'bg-sky-400');
-        document.getElementById('dotB0').className = dotStyle('boxB0', 'bg-rose-400');
-        document.getElementById('dotB1').className = dotStyle('boxB1', 'bg-rose-400');
+        styleSlot('A0', 'bg-sky-400');
+        styleSlot('A1', 'bg-sky-400');
+        styleSlot('B0', 'bg-rose-400');
+        styleSlot('B1', 'bg-rose-400');
 
         document.getElementById('pA0').textContent = pA0;
         document.getElementById('pA1').textContent = pA1;
         document.getElementById('pB0').textContent = pB0;
         document.getElementById('pB1').textContent = pB1;
-
-        const coords = {
-          boxA0: { x: 88, y: 100 },
-          boxA1: { x: 88, y: 40 },
-          boxB0: { x: 212, y: 40 },
-          boxB1: { x: 212, y: 100 }
-        };
-        const line = document.getElementById('serveLine');
-        if (m.status === 'finished') {
-          line.style.display = 'none';
-        } else {
-          line.style.display = 'block';
-          line.setAttribute('x1', coords[serverBox].x);
-          line.setAttribute('y1', coords[serverBox].y);
-          line.setAttribute('x2', coords[receiverBox].x);
-          line.setAttribute('y2', coords[receiverBox].y);
-        }
 
         const srvName = serverBox === 'boxA0' ? pA0 : serverBox === 'boxA1' ? pA1 : serverBox === 'boxB0' ? pB0 : pB1;
         const rcvName = receiverBox === 'boxA0' ? pA0 : receiverBox === 'boxA1' ? pA1 : receiverBox === 'boxB0' ? pB0 : pB1;
