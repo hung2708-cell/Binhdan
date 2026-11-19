@@ -198,6 +198,8 @@
   <script type="module">
     import { db, ref, set, update, onValue, remove } from './js/firebase-config.js';
     import { createInitialMatchState } from './js/pickleball-engine.js';
+    import { requirePin } from './js/auth.js';
+await requirePin('admin');
 
     let state = {
       settings: { name: 'Giải Pickleball Bính Dần Open 2026', scoringMode: 'sideout', targetScore: 11, logo: '' },
