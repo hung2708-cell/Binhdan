@@ -526,8 +526,13 @@
       return ['', ''];
     }
 
+    let isManualLineupOpen = false;
+
     function enforceBlindLineupWizard(m) {
+      // Đang mở quy trình chọn 2 bước thì không cho Firebase tự đóng ngang
+      if (isManualLineupOpen) return;
       if (!m || !m.tieId || !allTies[m.tieId]) return;
+
       const tie = allTies[m.tieId];
       if (tie.lineupA && tie.lineupB && hasRealPlayers(m)) {
         document.getElementById('blindRefModal').classList.add('hidden');
@@ -544,29 +549,37 @@
       document.getElementById('blindRefModal').classList.remove('hidden');
     }
 
-    // LUÔN MỞ ĐƯỢC CHỌN VĐV (CẢ LƯỢT ĐỒNG ĐỘI LẪN TRẬN LẺ)
+    // MỞ CHỌN VĐV: LUÔN BẮT ĐẦU TỪ ĐỘI A -> XÁC NHẬN MỚI SANG ĐỘI B
     window.openManualLineupModal = () => {
       if (!currentMatch) return;
+      isManualLineupOpen = true;
       const tie = currentMatch.tieId ? allTies[currentMatch.tieId] : null;
-      if (tie) {
-        blindWizard = { mode: 'tie', tieId: tie.id, side: 'A' };
-      } else {
-        blindWizard = { mode: 'single', matchId: currentMatchId, side: 'A' };
-      }
+      blindWizard = tie
+        ? { mode: 'tie', tieId: tie.id, side: 'A' }
+        : { mode: 'single', matchId: currentMatchId, side: 'A' };
+
       renderBlindWizardStep();
       document.getElementById('btnBlindCancel').classList.remove('hidden');
       document.getElementById('blindRefModal').classList.remove('hidden');
     };
 
     window.closeBlindModal = () => {
+      isManualLineupOpen = false;
       document.getElementById('blindRefModal').classList.add('hidden');
       blindWizard = null;
     };
 
-    function renderBlindWizardStep() {
+    function renderBlindWizardStep(justLockedTeamA = false) {
       if (!blindWizard) return;
       const isA = blindWizard.side === 'A';
-      document.getElementById('blindRefErr').classList.add('hidden');
+      const errEl = document.getElementById('blindRefErr');
+
+      if (justLockedTeamA) {
+        errEl.textContent = '✓ Đã khóa kín đội hình Đội A. Mời chuyển máy cho Đội B chọn VĐV!';
+        errEl.className = 'text-center text-xs text-emerald-400 font-bold';
+      } else {
+        errEl.className = 'hidden text-center text-xs text-red-400 font-bold';
+      }
 
       if (blindWizard.mode === 'tie') {
         const tie = allTies[blindWizard.tieId];
@@ -602,7 +615,7 @@
 
         document.getElementById('blindStepBadge').textContent = isA ? `BƯỚC 1/2 • ${teamName}` : `BƯỚC 2/2 • ${teamName}`;
         document.getElementById('blindRefTitle').textContent = `CHỌN VĐV: ${teamName}`;
-        document.getElementById('btnBlindNext').textContent = isA ? `XÁC NHẬN ${teamName} → SANG ĐỘI B` : `XÁC NHẬN & BỐC THĂM`;
+        document.getElementById('btnBlindNext').textContent = isA ? `XÁC NHẬN & KHÓA ${teamName} → SANG ĐỘI B` : `XÁC NHẬN & BỐC THĂM`;
 
         document.getElementById('blindRefRows').innerHTML = `
           <div class="bg-[#0a0d14] border border-white/10 rounded-xl p-3 space-y-2">
@@ -618,6 +631,11 @@
     window.confirmBlindStep = async () => {
       if (!blindWizard) return;
       const errEl = document.getElementById('blindRefErr');
+      const showErr = (msg) => {
+        errEl.textContent = msg;
+        errEl.className = 'text-center text-xs text-red-400 font-bold';
+      };
+
       const side = blindWizard.side;
       const teamKey = side === 'A' ? 'teamA' : 'teamB';
 
@@ -629,32 +647,39 @@
         for (let i = 0; i < 4; i++) {
           const p1 = document.getElementById(`br_${i}_1`).value;
           const p2 = document.getElementById(`br_${i}_2`).value;
-          if (!p1 || !p2) { errEl.textContent = `Vui lòng chọn đủ 2 VĐV cho Trận ${i + 1}.`; errEl.classList.remove('hidden'); return; }
-          if (p1 === p2) { errEl.textContent = `Trận ${i + 1} không thể chọn trùng 1 VĐV.`; errEl.classList.remove('hidden'); return; }
+          if (!p1 || !p2) return showErr(`Vui lòng chọn đủ 2 VĐV đúng giới tính cho Trận ${i + 1}.`);
+          if (p1 === p2) return showErr(`Trận ${i + 1} không thể chọn trùng 1 VĐV.`);
           counts[p1] = (counts[p1] || 0) + 1;
           counts[p2] = (counts[p2] || 0) + 1;
           pairs.push([p1, p2]);
         }
 
         const over = Object.entries(counts).filter(([_, c]) => c > 2).map(([n, c]) => `${n} (${c} trận)`);
-        if (over.length) { errEl.textContent = `Quá 2 trận/VĐV theo điều lệ: ${over.join(', ')}`; errEl.classList.remove('hidden'); return; }
+        if (over.length) return showErr(`Quá 2 trận/VĐV theo điều lệ: ${over.join(', ')}`);
 
+        isManualLineupOpen = true; // Giữ modal mở để chuyển mượt sang Đội B
         const updates = { [`ties/${tie.id}/lineup${side}`]: true };
         (tie.matchIds || []).slice(0, 4).forEach((mId, idx) => { updates[`matches/${mId}/${teamKey}/players`] = pairs[idx]; });
         await update(ref(db, '/'), updates);
       } else {
         const p1 = document.getElementById('br_0_1').value;
         const p2 = document.getElementById('br_0_2').value;
-        if (!p1 || !p2) { errEl.textContent = 'Vui lòng chọn đủ 2 VĐV.'; errEl.classList.remove('hidden'); return; }
-        if (p1 === p2) { errEl.textContent = 'Không thể chọn trùng 1 VĐV.'; errEl.classList.remove('hidden'); return; }
+        if (!p1 || !p2) return showErr('Vui lòng chọn đủ 2 VĐV.');
+        if (p1 === p2) return showErr('Không thể chọn trùng 1 VĐV.');
+
+        isManualLineupOpen = true;
         await set(ref(db, `matches/${currentMatchId}/${teamKey}/players`), [p1, p2]);
       }
 
       playBeep(760, 0.12);
+
       if (side === 'A') {
+        // Khóa xong Đội A -> xóa trắng form, chuyển ngay sang Đội B
         blindWizard.side = 'B';
-        renderBlindWizardStep();
+        renderBlindWizardStep(true);
       } else {
+        // Xong cả 2 đội -> đóng popup chọn VĐV và mở ngay Bốc thăm
+        isManualLineupOpen = false;
         document.getElementById('blindRefModal').classList.add('hidden');
         blindWizard = null;
         window.openCoinTossModal();
