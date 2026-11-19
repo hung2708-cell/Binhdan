@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi" class="dark">
 <head>
@@ -51,18 +50,17 @@
       </div>
     </section>
 
-    <!-- TABS: LỊCH THI ĐẤU & BẢNG XẾP HẠNG -->
+    <!-- TABS: LỊCH THI ĐẤU, BẢNG XẾP HẠNG & NHÁNH ĐẤU -->
     <section class="space-y-3">
-      <div class="flex gap-2 border-b border-gray-800 pb-2">
-        <button id="btnTabMatches" onclick="switchPubTab('matches')" class="px-4 py-2 rounded-xl text-xs font-black uppercase bg-orange-500 text-black">
-          <button id="btnTabBracket" onclick="switchPubTab('bracket')" class="px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400">
-  Nhánh đấu
-</button>
-
+      <div class="flex gap-2 border-b border-gray-800 pb-2 overflow-x-auto">
+        <button id="btnTabMatches" onclick="switchPubTab('matches')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-orange-500 text-black">
           Lịch & Kết quả
         </button>
-        <button id="btnTabStandings" onclick="switchPubTab('standings')" class="px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400">
+        <button id="btnTabStandings" onclick="switchPubTab('standings')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400">
           Bảng xếp hạng
+        </button>
+        <button id="btnTabBracket" onclick="switchPubTab('bracket')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400">
+          Nhánh đấu
         </button>
       </div>
 
@@ -84,24 +82,29 @@
           <tbody id="standingsBody" class="divide-y divide-gray-800"></tbody>
         </table>
       </div>
+
+      <!-- SƠ ĐỒ NHÁNH ĐẤU LOẠI TRỰC TIẾP -->
+      <div id="panelBracket" class="hidden pt-1"></div>
     </section>
 
   </main>
 
   <script type="module">
     import { db, ref, onValue } from './js/firebase-config.js';
+    import { renderBracketHTML } from './js/bracket-engine.js';
 
     window.switchPubTab = (tab) => {
-      const isMatches = tab === 'matches';
-      document.getElementById('panelMatches').classList.toggle('hidden', !isMatches);
-      document.getElementById('panelStandings').classList.toggle('hidden', isMatches);
+      const tabs = ['matches', 'standings', 'bracket'];
+      const btnIds = { matches: 'btnTabMatches', standings: 'btnTabStandings', bracket: 'btnTabBracket' };
+      const panelIds = { matches: 'panelMatches', standings: 'panelStandings', bracket: 'panelBracket' };
 
-      document.getElementById('btnTabMatches').className = isMatches
-        ? 'px-4 py-2 rounded-xl text-xs font-black uppercase bg-orange-500 text-black'
-        : 'px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400';
-      document.getElementById('btnTabStandings').className = !isMatches
-        ? 'px-4 py-2 rounded-xl text-xs font-black uppercase bg-orange-500 text-black'
-        : 'px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400';
+      tabs.forEach(t => {
+        const isActive = t === tab;
+        document.getElementById(panelIds[t]).classList.toggle('hidden', !isActive);
+        document.getElementById(btnIds[t]).className = isActive
+          ? 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-orange-500 text-black'
+          : 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400';
+      });
     };
 
     onValue(ref(db, '/'), (snap) => {
@@ -197,7 +200,7 @@
           </div>`;
       }).join('') || '<p class="text-xs text-gray-500 text-center py-6">Chưa có lịch thi đấu.</p>';
 
-      // 3. Tính Bảng Xếp Hạng tự động từ các trận đã kết thúc
+      // 3. Tính Bảng Xếp Hạng tự động
       const stats = {};
       Object.values(teams).forEach(t => {
         stats[t.name] = { name: t.name, played: 0, wins: 0, diff: 0 };
@@ -226,6 +229,9 @@
           <td class="py-2.5 px-3 text-right font-bold ${r.diff >= 0 ? 'text-gray-200' : 'text-red-400'}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
         </tr>
       `).join('') || '<tr><td colspan="5" class="py-6 text-center text-gray-500">Chưa có dữ liệu xếp hạng.</td></tr>';
+
+      // 4. Render Sơ đồ nhánh đấu
+      document.getElementById('panelBracket').innerHTML = renderBracketHTML(matches);
     });
   </script>
 </body>
