@@ -1,115 +1,196 @@
-// js/bracket-engine.js
-import { createInitialMatchState } from './pickleball-engine.js';
+// js/pickleball-engine.js
 
-// Sinh nhánh đấu Loại trực tiếp (Hỗ trợ 4 đội hoặc 8 đội)
-export function generateKnockoutMatches(teamsList, settings = {}) {
-  const count = teamsList.length;
-  if (count < 2) return {};
+export function createInitialMatchState(config = {}) {
+  const isDoubles = (config.matchType || 'doubles') === 'doubles';
+  const scoringMode = config.scoringMode || 'sideout'; // 'sideout' | 'rally'
+  const isDreambreaker = Boolean(config.isDreambreaker);
 
-  // Xác định quy mô nhánh: 4 đội (Bán kết) hoặc 8 đội (Tứ kết)
-  const size = count <= 4 ? 4 : 8;
-  const padded = [...teamsList];
-  while (padded.length < size) {
-    padded.push({ name: 'BYE (Miễn đấu)', players: ['-', '-'] });
+  return {
+    id: config.id || `match_${Date.now()}`,
+    tieId: config.tieId || '',             // Mã lượt đấu đồng đội (nếu có)
+    subMatchIndex: config.subMatchIndex || 0, // 1: Đôi nữ, 2: Đôi nam, 3-4: Đôi nam nữ, 5: Đơn 21đ
+    category: config.category || 'Giải Đồng Đội Bính Dần 1986',
+    courtId: config.courtId || '',
+    stage: config.stage || 'group',        // 'group' (Vòng bảng) | 'knockout' (Loại trực tiếp)
+
+    matchType: isDreambreaker ? 'singles' : (isDoubles ? 'doubles' : 'singles'),
+    scoringMode: isDreambreaker ? 'rally' : scoringMode,
+    isDreambreaker: isDreambreaker,
+
+    targetScore: Number(config.targetScore) || (isDreambreaker ? 21 : 15),
+    winByTwo: config.winByTwo !== undefined ? config.winByTwo : (config.stage === 'knockout' && !isDreambreaker),
+    maxScore: config.maxScore ? Number(config.maxScore) : (config.stage === 'knockout' && !isDreambreaker ? 18 : 0),
+    switchPoint: Number(config.switchPoint) || (isDreambreaker ? 11 : 8),
+    rotateEvery: isDreambreaker ? 4 : 0,   // Đổi cặp VĐV sau mỗi 4 điểm ở trận Đơn 21đ
+
+    teamA: {
+      name: config.teamAName || 'Đội A',
+      players: config.teamAPlayers || ['VĐV A1', 'VĐV A2'],
+      score: 0,
+      sets: 0,
+      timeouts: 2
+    },
+    teamB: {
+      name: config.teamBName || 'Đội B',
+      players: config.teamBPlayers || ['VĐV B1', 'VĐV B2'],
+      score: 0,
+      sets: 0,
+      timeouts: 2
+    },
+
+    servingTeam: 'A',
+    serverNumber: (!isDreambreaker && isDoubles && scoringMode === 'sideout') ? 2 : 1,
+    sidesSwitched: false,
+    status: 'live', // 'waiting' | 'live' | 'finished' | 'walkover'
+    winner: null,
+    history: [],
+    updatedAt: Date.now()
+  };
+}
+
+function pushHistory(state) {
+  const snapshot = JSON.parse(JSON.stringify(state));
+  delete snapshot.history;
+  const newHistory = [...(state.history || []), snapshot];
+  if (newHistory.length > 30) newHistory.shift();
+  return newHistory;
+}
+
+// Kiểm tra điều kiện thắng theo đúng điều lệ:
+// - Vòng bảng: chạm 15 điểm (winByTwo = false)
+// - Loại trực tiếp: 15 điểm, 14-14 cách biệt 2 điểm, tối đa 18 điểm (maxScore = 18)
+// - Đơn quyết định: chạm 21 điểm (Rally)
+function checkWinner(state) {
+  const { targetScore, winByTwo, maxScore, teamA, teamB } = state;
+  const sA = teamA.score;
+  const sB = teamB.score;
+
+  // Chạm trần điểm tối đa (VD: 18 điểm) -> thắng ngay
+  if (maxScore > 0) {
+    if (sA >= maxScore) return 'A';
+    if (sB >= maxScore) return 'B';
   }
 
-  const updates = {};
-  const tourName = settings.name || 'Bính Dần Open';
-  const baseCfg = {
-    scoringMode: settings.scoringMode || 'sideout',
-    targetScore: settings.targetScore || 11
-  };
+  const diff = Math.abs(sA - sB);
+  const minDiff = winByTwo ? 2 : 1;
 
-  // Hàm tạo 1 trận nhánh đấu
-  const makeMatch = (id, round, label, tA, tB, nextMatchId = '', nextSlot = '') => {
-    const m = createInitialMatchState({
-      ...baseCfg,
-      id,
-      category: `${label} - ${tourName}`,
-      teamAName: tA.name,
-      teamAPlayers: tA.players || [tA.name, ''],
-      teamBName: tB.name,
-      teamBPlayers: tB.players || [tB.name, '']
-    });
-    m.status = 'waiting';
-    m.bracketRound = round; // 'QF' | 'SF' | 'F'
-    m.bracketLabel = label;
-    m.nextMatchId = nextMatchId;
-    m.nextSlot = nextSlot;
-    updates[`matches/${id}`] = m;
-  };
+  if (sA >= targetScore && diff >= minDiff) return 'A';
+  if (sB >= targetScore && diff >= minDiff) return 'B';
+  return null;
+}
 
-  // Trận Chung kết
-  makeMatch('ko_F1', 'F', 'CHUNG KẾT', { name: 'Thắng BK 1' }, { name: 'Thắng BK 2' });
+export function awardPoint(currentState, team) {
+  if (currentState.status === 'finished') return currentState;
 
-  if (size === 4) {
-    makeMatch('ko_SF1', 'SF', 'Bán Kết 1', padded[0], padded[3], 'ko_F1', 'A');
-    makeMatch('ko_SF2', 'SF', 'Bán Kết 2', padded[1], padded[2], 'ko_F1', 'B');
+  const state = JSON.parse(JSON.stringify(currentState));
+  state.history = pushHistory(currentState);
+
+  if (state.scoringMode === 'rally') {
+    if (team === 'A') {
+      state.teamA.score += 1;
+      if (state.servingTeam === 'A' && state.matchType === 'doubles') state.teamA.players.reverse();
+      state.servingTeam = 'A';
+    } else {
+      state.teamB.score += 1;
+      if (state.servingTeam === 'B' && state.matchType === 'doubles') state.teamB.players.reverse();
+      state.servingTeam = 'B';
+    }
+    state.serverNumber = 1;
   } else {
-    // 2 trận Bán kết chờ
-    makeMatch('ko_SF1', 'SF', 'Bán Kết 1', { name: 'Thắng TK 1' }, { name: 'Thắng TK 2' }, 'ko_F1', 'A');
-    makeMatch('ko_SF2', 'SF', 'Bán Kết 2', { name: 'Thắng TK 3' }, { name: 'Thắng TK 4' }, 'ko_F1', 'B');
-
-    // 4 trận Tứ kết
-    makeMatch('ko_QF1', 'QF', 'Tứ Kết 1', padded[0], padded[7], 'ko_SF1', 'A');
-    makeMatch('ko_QF2', 'QF', 'Tứ Kết 2', padded[3], padded[4], 'ko_SF1', 'B');
-    makeMatch('ko_QF3', 'QF', 'Tứ Kết 3', padded[1], padded[6], 'ko_SF2', 'A');
-    makeMatch('ko_QF4', 'QF', 'Tứ Kết 4', padded[2], padded[5], 'ko_SF2', 'B');
+    if (team !== state.servingTeam) return faultOrSideOut(currentState);
+    if (team === 'A') {
+      state.teamA.score += 1;
+      if (state.matchType === 'doubles') state.teamA.players.reverse();
+    } else {
+      state.teamB.score += 1;
+      if (state.matchType === 'doubles') state.teamB.players.reverse();
+    }
   }
 
-  return updates;
-}
-
-// Vẽ sơ đồ cây nhánh đấu (Cuộn ngang mượt trên điện thoại)
-export function renderBracketHTML(matchesObj) {
-  const all = Object.values(matchesObj || {}).filter(m => m.bracketRound);
-  if (all.length === 0) {
-    return '<p class="text-xs text-gray-500 text-center py-8">Chưa có sơ đồ nhánh đấu loại trực tiếp.</p>';
+  const winner = checkWinner(state);
+  if (winner) {
+    state.status = 'finished';
+    state.winner = winner;
+    if (winner === 'A') state.teamA.sets += 1;
+    else state.teamB.sets += 1;
   }
 
-  const qf = all.filter(m => m.bracketRound === 'QF').sort((a, b) => a.id.localeCompare(b.id));
-  const sf = all.filter(m => m.bracketRound === 'SF').sort((a, b) => a.id.localeCompare(b.id));
-  const f  = all.filter(m => m.bracketRound === 'F');
-
-  const card = (m) => `
-    <div class="w-52 shrink-0 bg-[#131720] border ${m.status === 'live' ? 'border-orange-500' : 'border-gray-800'} rounded-xl overflow-hidden shadow">
-      <div class="px-2.5 py-1 bg-white/5 flex justify-between items-center text-[10px]">
-        <span class="font-black text-orange-400 uppercase">${m.bracketLabel || m.id}</span>
-        <span class="font-bold ${m.status === 'live' ? 'text-emerald-400' : 'text-gray-500'}">
-          ${m.status === 'live' ? '● LIVE' : (m.status === 'finished' ? 'XONG' : 'CHỜ')}
-        </span>
-      </div>
-      <div class="divide-y divide-gray-800 text-xs">
-        <div class="px-2.5 py-2 flex justify-between items-center ${m.winner === 'A' ? 'bg-emerald-500/10 text-emerald-400 font-black' : 'text-gray-200 font-semibold'}">
-          <span class="truncate pr-2">${m.teamA.name}</span>
-          <span class="font-black">${m.teamA.score}</span>
-        </div>
-        <div class="px-2.5 py-2 flex justify-between items-center ${m.winner === 'B' ? 'bg-emerald-500/10 text-emerald-400 font-black' : 'text-gray-200 font-semibold'}">
-          <span class="truncate pr-2">${m.teamB.name}</span>
-          <span class="font-black">${m.teamB.score}</span>
-        </div>
-      </div>
-    </div>
-  `;
-
-  return `
-    <div class="flex gap-5 overflow-x-auto pb-4 items-center">
-      ${qf.length ? `
-        <div class="flex flex-col gap-3">
-          <div class="text-[11px] font-black text-gray-400 uppercase text-center">Tứ Kết</div>
-          ${qf.map(card).join('')}
-        </div>` : ''}
-      ${sf.length ? `
-        <div class="flex flex-col gap-8">
-          <div class="text-[11px] font-black text-orange-400 uppercase text-center">Bán Kết</div>
-          ${sf.map(card).join('')}
-        </div>` : ''}
-      ${f.length ? `
-        <div class="flex flex-col gap-4">
-          <div class="text-[11px] font-black text-amber-400 uppercase text-center">🏆 Chung Kết</div>
-          ${f.map(card).join('')}
-        </div>` : ''}
-    </div>
-  `;
+  state.updatedAt = Date.now();
+  return state;
 }
 
+export function faultOrSideOut(currentState) {
+  if (currentState.status === 'finished') return currentState;
+
+  const state = JSON.parse(JSON.stringify(currentState));
+  state.history = pushHistory(currentState);
+
+  if (state.scoringMode === 'rally') {
+    const receivingTeam = state.servingTeam === 'A' ? 'B' : 'A';
+    return awardPoint(currentState, receivingTeam);
+  }
+
+  if (state.matchType === 'doubles') {
+    if (state.serverNumber === 1) {
+      state.serverNumber = 2;
+    } else {
+      state.servingTeam = state.servingTeam === 'A' ? 'B' : 'A';
+      state.serverNumber = 1;
+    }
+  } else {
+    state.servingTeam = state.servingTeam === 'A' ? 'B' : 'A';
+    state.serverNumber = 1;
+  }
+
+  state.updatedAt = Date.now();
+  return state;
+}
+
+export function undoLastAction(currentState) {
+  if (!currentState.history || currentState.history.length === 0) return currentState;
+  const history = [...currentState.history];
+  const previousState = history.pop();
+  previousState.history = history;
+  previousState.updatedAt = Date.now();
+  return previousState;
+}
+
+export function getCallScore(state) {
+  const srvScore = state.servingTeam === 'A' ? state.teamA.score : state.teamB.score;
+  const rcvScore = state.servingTeam === 'A' ? state.teamB.score : state.teamA.score;
+  if (state.matchType === 'doubles' && state.scoringMode === 'sideout') {
+    return `${srvScore} - ${rcvScore} - ${state.serverNumber}`;
+  }
+  return `${srvScore} - ${rcvScore}`;
+}
+
+export function getMatchAlerts(state) {
+  const { targetScore, winByTwo, maxScore, switchPoint, rotateEvery, teamA, teamB, sidesSwitched } = state;
+  const sA = teamA.score;
+  const sB = teamB.score;
+  const maxS = Math.max(sA, sB);
+  const totalPoints = sA + sB;
+
+  const sp = switchPoint || Math.ceil(targetScore / 2);
+  const isSwitchSides = !sidesSwitched && maxS === sp;
+
+  // Nhắc đổi cặp VĐV sau mỗi 4 điểm ở trận Đơn 21đ (tổng điểm 4, 8, 12, 16...)
+  const isRotatePair = Boolean(rotateEvery > 0 && totalPoints > 0 && totalPoints % rotateEvery === 0 && state.status !== 'finished');
+  const currentPairSlot = rotateEvery > 0 ? Math.floor(totalPoints / rotateEvery) + 1 : 0;
+
+  const minDiff = winByTwo ? 1 : 0;
+  const isCapNextA = maxScore > 0 && sA === maxScore - 1;
+  const isCapNextB = maxScore > 0 && sB === maxScore - 1;
+
+  const isGamePointA = isCapNextA || (sA >= targetScore - 1 && (sA - sB) >= minDiff);
+  const isGamePointB = isCapNextB || (sB >= targetScore - 1 && (sB - sA) >= minDiff);
+
+  return {
+    isSwitchSides,
+    isRotatePair,
+    currentPairSlot,
+    isGamePoint: state.status !== 'finished' && (isGamePointA || isGamePointB),
+    gamePointTeam: isGamePointA ? 'A' : (isGamePointB ? 'B' : null),
+    winner: state.winner
+  };
+}
