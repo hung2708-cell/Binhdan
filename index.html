@@ -6,6 +6,7 @@
   <title>Bính Dần 1986 Pickleball - Giải Đồng Đội</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body {
       background-color: #0c0908;
@@ -30,121 +31,172 @@
       -webkit-text-fill-color: transparent;
     }
     .live-dot { box-shadow: 0 0 10px #10b981; }
+
+    /* Thanh điều hướng Liquid Glass trượt kiểu iOS */
+    .ios-glass-nav {
+      background: rgba(24, 17, 14, 0.72);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.18);
+      touch-action: pan-y;
+    }
+    .ios-pill {
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      left: 6px;
+      width: calc((100% - 12px) / 3);
+      border-radius: 9999px;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.38), rgba(220, 38, 38, 0.25));
+      box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.28), 0 4px 14px rgba(249, 115, 22, 0.28);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      pointer-events: none;
+    }
   </style>
 </head>
-<body class="min-h-screen pb-12">
+<body class="min-h-screen pb-28">
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-30 bg-[#0c0908]/95 backdrop-blur border-b border-orange-500/35 px-4 py-2.5">
-    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 via-orange-600 to-red-700 p-[2px] shrink-0 shadow-lg shadow-orange-600/25">
-          <img id="pubLogo" src="logo.jpg" onerror="this.style.display='none'; document.getElementById('pubLogoFallback').style.display='flex';" class="w-full h-full object-cover rounded-[10px] bg-black" alt="Bính Dần Pickleball" />
-          <div id="pubLogoFallback" style="display:none;" class="w-full h-full rounded-[10px] bg-[#17110e] items-center justify-center font-black text-orange-400 text-sm">86</div>
+  <header class="sticky top-0 z-30 bg-[#0c0908]/90 backdrop-blur-md border-b border-orange-500/30 px-3.5 py-2.5">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-orange-600 to-red-700 p-[2px] shrink-0 shadow-lg">
+          <img id="pubLogo" src="logo.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover rounded-[10px] bg-black" alt="Logo" />
         </div>
         <div class="min-w-0">
-          <h1 class="font-black text-sm sm:text-base uppercase tracking-wider truncate fire-gradient-text">
-            CLB Bính Dần 1986
-          </h1>
-          <p id="pubTourName" class="text-xs text-amber-200/70 truncate">Đang tải dữ liệu giải đấu...</p>
+          <h1 class="font-black text-sm sm:text-base uppercase tracking-wider truncate fire-gradient-text">CLB Bính Dần 1986</h1>
+          <p id="pubTourName" class="text-[11px] text-amber-200/70 truncate">Đang tải dữ liệu...</p>
         </div>
       </div>
-      <a href="admin.html" class="shrink-0 text-xs font-bold px-3 py-1.5 rounded-xl bg-orange-500/15 border border-orange-500/35 text-orange-300 hover:bg-orange-500 hover:text-black transition">
+      <a href="admin.html" class="whitespace-nowrap shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-full bg-orange-500/15 border border-orange-500/35 text-orange-300">
         Quản trị
       </a>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto p-4 space-y-6">
+  <main class="max-w-5xl mx-auto p-4 space-y-5">
 
-    <!-- HERO BANNER BÍNH DẦN 1986 -->
-    <section class="fire-banner rounded-2xl p-4 flex items-center gap-4">
-      <img id="heroLogo" src="logo.jpg" onerror="this.style.display='none'" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-orange-500/70 shadow-lg shadow-orange-600/30 shrink-0 bg-black" alt="Logo Bính Dần" />
+    <!-- HERO BANNER -->
+    <section class="fire-banner rounded-2xl p-3.5 flex items-center gap-3.5">
+      <img src="logo.jpg" onerror="this.style.display='none'" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-orange-500/70 shrink-0 bg-black" alt="Logo" />
       <div class="min-w-0">
-        <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 text-[10px] font-black uppercase tracking-wider mb-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          Lư Trung Hỏa • 1986
+        <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 text-[10px] font-black uppercase mb-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Lư Trung Hỏa • 1986
         </div>
-        <h2 id="heroTourName" class="font-black text-base sm:text-xl text-white uppercase leading-tight truncate">
-          Giải Đồng Đội Bính Dần 1986
-        </h2>
-        <p class="text-xs text-amber-200/75 mt-0.5">4 Trận Đôi (15đ) • Đơn Quyết Định (21đ) • Live Score</p>
+        <h2 id="heroTourName" class="font-black text-sm sm:text-lg text-white uppercase leading-tight truncate">Giải Đồng Đội Bính Dần 1986</h2>
+        <p class="text-[11px] text-amber-200/70 mt-0.5 truncate">4 Trận Đôi (15đ) • Đơn Quyết Định (21đ)</p>
       </div>
     </section>
 
-    <!-- KHU VỰC SÂN ĐANG ĐẤU (LIVE) -->
-    <section class="space-y-3">
+    <!-- TAB 1: SÂN LIVE -->
+    <section id="panelLive" class="pub-panel space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="font-black text-orange-400 uppercase text-sm flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 live-dot animate-pulse"></span>
           Tỷ số trực tiếp các sân
         </h2>
-        <span id="liveCountBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-          0 sân đang đấu
-        </span>
+        <span id="liveCountBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">0 sân đang đấu</span>
       </div>
-      <div id="liveCourtsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div class="fire-card rounded-2xl p-6 text-center text-xs text-amber-200/50 col-span-full">
-          Đang kết nối tỷ số trực tiếp...
-        </div>
-      </div>
+      <div id="liveCourtsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
     </section>
 
-    <!-- TABS: LƯỢT ĐẤU ĐỒNG ĐỘI & BẢNG XẾP HẠNG -->
-    <section class="space-y-3">
-      <div class="flex gap-2 border-b border-orange-500/20 pb-2 overflow-x-auto">
-        <button id="btnTabTies" onclick="switchPubTab('ties')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-gradient-to-r from-orange-500 to-red-600 text-white shadow">
-          Lượt đấu Đồng đội
-        </button>
-        <button id="btnTabStandings" onclick="switchPubTab('standings')" class="shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60">
-          Bảng xếp hạng (3-2-1-0)
-        </button>
-      </div>
+    <!-- TAB 2: LƯỢT ĐẤU ĐỒNG ĐỘI -->
+    <section id="panelTies" class="pub-panel hidden space-y-3">
+      <h2 class="font-black text-orange-400 uppercase text-sm">Lịch & Kết quả Lượt đấu Đồng đội</h2>
+      <div id="tiesContainer" class="space-y-3"></div>
+    </section>
 
-      <!-- DANH SÁCH LƯỢT ĐẤU ĐỒNG ĐỘI -->
-      <div id="panelTies" class="space-y-3"></div>
-
-      <!-- BẢNG XẾP HẠNG ĐỒNG ĐỘI -->
-      <div id="panelStandings" class="hidden space-y-2">
-        <div class="fire-card rounded-2xl overflow-x-auto">
-          <table class="w-full text-left text-xs min-w-[340px]">
-            <thead class="bg-gradient-to-r from-orange-600/25 to-red-600/15 text-amber-300 uppercase">
-              <tr>
-                <th class="py-2.5 px-2.5">#</th>
-                <th class="py-2.5 px-2">CLB / Đội</th>
-                <th class="py-2.5 px-1.5 text-center">Trận</th>
-                <th class="py-2.5 px-1.5 text-center">T-H-B</th>
-                <th class="py-2.5 px-1.5 text-center">HS Hiệp</th>
-                <th class="py-2.5 px-1.5 text-center">HS Điểm</th>
-                <th class="py-2.5 px-2.5 text-right">Điểm</th>
-              </tr>
-            </thead>
-            <tbody id="standingsBody" class="divide-y divide-orange-500/15"></tbody>
-          </table>
-        </div>
-        <p class="text-[11px] text-amber-200/55 px-1">
-          * Quy định: Thắng 3đ, Hòa 2đ, Thua 1đ, Bỏ cuộc 0đ. Bằng điểm xét Đối đầu trực tiếp → Hiệu số hiệp → Hiệu số điểm.
-        </p>
+    <!-- TAB 3: BẢNG XẾP HẠNG -->
+    <section id="panelStandings" class="pub-panel hidden space-y-2.5">
+      <h2 class="font-black text-orange-400 uppercase text-sm">Bảng xếp hạng Đồng đội (3-2-1-0)</h2>
+      <div class="fire-card rounded-2xl overflow-x-auto">
+        <table class="w-full text-left text-xs min-w-[340px]">
+          <thead class="bg-gradient-to-r from-orange-600/25 to-red-600/15 text-amber-300 uppercase">
+            <tr>
+              <th class="py-2.5 px-2.5">#</th>
+              <th class="py-2.5 px-2">CLB / Đội</th>
+              <th class="py-2.5 px-1.5 text-center">Trận</th>
+              <th class="py-2.5 px-1.5 text-center">T-H-B</th>
+              <th class="py-2.5 px-1.5 text-center">HS Hiệp</th>
+              <th class="py-2.5 px-1.5 text-center">HS Điểm</th>
+              <th class="py-2.5 px-2.5 text-right">Điểm</th>
+            </tr>
+          </thead>
+          <tbody id="standingsBody" class="divide-y divide-orange-500/15"></tbody>
+        </table>
       </div>
+      <p class="text-[11px] text-amber-200/55 px-1">* Thắng 3đ, Hòa 2đ, Thua 1đ, Bỏ cuộc 0đ. Bằng điểm xét Đối đầu → HS Hiệp → HS Điểm.</p>
     </section>
 
   </main>
 
+  <!-- FLOATING LIQUID GLASS SLIDER NAV (TRƯỢT NHƯ IPHONE) -->
+  <div class="fixed bottom-3 left-3 right-3 z-40 flex justify-center pointer-events-none">
+    <nav id="pubIosNav" class="ios-glass-nav pointer-events-auto relative w-full max-w-md rounded-full p-1.5 grid grid-cols-3 select-none">
+      <div id="pubIosPill" class="ios-pill"></div>
+      <button onclick="switchPubTab('live')" data-tab="live" class="pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-orange-400 transition-colors">
+        <i data-lucide="radio" class="w-5 h-5"></i>
+        <span class="text-[10px] font-bold leading-none">Sân Live</span>
+      </button>
+      <button onclick="switchPubTab('ties')" data-tab="ties" class="pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-gray-400 transition-colors">
+        <i data-lucide="swords" class="w-5 h-5"></i>
+        <span class="text-[10px] font-bold leading-none">Lượt đấu</span>
+      </button>
+      <button onclick="switchPubTab('standings')" data-tab="standings" class="pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-gray-400 transition-colors">
+        <i data-lucide="trophy" class="w-5 h-5"></i>
+        <span class="text-[10px] font-bold leading-none">Xếp hạng</span>
+      </button>
+    </nav>
+  </div>
+
   <script type="module">
     import { db, ref, onValue } from './js/firebase-config.js';
 
-    window.switchPubTab = (tab) => {
-      const isTies = tab === 'ties';
-      document.getElementById('panelTies').classList.toggle('hidden', !isTies);
-      document.getElementById('panelStandings').classList.toggle('hidden', isTies);
+    const TABS = ['live', 'ties', 'standings'];
+    const PANELS = { live: 'panelLive', ties: 'panelTies', standings: 'panelStandings' };
+    const nav = document.getElementById('pubIosNav');
+    const pill = document.getElementById('pubIosPill');
 
-      document.getElementById('btnTabTies').className = isTies
-        ? 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-gradient-to-r from-orange-500 to-red-600 text-white shadow'
-        : 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60';
-      document.getElementById('btnTabStandings').className = !isTies
-        ? 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-gradient-to-r from-orange-500 to-red-600 text-white shadow'
-        : 'shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-amber-200/60';
+    function updatePill(idx, animate = true) {
+      pill.style.transition = animate ? 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)' : 'none';
+      pill.style.transform = `translateX(${idx * 100}%)`;
+    }
+
+    window.switchPubTab = (tab) => {
+      const idx = TABS.indexOf(tab);
+      if (idx === -1) return;
+      updatePill(idx, true);
+      TABS.forEach(t => {
+        document.getElementById(PANELS[t]).classList.toggle('hidden', t !== tab);
+      });
+      document.querySelectorAll('.pub-nav-btn').forEach(b => {
+        b.className = `pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 transition-colors ${b.dataset.tab === tab ? 'text-orange-400' : 'text-gray-400'}`;
+      });
     };
+
+    // Cảm ứng trượt ngón tay trực tiếp trên thanh điều hướng
+    let isDragging = false;
+    nav.addEventListener('touchstart', () => { isDragging = true; pill.style.transition = 'none'; }, { passive: true });
+    nav.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      const rect = nav.getBoundingClientRect();
+      const pad = 6;
+      const innerW = rect.width - pad * 2;
+      const pillW = innerW / TABS.length;
+      const x = Math.max(0, Math.min(innerW - pillW, e.touches[0].clientX - rect.left - pad - pillW / 2));
+      pill.style.transform = `translateX(${x}px)`;
+    }, { passive: true });
+    nav.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const rect = nav.getBoundingClientRect();
+      const pad = 6;
+      const innerW = rect.width - pad * 2;
+      const relX = Math.max(0, Math.min(innerW - 1, e.changedTouches[0].clientX - rect.left - pad));
+      const idx = Math.floor((relX / innerW) * TABS.length);
+      window.switchPubTab(TABS[idx]);
+    });
 
     onValue(ref(db, '/'), (snap) => {
       const data = snap.val() || {};
@@ -158,12 +210,11 @@
       document.getElementById('pubTourName').textContent = tourName;
       document.getElementById('heroTourName').textContent = tourName;
 
-      // 1. Render Live Courts
+      // 1. Live Courts
       let activeCount = 0;
-      const courtsHtml = Object.entries(courts).map(([cId, c]) => {
+      document.getElementById('liveCourtsGrid').innerHTML = Object.entries(courts).map(([cId, c]) => {
         const m = c.activeMatchId ? matches[c.activeMatchId] : null;
         if (m) activeCount++;
-
         if (!m) {
           return `
             <div class="fire-card rounded-2xl p-4 opacity-60">
@@ -175,7 +226,6 @@
             </div>`;
         }
 
-        // Tính tỷ số tổng đồng đội nếu có
         let tieBadge = '';
         if (m.tieId && ties[m.tieId]) {
           let wA = 0, wB = 0;
@@ -189,7 +239,6 @@
         const isA = m.servingTeam === 'A';
         const dots = m.serverNumber === 2 ? '●●' : '●';
         const isDone = m.status === 'finished';
-        const subTitle = m.category ? m.category.split('(')[0].trim() : '';
 
         return `
           <div class="fire-card rounded-2xl overflow-hidden">
@@ -197,13 +246,11 @@
               <span class="font-black text-xs text-amber-300 uppercase truncate">${c.name}</span>
               <div class="flex items-center gap-1.5 shrink-0">
                 ${tieBadge}
-                <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isDone ? 'bg-white/10 text-gray-300' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
-                  ${isDone ? 'XONG' : '● LIVE'}
-                </span>
+                <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isDone ? 'bg-white/10 text-gray-300' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">${isDone ? 'XONG' : '● LIVE'}</span>
               </div>
             </div>
             <div class="p-3.5 space-y-2">
-              <div class="text-[11px] font-bold text-orange-400 truncate">${subTitle}</div>
+              <div class="text-[11px] font-bold text-orange-400 truncate">${(m.category || '').split('(')[0]}</div>
               <div class="flex items-center justify-between">
                 <div class="min-w-0 pr-2">
                   <div class="flex items-center gap-1.5">
@@ -212,9 +259,7 @@
                   </div>
                   <div class="text-[10px] text-amber-200/60 truncate">${m.isDreambreaker ? 'Đơn 21 điểm' : (m.teamA.players || []).join(' / ')}</div>
                 </div>
-                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg shrink-0 ${isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">
-                  ${m.teamA.score}
-                </span>
+                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg shrink-0 ${isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">${m.teamA.score}</span>
               </div>
               <div class="flex items-center justify-between">
                 <div class="min-w-0 pr-2">
@@ -224,33 +269,24 @@
                   </div>
                   <div class="text-[10px] text-amber-200/60 truncate">${m.isDreambreaker ? 'Đơn 21 điểm' : (m.teamB.players || []).join(' / ')}</div>
                 </div>
-                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg shrink-0 ${!isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">
-                  ${m.teamB.score}
-                </span>
+                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg shrink-0 ${!isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">${m.teamB.score}</span>
               </div>
             </div>
           </div>`;
-      }).join('');
-
-      document.getElementById('liveCourtsGrid').innerHTML = courtsHtml || '<p class="text-xs text-amber-200/50">Chưa có sân nào.</p>';
+      }).join('') || '<p class="text-xs text-amber-200/50">Chưa có sân nào.</p>';
       document.getElementById('liveCountBadge').textContent = `${activeCount} sân đang đấu`;
 
-      // 2. Render Danh sách Lượt đấu Đồng đội (Ties)
+      // 2. Ties
       const tiesArr = Object.values(ties).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-      document.getElementById('panelTies').innerHTML = tiesArr.map(tie => {
+      document.getElementById('tiesContainer').innerHTML = tiesArr.map(tie => {
         const subMatches = (tie.matchIds || []).map(id => matches[id]).filter(Boolean);
         let wA = 0, wB = 0;
         subMatches.forEach(m => { if (m.winner === 'A') wA++; if (m.winner === 'B') wB++; });
-
         return `
           <div class="fire-card rounded-2xl p-3.5 space-y-2.5">
             <div class="flex items-center justify-between border-b border-orange-500/20 pb-2">
-              <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-orange-500/20 text-amber-300">
-                ${tie.stage === 'knockout' ? 'Loại trực tiếp' : 'Vòng bảng'}
-              </span>
-              <div class="font-black text-sm text-white">
-                ${tie.teamAName} <span class="text-orange-400 mx-1.5 text-base">${wA} - ${wB}</span> ${tie.teamBName}
-              </div>
+              <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-orange-500/20 text-amber-300">${tie.stage === 'knockout' ? 'Loại trực tiếp' : 'Vòng bảng'}</span>
+              <div class="font-black text-sm text-white">${tie.teamAName} <span class="text-orange-400 mx-1.5 text-base">${wA} - ${wB}</span> ${tie.teamBName}</div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               ${subMatches.map(m => `
@@ -259,76 +295,42 @@
                     <div class="text-[10px] font-bold text-amber-300/80">${m.category.split('(')[0]}</div>
                     <div class="text-[11px] text-gray-300 truncate">${(m.teamA.players || []).join('/')} vs ${(m.teamB.players || []).join('/')}</div>
                   </div>
-                  <span class="shrink-0 font-black text-sm ${m.status === 'live' ? 'text-emerald-400' : 'text-orange-400'}">
-                    ${m.teamA.score} - ${m.teamB.score}
-                  </span>
+                  <span class="shrink-0 font-black text-sm ${m.status === 'live' ? 'text-emerald-400' : 'text-orange-400'}">${m.teamA.score} - ${m.teamB.score}</span>
                 </div>
               `).join('')}
             </div>
           </div>`;
       }).join('') || '<p class="text-xs text-amber-200/50 text-center py-6">Chưa có lượt đấu đồng đội nào.</p>';
 
-      // 3. Tính Bảng Xếp Hạng Đồng Đội (Thắng 3, Hòa 2, Thua 1, Bỏ cuộc 0)
-      const stats = {};
-      const h2h = {}; // h2h[teamA][teamB] = 'W' | 'L' | 'D'
-      const initTeam = (name) => {
-        if (!stats[name]) stats[name] = { name, played: 0, w: 0, d: 0, l: 0, setDiff: 0, ptDiff: 0, pts: 0 };
-        if (!h2h[name]) h2h[name] = {};
-      };
-
+      // 3. Standings 3-2-1-0
+      const stats = {}; const h2h = {};
+      const initTeam = (n) => { if (!stats[n]) stats[n] = { name: n, played: 0, w: 0, d: 0, l: 0, setDiff: 0, ptDiff: 0, pts: 0 }; if (!h2h[n]) h2h[n] = {}; };
       Object.values(teams).forEach(t => initTeam(t.name));
 
       tiesArr.filter(t => t.stage === 'group').forEach(tie => {
-        initTeam(tie.teamAName);
-        initTeam(tie.teamBName);
-        const subMatches = (tie.matchIds || []).slice(0, 4).map(id => matches[id]).filter(Boolean);
-        const allFinished = subMatches.length === 4 && subMatches.every(m => m.status === 'finished');
-
-        if (!tie.walkoverWinner && !allFinished) return;
-
-        const sA = stats[tie.teamAName];
-        const sB = stats[tie.teamBName];
+        initTeam(tie.teamAName); initTeam(tie.teamBName);
+        const sub = (tie.matchIds || []).slice(0, 4).map(id => matches[id]).filter(Boolean);
+        if (!tie.walkoverWinner && !(sub.length === 4 && sub.every(m => m.status === 'finished'))) return;
+        const sA = stats[tie.teamAName], sB = stats[tie.teamBName];
         sA.played++; sB.played++;
-
         let wA = 0, wB = 0;
-        subMatches.forEach(m => {
-          if (m.winner === 'A') wA++;
-          if (m.winner === 'B') wB++;
-          sA.ptDiff += (m.teamA.score - m.teamB.score);
-          sB.ptDiff += (m.teamB.score - m.teamA.score);
+        sub.forEach(m => {
+          if (m.winner === 'A') wA++; if (m.winner === 'B') wB++;
+          sA.ptDiff += (m.teamA.score - m.teamB.score); sB.ptDiff += (m.teamB.score - m.teamA.score);
         });
-        sA.setDiff += (wA - wB);
-        sB.setDiff += (wB - wA);
-
-        if (tie.walkoverWinner === 'A') {
-          sA.w++; sA.pts += 3; sB.l++; sB.pts += 0;
-          h2h[tie.teamAName][tie.teamBName] = 'W'; h2h[tie.teamBName][tie.teamAName] = 'L';
-        } else if (tie.walkoverWinner === 'B') {
-          sB.w++; sB.pts += 3; sA.l++; sA.pts += 0;
-          h2h[tie.teamBName][tie.teamAName] = 'W'; h2h[tie.teamAName][tie.teamBName] = 'L';
-        } else if (wA > wB) {
-          sA.w++; sA.pts += 3; sB.l++; sB.pts += 1;
-          h2h[tie.teamAName][tie.teamBName] = 'W'; h2h[tie.teamBName][tie.teamAName] = 'L';
-        } else if (wB > wA) {
-          sB.w++; sB.pts += 3; sA.l++; sA.pts += 1;
-          h2h[tie.teamBName][tie.teamAName] = 'W'; h2h[tie.teamAName][tie.teamBName] = 'L';
-        } else {
-          sA.d++; sA.pts += 2; sB.d++; sB.pts += 2;
-          h2h[tie.teamAName][tie.teamBName] = 'D'; h2h[tie.teamBName][tie.teamAName] = 'D';
-        }
+        sA.setDiff += (wA - wB); sB.setDiff += (wB - wA);
+        if (tie.walkoverWinner === 'A') { sA.w++; sA.pts += 3; sB.l++; h2h[tie.teamAName][tie.teamBName] = 'W'; h2h[tie.teamBName][tie.teamAName] = 'L'; }
+        else if (tie.walkoverWinner === 'B') { sB.w++; sB.pts += 3; sA.l++; h2h[tie.teamBName][tie.teamAName] = 'W'; h2h[tie.teamAName][tie.teamBName] = 'L'; }
+        else if (wA > wB) { sA.w++; sA.pts += 3; sB.l++; sB.pts += 1; h2h[tie.teamAName][tie.teamBName] = 'W'; h2h[tie.teamBName][tie.teamAName] = 'L'; }
+        else if (wB > wA) { sB.w++; sB.pts += 3; sA.l++; sA.pts += 1; h2h[tie.teamBName][tie.teamAName] = 'W'; h2h[tie.teamAName][tie.teamBName] = 'L'; }
+        else { sA.d++; sA.pts += 2; sB.d++; sB.pts += 2; h2h[tie.teamAName][tie.teamBName] = 'D'; h2h[tie.teamBName][tie.teamAName] = 'D'; }
       });
 
-      // Sắp xếp theo Điểm -> Đối đầu (nếu 2 đội bằng điểm) -> Hiệu số hiệp -> Hiệu số điểm
       const arr = Object.values(stats);
-      const ptsCount = {};
-      arr.forEach(r => { ptsCount[r.pts] = (ptsCount[r.pts] || 0) + 1; });
-
+      const ptsCount = {}; arr.forEach(r => { ptsCount[r.pts] = (ptsCount[r.pts] || 0) + 1; });
       arr.sort((a, b) => {
         if (b.pts !== a.pts) return b.pts - a.pts;
-        if (ptsCount[a.pts] === 2) {
-          if (h2h[a.name]?.[b.name] === 'W') return -1;
-          if (h2h[a.name]?.[b.name] === 'L') return 1;
-        }
+        if (ptsCount[a.pts] === 2) { if (h2h[a.name]?.[b.name] === 'W') return -1; if (h2h[a.name]?.[b.name] === 'L') return 1; }
         if (b.setDiff !== a.setDiff) return b.setDiff - a.setDiff;
         return b.ptDiff - a.ptDiff;
       });
@@ -345,6 +347,8 @@
         </tr>
       `).join('') || '<tr><td colspan="7" class="py-6 text-center text-amber-200/50">Chưa có dữ liệu xếp hạng.</td></tr>';
     });
+
+    lucide.createIcons();
   </script>
 </body>
 </html>
