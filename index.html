@@ -317,103 +317,126 @@
       <div id="completedMatchesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5"></div>
     </section>
 
-    <!-- 6. QUẢN TRỊ (CHỈ BTC) -->
+   <!-- 6. QUẢN TRỊ (TỰ CO GIÃN 2 CỘT MÁY TÍNH / 1 CỘT ĐIỆN THOẠI) -->
     <section id="panelAdmin" class="pub-panel hidden space-y-4">
-      <div class="sc-card rounded-2xl p-4 space-y-3.5">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h2 class="font-extrabold text-sm text-white uppercase tracking-wide">Cấu hình giải đấu</h2>
-            <p id="formatLockHint" class="text-[11px] text-slate-400 mt-0.5">Chọn Đồng đội hoặc Đôi. Nội dung còn lại sẽ ẩn hoàn toàn.</p>
+
+      <!-- HÀNG 1: CẤU HÌNH GIẢI (7/12) + CHIA BẢNG & XẾP LỊCH (5/12) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+
+        <!-- CẤU HÌNH GIẢI ĐẤU -->
+        <div class="sc-card rounded-2xl p-4 lg:col-span-7 flex flex-col justify-between gap-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="font-extrabold text-xs sm:text-sm text-white uppercase tracking-wide">Cấu hình giải đấu</h2>
+              <p id="formatLockHint" class="text-[11px] text-slate-400 mt-0.5">Chọn Đồng đội hoặc Đôi.</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="exportTournamentExcel()" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 text-[11px] font-extrabold flex items-center gap-1">
+                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Xuất Excel
+              </button>
+              <button type="button" id="btnUnlockFormat" onclick="unlockFormatChoice()" class="hidden px-2.5 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/15 text-amber-300 text-[11px] font-bold">
+                Đổi thể thức
+              </button>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="exportTournamentExcel()" class="px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 text-xs font-extrabold flex items-center gap-1.5">
-              <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Xuất Excel
+
+          <div id="formatChooserGrid" class="grid grid-cols-2 gap-2">
+            <button type="button" id="pickFormatTeam" onclick="chooseTournamentFormat('team')" class="py-2.5 px-3 rounded-xl font-extrabold text-xs uppercase border transition flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4"><use href="#icon-pickleball"></use></svg> Đồng Đội
             </button>
-            <button type="button" id="btnUnlockFormat" onclick="unlockFormatChoice()" class="hidden px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/15 text-amber-300 text-xs font-bold">
-              Đổi thể thức
+            <button type="button" id="pickFormatDoubles" onclick="chooseTournamentFormat('doubles')" class="py-2.5 px-3 rounded-xl font-extrabold text-xs uppercase border transition flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4"><use href="#icon-pickleball"></use></svg> Nội Dung Đôi
+            </button>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input id="quickTourName" type="text" placeholder="Tên giải đấu..." class="flex-1 bg-[#0a0d14] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500" />
+            <button type="button" onclick="saveTourNameOnly()" class="fire-btn py-2 px-4 rounded-xl text-xs font-extrabold text-white shadow shrink-0">
+              Lưu tên giải
             </button>
           </div>
         </div>
 
-        <div id="formatChooserGrid" class="grid grid-cols-2 gap-2.5">
-          <button type="button" id="pickFormatTeam" onclick="chooseTournamentFormat('team')" class="py-3 px-3 rounded-xl font-extrabold text-xs uppercase border transition flex items-center justify-center gap-2">
-            <svg class="w-4 h-4"><use href="#icon-pickleball"></use></svg> Giải Đồng Đội
-          </button>
-          <button type="button" id="pickFormatDoubles" onclick="chooseTournamentFormat('doubles')" class="py-3 px-3 rounded-xl font-extrabold text-xs uppercase border transition flex items-center justify-center gap-2">
-            <svg class="w-4 h-4"><use href="#icon-pickleball"></use></svg> Nội Dung Đôi
-          </button>
-        </div>
+        <!-- CHIA BẢNG & XẾP LỊCH -->
+        <div class="sc-card rounded-2xl p-4 lg:col-span-5 flex flex-col justify-between gap-3">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="font-extrabold text-xs sm:text-sm text-orange-400 uppercase tracking-wide">Chia bảng & Lịch đấu</h3>
+            <button type="button" onclick="resetTournamentMatches()" class="text-[11px] font-bold text-red-400 hover:text-red-300 px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/25 shrink-0">
+              Xóa lịch cũ
+            </button>
+          </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <input id="quickTourName" type="text" placeholder="Tên giải đấu..." class="sm:col-span-2 bg-[#0a0d14] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500" />
-          <button type="button" onclick="saveTourNameOnly()" class="fire-btn py-2 px-4 rounded-xl text-xs font-extrabold text-white shadow">Lưu tên giải</button>
+          <div class="space-y-2">
+            <button type="button" onclick="autoDrawGroups()" class="fire-btn w-full py-2.5 px-3 rounded-xl text-xs font-extrabold text-white shadow">
+              Tự chia bảng & Tạo trận vòng bảng
+            </button>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] text-slate-400 shrink-0">Sân nhánh:</span>
+              <select id="bracketTargetCourt" class="flex-1 bg-[#0a0d14] border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none"></select>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="sc-card rounded-2xl p-4 space-y-3">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <h3 class="font-extrabold text-xs text-orange-400 uppercase tracking-wider">Chia bảng & Xếp lịch tự động</h3>
-          <button type="button" onclick="resetTournamentMatches()" class="text-[11px] font-bold text-red-400 hover:text-red-300 px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/25">
-            Xóa lịch/trận cũ
-          </button>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <button type="button" onclick="autoDrawGroups()" class="fire-btn py-2.5 px-3 rounded-xl text-xs font-extrabold text-white shadow">
-            Tự chia bảng & Tạo toàn bộ trận vòng bảng
-          </button>
-          <select id="bracketTargetCourt" class="bg-[#0a0d14] border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none"></select>
-        </div>
-      </div>
-
-      <!-- QUẢN LÝ CLB ĐỒNG ĐỘI -->
-      <div id="adminTeamSection" class="space-y-4">
-        <div class="sc-card rounded-2xl p-4 space-y-3">
-          <h3 class="font-extrabold text-xs text-orange-400 uppercase tracking-wider">Thêm CLB & VĐV (Tên • Giới tính • Trình)</h3>
-          <input id="admClubName" type="text" placeholder="Tên CLB / Đội (VD: Bính Dần 1)" class="w-full bg-[#0a0d14] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-orange-500" />
+      <!-- HÀNG 2: QUẢN LÝ CLB ĐỒNG ĐỘI (FORM TRÁI 5/12 • DANH SÁCH PHẢI 7/12) -->
+      <div id="adminTeamSection" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        <div class="sc-card rounded-2xl p-4 lg:col-span-5 space-y-3">
+          <h3 class="font-extrabold text-xs text-orange-400 uppercase tracking-wider">Thêm CLB & VĐV</h3>
+          <input id="admClubName" type="text" placeholder="Tên CLB / Đội (VD: Bính Dần 1)" class="w-full bg-[#0a0d14] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500" />
           <div class="grid grid-cols-12 gap-1.5">
-            <input id="admPlName" type="text" placeholder="Tên VĐV" class="col-span-5 bg-[#0a0d14] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            <select id="admPlGender" class="col-span-3 bg-[#0a0d14] border border-white/10 rounded-xl px-2 py-2 text-xs font-bold text-white outline-none">
+            <input id="admPlName" type="text" placeholder="Tên VĐV" class="col-span-5 bg-[#0a0d14] border border-white/10 rounded-xl px-2.5 py-2 text-xs text-white outline-none" />
+            <select id="admPlGender" class="col-span-3 bg-[#0a0d14] border border-white/10 rounded-xl px-1.5 py-2 text-xs font-bold text-white outline-none">
               <option value="Nam">Nam</option>
               <option value="Nữ">Nữ</option>
             </select>
-            <input id="admPlRating" type="number" step="0.1" min="1.5" max="6.0" value="2.8" class="col-span-2 bg-[#0a0d14] border border-white/10 rounded-xl px-1.5 py-2 text-xs text-center font-black text-amber-300 outline-none" />
-            <button type="button" onclick="addDraftClubPlayer()" class="col-span-2 rounded-xl bg-emerald-600 text-white font-black text-sm">+</button>
+            <input id="admPlRating" type="number" step="0.1" min="1.5" max="6.0" value="2.8" class="col-span-2 bg-[#0a0d14] border border-white/10 rounded-xl px-1 py-2 text-xs text-center font-black text-amber-300 outline-none" />
+            <button type="button" onclick="addDraftClubPlayer()" class="col-span-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-sm">+</button>
           </div>
           <div id="draftClubPlayers" class="flex flex-wrap gap-1.5"></div>
-          <button type="button" onclick="saveNewClub()" class="fire-btn w-full py-2.5 rounded-xl font-extrabold text-xs text-white shadow">Lưu CLB Đồng đội</button>
+          <button type="button" onclick="saveNewClub()" class="fire-btn w-full py-2.5 rounded-xl font-extrabold text-xs text-white shadow">
+            Lưu CLB Đồng đội
+          </button>
         </div>
-        <div id="adminClubsList" class="space-y-3"></div>
+
+        <div class="lg:col-span-7 space-y-3">
+          <div id="adminClubsList" class="grid grid-cols-1 gap-3"></div>
+        </div>
       </div>
 
-      <!-- QUẢN LÝ NỘI DUNG ĐÔI -->
-      <div id="adminDoublesSection" class="hidden space-y-4">
-        <div class="sc-card rounded-2xl p-4 space-y-3">
-          <h3 class="font-extrabold text-xs text-orange-400 uppercase tracking-wider">Thêm Cặp đôi (Tên • Giới tính • Trình)</h3>
+      <!-- HÀNG 2 (THAY THẾ): QUẢN LÝ NỘI DUNG ĐÔI (FORM TRÁI 5/12 • DANH SÁCH PHẢI 7/12) -->
+      <div id="adminDoublesSection" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        <div class="sc-card rounded-2xl p-4 lg:col-span-5 space-y-3">
+          <h3 class="font-extrabold text-xs text-orange-400 uppercase tracking-wider">Thêm Cặp đôi</h3>
           <div class="grid grid-cols-12 gap-1.5">
-            <input id="dbl1Name" type="text" placeholder="Tên VĐV 1" class="col-span-6 bg-[#0a0d14] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            <select id="dbl1Gender" class="col-span-3 bg-[#0a0d14] border border-white/10 rounded-xl px-2 py-2 text-xs font-bold text-white outline-none">
+            <input id="dbl1Name" type="text" placeholder="Tên VĐV 1" class="col-span-6 bg-[#0a0d14] border border-white/10 rounded-xl px-2.5 py-2 text-xs text-white outline-none" />
+            <select id="dbl1Gender" class="col-span-3 bg-[#0a0d14] border border-white/10 rounded-xl px-1.5 py-2 text-xs font-bold text-white outline-none">
               <option value="Nam">Nam</option>
               <option value="Nữ">Nữ</option>
             </select>
-            <input id="dbl1Rating" type="number" step="0.1" min="1.5" max="6.0" value="2.8" class="col-span-3 bg-[#0a0d14] border border-white/10 rounded-xl px-2 py-2 text-xs text-center font-black text-amber-300 outline-none" />
+            <input id="dbl1Rating" type="number" step="0.1" min="1.5" max="6.0" value="2.8" class="col-span-3 bg-[#0a0d14] border border-white/10 rounded-xl px-1.5 py-2 text-xs text-center font-black text-amber-300 outline-none" />
           </div>
           <div class="grid grid-cols-12 gap-1.5">
-            <input id="dbl2Name" type="text" placeholder="Tên VĐV 2" class="col-span-6 bg-[#0a0d14] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            <select id="dbl2Gender" class="col-span-3 bg-[#0a0d14] border border-white/10 rounded-xl px-2 py-2 text-xs font-bold text-white outline-none">
+            <input id="dbl2Name" type="text" placeholder="Tên VĐV 2" class="col-span-6 bg-[#0a0d14] border border-white/10 rounded-xl px-2.5 py-2 text-xs text-white outline-none" />
+            <select id="dbl2Gender" class="col-span-3 bg-[#0a0d14] border border-white/10 rounded-xl px-1.5 py-2 text-xs font-bold text-white outline-none">
               <option value="Nam">Nam</option>
               <option value="Nữ">Nữ</option>
             </select>
-            <input id="dbl2Rating" type="number" step="0.1" min="1.5" max="6.0" value="2.7" class="col-span-3 bg-[#0a0d14] border border-white/10 rounded-xl px-2 py-2 text-xs text-center font-black text-amber-300 outline-none" />
+            <input id="dbl2Rating" type="number" step="0.1" min="1.5" max="6.0" value="2.7" class="col-span-3 bg-[#0a0d14] border border-white/10 rounded-xl px-1.5 py-2 text-xs text-center font-black text-amber-300 outline-none" />
           </div>
-          <button type="button" onclick="saveNewDoublesPair()" class="fire-btn w-full py-2.5 rounded-xl font-extrabold text-xs text-white shadow">+ Lưu Cặp đôi</button>
+          <button type="button" onclick="saveNewDoublesPair()" class="fire-btn w-full py-2.5 rounded-xl font-extrabold text-xs text-white shadow">
+            + Lưu Cặp đôi
+          </button>
         </div>
-        <div id="adminDoublesList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+
+        <div class="lg:col-span-7">
+          <div id="adminDoublesList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </div>
       </div>
 
-      <!-- GÁN SÂN -->
-      <div class="space-y-2.5">
+      <!-- HÀNG 3: ĐIỀU PHỐI SÂN (TỰ CO GIÃN 1 -> 2 -> 4 CỘT) -->
+      <div class="sc-card rounded-2xl p-4 space-y-3">
         <h3 class="font-extrabold text-xs text-slate-300 uppercase tracking-wider">Điều phối sân thi đấu</h3>
-        <div id="adminCourtAssignGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5"></div>
+        <div id="adminCourtAssignGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
       </div>
     </section>
 
