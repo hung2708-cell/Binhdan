@@ -27,12 +27,29 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    .ios-bottom-dock {
-      background: rgba(18, 22, 31, 0.82);
+    /* Khóa cứng thanh tác vụ trên máy tính & điện thoại */
+    .locked-top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: rgba(9, 11, 15, 0.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .locked-bottom-dock {
+      position: fixed;
+      bottom: calc(10px + env(safe-area-inset-bottom));
+      left: 10px;
+      right: 10px;
+      z-index: 50;
+      background: rgba(18, 22, 31, 0.88);
       backdrop-filter: blur(28px) saturate(200%);
       -webkit-backdrop-filter: blur(28px) saturate(200%);
       border: 1px solid rgba(255, 255, 255, 0.16);
-      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.22);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.72), inset 0 1px 1px rgba(255, 255, 255, 0.22);
       touch-action: none;
     }
     .ios-bottom-thumb {
@@ -74,7 +91,7 @@
     .bracket-col:last-child .bracket-match::after { display: none; }
   </style>
 </head>
-<body class="min-h-screen pb-28 lg:pb-10">
+<body class="min-h-screen pt-16 pb-28 lg:pb-10">
 
   <svg class="hidden" aria-hidden="true">
     <symbol id="icon-pickleball" viewBox="0 0 24 24" fill="none">
@@ -90,8 +107,8 @@
     </symbol>
   </svg>
 
-  <!-- HEADER TRÊN CÙNG -->
-  <header class="sticky top-0 z-30 bg-[#090b0f]/92 backdrop-blur-md border-b border-white/10 px-3 py-2">
+  <!-- THANH TÁC VỤ KHÓA CỨNG TRÊN CÙNG -->
+  <header class="locked-top-bar px-3 py-2">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-2 shrink-0">
         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 via-orange-600 to-red-700 p-[1.5px] shrink-0">
@@ -125,7 +142,7 @@
 
   <main class="max-w-7xl mx-auto p-3.5 sm:p-4 lg:p-6 space-y-4">
 
-    <!-- 1. SÂN LIVE + CHỌN SÂN + XEM CHI TIẾT NGAY TẠI SÂN -->
+    <!-- 1. SÂN LIVE -->
     <section id="panelLive" class="pub-panel space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-black text-orange-400 uppercase text-sm flex items-center gap-2">
@@ -146,7 +163,7 @@
       <div id="tiesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-3.5"></div>
     </section>
 
-    <!-- 3. BẢNG XẾP HẠNG (THẮNG 3Đ • HÒA 2Đ • THUA 1Đ • BỎ CUỘC 0Đ • HIỆU SỐ ĐIỂM RÕ +- ) -->
+    <!-- 3. BẢNG XẾP HẠNG -->
     <section id="panelStandings" class="pub-panel hidden space-y-2.5">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-black text-orange-400 uppercase text-sm">Bảng xếp hạng Đồng đội (3 • 2 • 1 • 0)</h2>
@@ -357,9 +374,9 @@
 
   </main>
 
-  <!-- THANH TÁC VỤ DƯỚI ĐÁY TRÊN ĐIỆN THOẠI (KÉO TRƯỢT MƯỢT) -->
-  <div class="lg:hidden fixed bottom-3 left-2.5 right-2.5 z-40 flex justify-center pointer-events-none">
-    <nav id="mobileBottomDock" class="ios-bottom-dock pointer-events-auto relative w-full max-w-md rounded-full p-1 grid grid-cols-6 select-none">
+  <!-- THANH TÁC VỤ KHÓA CỨNG DƯỚI ĐÁY TRÊN ĐIỆN THOẠI -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-2.5 pb-2.5 pt-1 pointer-events-none flex justify-center">
+    <nav id="mobileBottomDock" class="locked-bottom-dock pointer-events-auto relative w-full max-w-md rounded-full p-1 grid grid-cols-6 select-none">
       <div id="mobileBottomThumb" class="ios-bottom-thumb"></div>
       <button type="button" onclick="switchPubTab('live')" data-btab="live" class="mb-tab relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 text-orange-400">
         <svg class="w-4 h-4"><use href="#icon-pickleball"></use></svg>
@@ -411,6 +428,8 @@
     import { requirePin } from './js/auth.js';
 
     const BOTTOM_TABS = ['live', 'ties', 'standings', 'groups', 'bracket', 'matches'];
+    const ALL_TABS = ['live', 'ties', 'standings', 'groups', 'bracket', 'matches', 'players', 'admin'];
+    const STORAGE_KEY = 'bd86_active_tab';
     const PANELS = {
       live: 'panelLive',
       ties: 'panelTies',
@@ -421,6 +440,25 @@
       players: 'panelPlayers',
       admin: 'panelAdmin'
     };
+
+    function getSavedTab() {
+      const hashTab = (window.location.hash || '').replace(/^#tab=/, '').trim();
+      if (ALL_TABS.includes(hashTab)) return hashTab;
+      try {
+        const lsTab = localStorage.getItem(STORAGE_KEY);
+        if (ALL_TABS.includes(lsTab)) return lsTab;
+      } catch (e) {}
+      return 'live';
+    }
+
+    function persistTab(tab) {
+      try { localStorage.setItem(STORAGE_KEY, tab); } catch (e) {}
+      try {
+        if (window.location.hash !== `#tab=${tab}`) {
+          history.replaceState(null, '', `#tab=${tab}`);
+        }
+      } catch (e) {}
+    }
 
     let dataStore = {
       settings: { format: '' }, teams: {}, doublesTeams: {}, ties: {}, courts: {}, matches: {},
@@ -434,7 +472,7 @@
     let formatUnlockedManually = false;
     let adminUnlocked = false;
     let modalResolver = null;
-    let currentTabKey = 'live';
+    let currentTabKey = getSavedTab();
     let draggingDock = false;
 
     const dock = document.getElementById('mobileBottomDock');
@@ -525,7 +563,6 @@
       });
     }
 
-    // Xem chi tiết ngay tại sân (cho đồng đội & các trận tại sân)
     window.openCourtDetailModal = (cId) => {
       const court = dataStore.courts?.[cId];
       const match = court?.activeMatchId ? dataStore.matches?.[court.activeMatchId] : null;
@@ -568,10 +605,7 @@
           </div>`;
       }
 
-      openScModal({
-        title: `Chi tiết • ${court.name}`,
-        bodyHtml: html
-      });
+      openScModal({ title: `Chi tiết • ${court.name}`, bodyHtml: html });
     };
 
     function getActiveFormat() {
@@ -589,6 +623,32 @@
         Object.keys(dataStore.doublesTeams || {}).length > 0 ||
         dataStore.groupDraw
       );
+    }
+
+    function applyTabVisibilityOnly() {
+      Object.entries(PANELS).forEach(([k, id]) => {
+        document.getElementById(id).classList.toggle('hidden', k !== currentTabKey);
+      });
+
+      document.querySelectorAll('.desk-tab').forEach(btn => {
+        const active = btn.dataset.tab === currentTabKey;
+        if (btn.dataset.tab === 'admin') {
+          btn.className = `desk-tab shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-black flex items-center gap-1 border ${
+            active ? 'bg-orange-500 text-slate-950 border-orange-400' : 'bg-white/[0.08] hover:bg-orange-500/20 border-white/15 text-amber-300'
+          }`;
+        } else {
+          btn.className = `desk-tab px-2.5 py-1.5 rounded-xl text-[11px] flex items-center gap-1 ${
+            active ? 'font-black bg-orange-500 text-slate-950' : 'font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]'
+          }`;
+        }
+      });
+
+      document.querySelectorAll('.mb-tab').forEach(btn => {
+        btn.className = `mb-tab ${btn.classList.contains('btab-team') ? 'btab-team ' : ''}relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 ${
+          btn.dataset.btab === currentTabKey ? 'text-orange-400' : 'text-slate-400'
+        }`;
+      });
+      syncDockThumb(false);
     }
 
     function applyFormatVisibility() {
@@ -622,8 +682,9 @@
 
       if (!showTeam && (currentTabKey === 'ties' || currentTabKey === 'standings')) {
         currentTabKey = 'live';
+        persistTab(currentTabKey);
       }
-      syncDockThumb(false);
+      applyTabVisibilityOnly();
     }
 
     window.chooseTournamentFormat = async (fmt) => {
@@ -677,9 +738,7 @@
       const id = `club_${Date.now()}`;
       await update(ref(db, '/'), {
         'settings/format': 'team',
-        [`teams/${id}`]: {
-          id, name, roster: draftClubPlayers.map(p => p.name), rosterDetails: draftClubPlayers
-        }
+        [`teams/${id}`]: { id, name, roster: draftClubPlayers.map(p => p.name), rosterDetails: draftClubPlayers }
       });
       document.getElementById('admClubName').value = '';
       draftClubPlayers = [];
@@ -790,29 +849,8 @@
     window.switchPubTab = (tab) => {
       if (!PANELS[tab]) return;
       currentTabKey = tab;
-      Object.entries(PANELS).forEach(([k, id]) => {
-        document.getElementById(id).classList.toggle('hidden', k !== tab);
-      });
-
-      document.querySelectorAll('.desk-tab').forEach(btn => {
-        const active = btn.dataset.tab === tab;
-        if (btn.dataset.tab === 'admin') {
-          btn.className = `desk-tab shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-black flex items-center gap-1 border ${
-            active ? 'bg-orange-500 text-slate-950 border-orange-400' : 'bg-white/[0.08] hover:bg-orange-500/20 border-white/15 text-amber-300'
-          }`;
-        } else {
-          btn.className = `desk-tab px-2.5 py-1.5 rounded-xl text-[11px] flex items-center gap-1 ${
-            active ? 'font-black bg-orange-500 text-slate-950' : 'font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]'
-          }`;
-        }
-      });
-
-      document.querySelectorAll('.mb-tab').forEach(btn => {
-        btn.className = `mb-tab ${btn.classList.contains('btab-team') ? 'btab-team ' : ''}relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 ${
-          btn.dataset.btab === tab ? 'text-orange-400' : 'text-slate-400'
-        }`;
-      });
-      syncDockThumb(true);
+      persistTab(tab);
+      applyTabVisibilityOnly();
     };
 
     window.openInFrameAdmin = async () => {
@@ -858,7 +896,6 @@
       showToast('Đã chia bảng thành công');
     };
 
-    // Tự chia nhánh Serie A (nhất/nhì) & Serie B (ba/tư) cho cả Đồng đội và Đôi
     window.generateSeriesBrackets = async () => {
       const scope = document.getElementById('bracketScopeSel').value || 'team';
       let serieAEntries = [];
@@ -924,7 +961,6 @@
       showToast(`Đã cập nhật cây sơ đồ ${scope === 'team' ? 'Đồng đội' : 'Đôi'}`);
     };
 
-    // Thi đấu ngay khi đủ đội (vòng trong hòa 2-2 có Trận 5 Đơn 21đ)
     window.playBracketMatchNow = async (seriesKey, roundIdx, matchIdx) => {
       const scope = document.getElementById('bracketScopeSel').value || 'team';
       const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
@@ -1259,7 +1295,6 @@
           </div>`;
       }).join('');
 
-      // Tính điểm 3 - 2 - 1 - 0 và hiệu số điểm ghi rõ + / -
       const stats = {};
       Object.values(dataStore.teams || {}).forEach(t => { stats[t.name] = { name: t.name, played: 0, w: 0, d: 0, l: 0, setDiff: 0, ptDiff: 0, pts: 0 }; });
       tiesArr.filter(t => t.stage === 'group').forEach(tie => {
@@ -1309,7 +1344,7 @@
     });
 
     lucide.createIcons();
-    syncDockThumb(false);
+    applyTabVisibilityOnly();
   </script>
 </body>
 </html>
