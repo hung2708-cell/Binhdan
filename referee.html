@@ -28,11 +28,15 @@
     .btn-tap:active:not(:disabled) { transform: scale(0.97); opacity: 0.92; }
     button:disabled { opacity: 0.35 !important; cursor: not-allowed !important; filter: grayscale(0.4); }
 
-    /* Sân Pickleball chuẩn 1 màu xanh đồng nhất, vạch kẻ trắng sắc nét */
+    /* Sân Pickleball chuẩn 1 màu xanh đồng nhất, tự co giãn theo thiết bị */
     .court-outer {
       background: #0d2b45;
-      padding: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      width: 100%;
+      aspect-ratio: 2.1 / 1;
+      max-height: 195px;
+      margin: 0 auto;
     }
     .court-surface {
       background: #145388;
@@ -57,6 +61,8 @@
 
     /* Chấm tròn phát sáng tách riêng khỏi tên VĐV */
     .dot-node {
+      position: relative;
+      z-index: 20;
       width: 22px;
       height: 22px;
       border-radius: 9999px;
@@ -68,6 +74,14 @@
       transition: all 0.2s ease;
     }
     .dot-core { width: 9px; height: 9px; border-radius: 9999px; }
+
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -10; }
+    }
+    .serve-arrow-line {
+      animation: dashFlow 0.75s linear infinite;
+      filter: drop-shadow(0 0 3px rgba(250, 204, 21, 0.55));
+    }
 
     @keyframes serveGlow {
       0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.85), 0 0 14px rgba(250, 204, 21, 0.8); }
@@ -89,6 +103,8 @@
     }
 
     .player-name-tag {
+      position: relative;
+      z-index: 20;
       font-size: 11px;
       font-weight: 800;
       color: #ffffff;
@@ -99,13 +115,26 @@
       word-break: break-word;
     }
 
-    /* Siêu gọn cho điện thoại xoay ngang để không bị cắt đáy */
+    /* Tự co gọn cho điện thoại xoay ngang */
     @media (orientation: landscape) and (max-height: 520px) {
-      .court-outer { padding: 4px; }
+      .court-outer {
+        aspect-ratio: auto;
+        max-height: none;
+        flex: 1 1 0%;
+        padding: 4px;
+      }
       .dot-node { width: 18px; height: 18px; }
       .dot-core { width: 7px; height: 7px; }
       .player-name-tag { font-size: 10px; }
       .ls-compact-hide { display: none !important; }
+    }
+
+    /* Tỷ lệ chuẩn cho máy tính */
+    @media (min-width: 1024px) {
+      .court-outer {
+        aspect-ratio: 2.05 / 1;
+        max-height: 310px;
+      }
     }
 
     @keyframes coinFlip {
@@ -145,16 +174,16 @@
     <p class="text-xs text-slate-400 mt-1">Vào mục Quản trị để gán trận đấu vào sân này.</p>
   </div>
 
-  <!-- BÀN CHẤM ĐIỂM CHÍNH: KHÓA CỨNG 1 MÀN HÌNH DỌC & NGANG -->
-  <main id="refereeBoard" class="hidden flex-1 min-h-0 flex flex-col justify-between gap-1.5 landscape:grid landscape:grid-cols-12 landscape:gap-2 lg:grid lg:grid-cols-12 lg:gap-4">
+  <!-- BÀN CHẤM ĐIỂM CHÍNH -->
+  <main id="refereeBoard" class="hidden flex-1 min-h-0 flex flex-col justify-between gap-2 landscape:grid landscape:grid-cols-12 landscape:gap-2 lg:grid lg:grid-cols-12 lg:gap-4 lg:items-start lg:my-auto">
 
     <!-- CỘT TRÁI (7/12): BẢNG ĐIỂM + SÂN 2D -->
-    <div class="flex flex-col gap-1.5 landscape:gap-1 lg:gap-2.5 landscape:col-span-7 lg:col-span-7 min-h-0 flex-1">
+    <div class="flex flex-col gap-2 landscape:gap-1 lg:gap-3 landscape:col-span-7 lg:col-span-7 landscape:min-h-0 landscape:flex-1">
 
       <div id="alertBanner" class="hidden shrink-0 rounded-xl px-2.5 py-0.5 lg:py-1 text-center font-black text-[10px] lg:text-xs uppercase tracking-wide"></div>
 
       <!-- BẢNG ĐIỂM -->
-      <div class="sc-panel shrink-0 rounded-2xl p-1.5 lg:p-3 flex items-center justify-between gap-1.5">
+      <div class="sc-panel shrink-0 rounded-2xl p-2 lg:p-3 flex items-center justify-between gap-1.5">
         <div class="flex-1 flex items-center gap-1.5 min-w-0">
           <button onclick="handleSubtractPoint('A')" class="btn-tap w-7 h-7 lg:w-8 lg:h-8 rounded-full bg-white/[0.06] hover:bg-red-500/20 text-slate-300 font-bold text-base flex items-center justify-center shrink-0">−</button>
           <div class="flex-1 text-center min-w-0">
@@ -178,14 +207,28 @@
         </div>
       </div>
 
-      <!-- SÂN 2D CHUẨN 1 MÀU -->
-      <div id="court2DWrapper" class="space-y-1 flex-1 min-h-0 flex flex-col">
+      <!-- SÂN 2D CHUẨN 1 MÀU • TỰ CO GIÃN GỌN TRÊN ĐIỆN THOẠI -->
+      <div id="court2DWrapper" class="space-y-1 flex flex-col justify-center landscape:flex-1 landscape:min-h-0">
         <div class="flex justify-between items-center text-[10px] lg:text-[11px] px-1 shrink-0">
           <span id="courtModeLabel" class="font-extrabold text-slate-400 uppercase tracking-wider">Sân 2D</span>
           <span id="serveHint" class="font-bold text-amber-300 truncate max-w-[74%] text-right">Đội A giao #2</span>
         </div>
 
-        <div class="court-outer relative w-full flex-1 min-h-0 rounded-2xl overflow-hidden shadow-xl">
+        <div class="court-outer relative rounded-2xl overflow-hidden shadow-xl">
+          <!-- MŨI TÊN NGẮN HIỆN ĐẠI CHỈ HƯỚNG PHÁT -> ĐỠ -->
+          <svg id="serveLineSvg" viewBox="0 0 100 100" preserveAspectRatio="none" class="absolute inset-0 w-full h-full pointer-events-none z-10">
+            <defs>
+              <linearGradient id="serveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#facc15" stop-opacity="0.95" />
+                <stop offset="100%" stop-color="#34d399" stop-opacity="0.95" />
+              </linearGradient>
+              <marker id="serveArrowHead" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+                <path d="M0.5,0.5 L4.5,2.5 L0.5,4.5 L1.5,2.5 Z" fill="#34d399" />
+              </marker>
+            </defs>
+            <line id="serveDiagLine" x1="36" y1="63" x2="64" y2="37" stroke="url(#serveGrad)" stroke-width="0.7" stroke-linecap="round" stroke-dasharray="2.2 1.8" marker-end="url(#serveArrowHead)" class="serve-arrow-line" />
+          </svg>
+
           <div class="court-surface w-full h-full">
             <!-- BÊN TRÁI (ĐỘI A) -->
             <div class="grid grid-rows-2 divide-y-2 divide-white h-full">
@@ -225,10 +268,10 @@
     </div>
 
     <!-- CỘT PHẢI (5/12): BẢNG ĐIỀU KHIỂN CO GIÃN GỌN -->
-    <div class="shrink-0 flex flex-col justify-between gap-1.5 landscape:gap-1 lg:gap-2.5 landscape:col-span-5 lg:col-span-5 landscape:min-h-0">
+    <div class="shrink-0 flex flex-col justify-between gap-2 landscape:gap-1 lg:gap-3 landscape:col-span-5 lg:col-span-5 landscape:min-h-0">
 
       <!-- THIẾT LẬP TRƯỚC TRẬN -->
-      <div id="preMatchSetup" class="sc-panel rounded-2xl p-1.5 lg:p-2.5 space-y-1.5 landscape:space-y-1 shrink-0">
+      <div id="preMatchSetup" class="sc-panel rounded-2xl p-2 lg:p-2.5 space-y-1.5 landscape:space-y-1 shrink-0">
         <div class="grid grid-cols-2 gap-1.5">
           <button onclick="openManualLineupModal()" class="btn-tap py-1.5 landscape:py-1 px-2 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-[10px] lg:text-xs font-extrabold flex items-center justify-center gap-1">
             <i data-lucide="users" class="w-3.5 h-3.5"></i> Chọn VĐV
@@ -254,36 +297,36 @@
       </div>
 
       <!-- CHẤM ĐIỂM SIDE-OUT -->
-      <div id="sideoutControls" class="sc-panel rounded-2xl p-1.5 lg:p-2.5 flex flex-col gap-1.5 landscape:gap-1 lg:gap-2 landscape:flex-1 lg:flex-none justify-center">
-        <button id="btnPointServing" onclick="handlePointServing()" class="btn-tap w-full py-3.5 landscape:py-2 lg:py-5 rounded-xl fire-btn text-white font-black text-sm lg:text-base tracking-wide shadow-lg">
+      <div id="sideoutControls" class="sc-panel rounded-2xl p-2 lg:p-3 flex flex-col gap-2 landscape:gap-1 landscape:flex-1 lg:flex-none justify-center">
+        <button id="btnPointServing" onclick="handlePointServing()" class="btn-tap w-full py-4 landscape:py-2 lg:py-5 rounded-xl fire-btn text-white font-black text-sm lg:text-base tracking-wide shadow-lg">
           +1 ĐIỂM (<span id="btnServingName">ĐỘI GIAO</span>)
         </button>
-        <button id="btnSideOut" onclick="handleSideOut()" class="btn-tap w-full py-2.5 landscape:py-1.5 lg:py-3.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 text-orange-400 font-extrabold text-[11px] lg:text-sm tracking-wide">
+        <button id="btnSideOut" onclick="handleSideOut()" class="btn-tap w-full py-3 landscape:py-1.5 lg:py-3.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 text-orange-400 font-extrabold text-xs lg:text-sm tracking-wide">
           SIDE-OUT / ĐỔI TAY
         </button>
       </div>
 
       <!-- CHẤM ĐIỂM RALLY (ĐƠN 21Đ) -->
-      <div id="rallyControls" class="hidden sc-panel rounded-2xl p-1.5 lg:p-2.5 grid-cols-2 gap-1.5 landscape:flex-1 lg:flex-none items-center">
-        <button id="btnRallyA" onclick="handleRallyPoint('A')" class="btn-tap py-3.5 landscape:py-2.5 lg:py-6 rounded-xl fire-btn text-white font-black text-sm lg:text-base shadow-lg">+1 ĐỘI A</button>
-        <button id="btnRallyB" onclick="handleRallyPoint('B')" class="btn-tap py-3.5 landscape:py-2.5 lg:py-6 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-black text-sm lg:text-base shadow-lg">+1 ĐỘI B</button>
+      <div id="rallyControls" class="hidden sc-panel rounded-2xl p-2 lg:p-3 grid-cols-2 gap-2 landscape:flex-1 lg:flex-none items-center">
+        <button id="btnRallyA" onclick="handleRallyPoint('A')" class="btn-tap py-4 landscape:py-2.5 lg:py-6 rounded-xl fire-btn text-white font-black text-sm lg:text-base shadow-lg">+1 ĐỘI A</button>
+        <button id="btnRallyB" onclick="handleRallyPoint('B')" class="btn-tap py-4 landscape:py-2.5 lg:py-6 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-black text-sm lg:text-base shadow-lg">+1 ĐỘI B</button>
       </div>
 
       <!-- TIỆN ÍCH (5 Ô ĐỀU NHAU) -->
       <div class="sc-panel rounded-2xl p-1.5 landscape:p-1 grid grid-cols-5 gap-1 shrink-0">
-        <button onclick="handleUndo()" class="btn-tap py-1.5 landscape:py-1 rounded-xl bg-[#0a0d14] hover:bg-white/[0.06] border border-white/[0.07] text-slate-200 font-bold text-[9px] lg:text-[10px] flex flex-col items-center justify-center gap-0.5">
+        <button onclick="handleUndo()" class="btn-tap py-2 landscape:py-1 rounded-xl bg-[#0a0d14] hover:bg-white/[0.06] border border-white/[0.07] text-slate-200 font-bold text-[9px] lg:text-[10px] flex flex-col items-center justify-center gap-0.5">
           <i data-lucide="undo-2" class="w-3.5 h-3.5"></i><span>Hoàn tác</span>
         </button>
-        <button id="btnToA" onclick="handleTimeout('A')" class="btn-tap py-1.5 landscape:py-1 rounded-xl bg-[#0a0d14] hover:bg-white/[0.06] border border-white/[0.07] text-amber-300 font-bold text-[9px] lg:text-[10px] flex flex-col items-center justify-center gap-0.5">
+        <button id="btnToA" onclick="handleTimeout('A')" class="btn-tap py-2 landscape:py-1 rounded-xl bg-[#0a0d14] hover:bg-white/[0.06] border border-white/[0.07] text-amber-300 font-bold text-[9px] lg:text-[10px] flex flex-col items-center justify-center gap-0.5">
           <i data-lucide="timer" class="w-3.5 h-3.5 text-amber-400"></i><span>Ý A(<span id="toA">2</span>)</span>
         </button>
-        <button id="btnToB" onclick="handleTimeout('B')" class="btn-tap py-1.5 landscape:py-1 rounded-xl bg-[#0a0d14] hover:bg-white/[0.06] border border-white/[0.07] text-amber-300 font-bold text-[9px] lg:text-[10px] flex flex-col items-center justify-center gap-0.5">
+        <button id="btnToB" onclick="handleTimeout('B')" class="btn-tap py-2 landscape:py-1 rounded-xl bg-[#0a0d14] hover:bg-white/[0.06] border border-white/[0.07] text-amber-300 font-bold text-[9px] lg:text-[10px] flex flex-col items-center justify-center gap-0.5">
           <i data-lucide="timer" class="w-3.5 h-3.5 text-amber-400"></i><span>Ý B(<span id="toB">2</span>)</span>
         </button>
-        <button onclick="handleSwitchSides()" class="btn-tap py-1.5 landscape:py-1 rounded-xl bg-[#0a0d14] hover:bg-white/[0.06] border border-white/[0.07] text-slate-200 font-bold text-[9px] lg:text-[10px] flex flex-col items-center justify-center gap-0.5">
+        <button onclick="handleSwitchSides()" class="btn-tap py-2 landscape:py-1 rounded-xl bg-[#0a0d14] hover:bg-white/[0.06] border border-white/[0.07] text-slate-200 font-bold text-[9px] lg:text-[10px] flex flex-col items-center justify-center gap-0.5">
           <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i><span>Đổi sân</span>
         </button>
-        <button id="btnInjurySub" onclick="openInjurySubModal()" class="btn-tap py-1.5 landscape:py-1 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/35 text-rose-300 font-bold text-[9px] lg:text-[10px] flex flex-col items-center justify-center gap-0.5">
+        <button id="btnInjurySub" onclick="openInjurySubModal()" class="btn-tap py-2 landscape:py-1 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/35 text-rose-300 font-bold text-[9px] lg:text-[10px] flex flex-col items-center justify-center gap-0.5">
           <i data-lucide="heart-pulse" class="w-3.5 h-3.5 text-rose-400"></i><span>Thay VĐV</span>
         </button>
       </div>
@@ -412,6 +455,32 @@
     let tossWinner = null;
     let blindWizard = null;
     let isManualLineupOpen = false;
+
+    const QUAD_COORDS = {
+      boxA1: { x: 22, y: 25 },
+      boxA0: { x: 22, y: 75 },
+      boxB0: { x: 78, y: 25 },
+      boxB1: { x: 78, y: 75 }
+    };
+
+    function updateServeArrow(serverBox, receiverBox, finished) {
+      const svg = document.getElementById('serveLineSvg');
+      const line = document.getElementById('serveDiagLine');
+      if (!svg || !line) return;
+      if (finished || !QUAD_COORDS[serverBox] || !QUAD_COORDS[receiverBox]) {
+        svg.classList.add('hidden');
+        return;
+      }
+      svg.classList.remove('hidden');
+      const from = QUAD_COORDS[serverBox];
+      const to = QUAD_COORDS[receiverBox];
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      line.setAttribute('x1', (from.x + dx * 0.28).toFixed(1));
+      line.setAttribute('y1', (from.y + dy * 0.28).toFixed(1));
+      line.setAttribute('x2', (to.x - dx * 0.28).toFixed(1));
+      line.setAttribute('y2', (to.y - dy * 0.28).toFixed(1));
+    }
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playBeep(freq = 800, duration = 0.12, type = 'sine') {
@@ -938,6 +1007,8 @@
         const serverBox = isA ? activeBoxA : activeBoxB;
         const receiverBox = isA ? activeBoxB : activeBoxA;
 
+        updateServeArrow(serverBox, receiverBox, finished);
+
         const renderSingleQuad = (slotKey, activeBox, playerName, defaultColor) => {
           const boxId = `box${slotKey}`;
           const isVisible = boxId === activeBox;
@@ -976,6 +1047,8 @@
         const sBox = (m.servingBox !== undefined) ? m.servingBox : 0;
         const serverBox = isA ? (sBox === 0 ? 'boxA0' : 'boxA1') : (sBox === 0 ? 'boxB0' : 'boxB1');
         const receiverBox = isA ? (sBox === 0 ? 'boxB0' : 'boxB1') : (sBox === 0 ? 'boxA0' : 'boxA1');
+
+        updateServeArrow(serverBox, receiverBox, finished);
 
         const styleQuad = (slotKey, defaultCoreColor) => {
           const boxId = `box${slotKey}`;
