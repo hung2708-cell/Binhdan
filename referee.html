@@ -131,6 +131,8 @@
   <script type="module">
     import { db, ref, set, update, onValue } from './js/firebase-config.js';
     import { awardPoint, faultOrSideOut, undoLastAction, getCallScore, getMatchAlerts } from './js/pickleball-engine.js';
+    import { requirePin } from './js/auth.js';
+await requirePin('referee');
 
     const params = new URLSearchParams(window.location.search);
     let currentCourtId = params.get('court') || 'court_1';
