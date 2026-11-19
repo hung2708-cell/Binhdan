@@ -129,11 +129,22 @@
       .ls-compact-hide { display: none !important; }
     }
 
-    /* Tỷ lệ chuẩn cho máy tính */
+    /* Căn giữa toàn bộ giao diện gọn đẹp trên máy tính */
     @media (min-width: 1024px) {
+      body {
+        max-width: 1024px !important;
+        padding: 20px 24px !important;
+        justify-content: center;
+      }
+      #refereeBoard {
+        flex: none !important;
+        margin-top: 8px;
+        gap: 20px !important;
+        align-items: stretch !important;
+      }
       .court-outer {
         aspect-ratio: 2.05 / 1;
-        max-height: 310px;
+        max-height: 300px;
       }
     }
 
@@ -147,7 +158,7 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="flex flex-col p-2 landscape:p-1.5 lg:p-4 max-w-md landscape:max-w-full lg:max-w-5xl mx-auto">
+<body class="flex flex-col p-2 landscape:p-1.5 max-w-md landscape:max-w-full lg:max-w-5xl mx-auto">
 
   <!-- TOP BAR CỐ ĐỊNH: CHỌN SÂN + CHỌN NỘI DUNG THI ĐẤU -->
   <header class="flex items-center justify-between gap-1.5 mb-1.5 landscape:mb-1 lg:mb-3 shrink-0">
@@ -1140,7 +1151,9 @@
       document.getElementById('scoreB').textContent = m.teamB.score;
       document.getElementById('toA').textContent = m.teamA.timeouts ?? 2;
       document.getElementById('toB').textContent = m.teamB.timeouts ?? 2;
-      document.getElementById('preMatchSetup').classList.toggle('hidden', isMatchStarted(m));
+      const started = isMatchStarted(m);
+      document.getElementById('preMatchSetup').classList.remove('hidden');
+      document.querySelectorAll('#preMatchSetup button').forEach(btn => { btn.disabled = started; });
 
       const isA = m.servingTeam === 'A';
       document.getElementById('courtModeLabel').textContent = isSingles ? `Sân 2D • ĐƠN (Cặp #${alerts.currentPairSlot || 1})` : 'Sân 2D • 4 Ô VĐV';
