@@ -9,34 +9,29 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body {
-      background-color: #0c0908;
+      background-color: #090b0f;
       background-image:
-        radial-gradient(circle at 15% 0%, rgba(234, 88, 12, 0.16), transparent 45%),
-        radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.08), transparent 40%);
-      color: #f5f0eb;
+        radial-gradient(circle at 15% 0%, rgba(249, 115, 22, 0.12), transparent 45%),
+        radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.06), transparent 40%);
+      color: #f8fafc;
       font-family: system-ui, -apple-system, sans-serif;
     }
-    .fire-card {
-      background: linear-gradient(145deg, #17110e 0%, #110d0b 100%);
+    .sc-card {
+      background: #12161f;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+    .sc-banner {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.14) 0%, rgba(220, 38, 38, 0.1) 60%, rgba(16, 185, 129, 0.06) 100%);
       border: 1px solid rgba(249, 115, 22, 0.3);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
-    }
-    .fire-banner {
-      background: linear-gradient(135deg, rgba(220, 38, 38, 0.18) 0%, rgba(249, 115, 22, 0.12) 55%, rgba(16, 185, 129, 0.1) 100%);
-      border: 1px solid rgba(249, 115, 22, 0.45);
-    }
-    .fire-gradient-text {
-      background: linear-gradient(90deg, #fbbf24, #f97316, #ef4444);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
     }
     .live-dot { box-shadow: 0 0 10px #10b981; }
     .ios-glass-nav {
-      background: rgba(24, 17, 14, 0.72);
+      background: rgba(18, 22, 31, 0.78);
       backdrop-filter: blur(24px) saturate(190%);
       -webkit-backdrop-filter: blur(24px) saturate(190%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.16);
       touch-action: pan-y;
     }
     .ios-pill {
@@ -53,58 +48,70 @@
     }
   </style>
 </head>
-<body class="min-h-screen pb-28">
+<body class="min-h-screen pb-28 lg:pb-8">
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-30 bg-[#0c0908]/90 backdrop-blur-md border-b border-orange-500/30 px-3.5 py-2.5">
-    <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
+  <header class="sticky top-0 z-30 bg-[#090b0f]/90 backdrop-blur-md border-b border-white/10 px-3.5 py-2.5">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-2.5 min-w-0">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-orange-600 to-red-700 p-[2px] shrink-0 shadow-lg">
           <img id="pubLogo" src="logo.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover rounded-[10px] bg-black" alt="Logo" />
         </div>
         <div class="min-w-0">
-          <h1 class="font-black text-sm sm:text-base uppercase tracking-wider truncate fire-gradient-text">CLB Bính Dần 1986</h1>
-          <p id="pubTourName" class="text-[11px] text-amber-200/70 truncate">Đang tải dữ liệu...</p>
+          <h1 class="font-black text-sm sm:text-base uppercase tracking-wider truncate text-orange-400">CLB Bính Dần 1986</h1>
+          <p id="pubTourName" class="text-[11px] text-slate-400 truncate">Đang tải dữ liệu...</p>
         </div>
       </div>
-      <a href="admin.html" class="whitespace-nowrap shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-full bg-orange-500/15 border border-orange-500/35 text-orange-300">
+
+      <!-- MENU ĐIỀU HƯỚNG TRÊN MÁY TÍNH -->
+      <nav class="hidden lg:flex items-center gap-1.5">
+        <button onclick="switchPubTab('live')" data-tab="live" class="desk-tab px-3.5 py-1.5 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/40">Sân Live</button>
+        <button onclick="switchPubTab('ties')" data-tab="ties" class="desk-tab px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.06]">Lượt đấu</button>
+        <button onclick="switchPubTab('standings')" data-tab="standings" class="desk-tab px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.06]">Xếp hạng</button>
+        <a href="groups.html" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Bảng đấu A–D</a>
+        <a href="players.html" class="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06]">Điểm trình</a>
+      </nav>
+
+      <a href="admin.html" class="whitespace-nowrap shrink-0 text-[11px] px-3 py-1.5 rounded-full bg-white/[0.06] border border-white/10 text-slate-200 font-semibold">
         Quản trị
       </a>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto p-4 space-y-4">
+  <main class="max-w-6xl mx-auto p-4 lg:p-6 space-y-4">
 
     <!-- HERO BANNER -->
-    <section class="fire-banner rounded-2xl p-3.5 flex items-center gap-3.5">
-      <img src="logo.jpg" onerror="this.style.display='none'" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-orange-500/70 shrink-0 bg-black" alt="Logo" />
-      <div class="min-w-0">
-        <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 text-[10px] font-black uppercase mb-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Lư Trung Hỏa • 1986
+    <section class="sc-banner rounded-2xl p-3.5 sm:p-4 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5 min-w-0">
+        <img src="logo.jpg" onerror="this.style.display='none'" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border border-orange-500/50 shrink-0 bg-black" alt="Logo" />
+        <div class="min-w-0">
+          <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/35 text-emerald-400 text-[10px] font-bold uppercase mb-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Bính Dần • 1986
+          </div>
+          <h2 id="heroTourName" class="font-black text-sm sm:text-lg text-white uppercase leading-tight truncate">Giải Đồng Đội Bính Dần 1986</h2>
+          <p class="text-[11px] text-slate-400 mt-0.5 truncate">4 Trận Đôi (15đ) • Đơn Quyết Định (21đ)</p>
         </div>
-        <h2 id="heroTourName" class="font-black text-sm sm:text-lg text-white uppercase leading-tight truncate">Giải Đồng Đội Bính Dần 1986</h2>
-        <p class="text-[11px] text-amber-200/70 mt-0.5 truncate">4 Trận Đôi (15đ) • Đơn Quyết Định (21đ)</p>
       </div>
     </section>
 
-    <!-- LIÊN KẾT NHANH SANG BẢNG ĐẤU & ĐIỂM TRÌNH -->
-    <section class="grid grid-cols-2 gap-2.5">
-      <a href="groups.html" class="fire-card rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 hover:border-orange-500/60 active:scale-95 transition">
-        <div class="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">
+    <!-- LIÊN KẾT NHANH TRÊN ĐIỆN THOẠI -->
+    <section class="grid grid-cols-2 gap-2.5 lg:hidden">
+      <a href="groups.html" class="sc-card rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 hover:border-orange-500/40 active:scale-95 transition">
+        <div class="w-8 h-8 rounded-lg bg-orange-500/15 text-orange-400 flex items-center justify-center shrink-0">
           <i data-lucide="grid" class="w-4 h-4"></i>
         </div>
         <div class="min-w-0">
-          <div class="text-xs font-black text-white truncate">Bảng đấu A–D</div>
-          <div class="text-[10px] text-amber-200/60 truncate">Đa nội dung & Chia bảng</div>
+          <div class="text-xs font-bold text-white truncate">Bảng đấu A–D</div>
+          <div class="text-[10px] text-slate-400 truncate">Đa nội dung & Chia bảng</div>
         </div>
       </a>
-      <a href="players.html" class="fire-card rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 hover:border-orange-500/60 active:scale-95 transition">
-        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+      <a href="players.html" class="sc-card rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 hover:border-orange-500/40 active:scale-95 transition">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0">
           <i data-lucide="award" class="w-4 h-4"></i>
         </div>
         <div class="min-w-0">
-          <div class="text-xs font-black text-white truncate">Điểm trình VĐV</div>
-          <div class="text-[10px] text-amber-200/60 truncate">Tra cứu & Ghép cặp</div>
+          <div class="text-xs font-bold text-white truncate">Điểm trình VĐV</div>
+          <div class="text-[10px] text-slate-400 truncate">Tra cứu & Ghép cặp</div>
         </div>
       </a>
     </section>
@@ -118,52 +125,52 @@
         </h2>
         <span id="liveCountBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">0 sân đang đấu</span>
       </div>
-      <div id="liveCourtsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      <div id="liveCourtsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5"></div>
     </section>
 
     <!-- TAB 2: LƯỢT ĐẤU ĐỒNG ĐỘI -->
     <section id="panelTies" class="pub-panel hidden space-y-3">
       <h2 class="font-black text-orange-400 uppercase text-sm">Lịch & Kết quả Lượt đấu Đồng đội</h2>
-      <div id="tiesContainer" class="space-y-3"></div>
+      <div id="tiesContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-3.5"></div>
     </section>
 
     <!-- TAB 3: BẢNG XẾP HẠNG -->
     <section id="panelStandings" class="pub-panel hidden space-y-2.5">
       <h2 class="font-black text-orange-400 uppercase text-sm">Bảng xếp hạng Đồng đội (3-2-1-0)</h2>
-      <div class="fire-card rounded-2xl overflow-x-auto">
-        <table class="w-full text-left text-xs min-w-[340px]">
-          <thead class="bg-gradient-to-r from-orange-600/25 to-red-600/15 text-amber-300 uppercase">
+      <div class="sc-card rounded-2xl overflow-x-auto">
+        <table class="w-full text-left text-xs min-w-[360px]">
+          <thead class="bg-white/[0.04] text-amber-300 uppercase border-b border-white/10">
             <tr>
-              <th class="py-2.5 px-2.5">#</th>
+              <th class="py-2.5 px-3">#</th>
               <th class="py-2.5 px-2">CLB / Đội</th>
-              <th class="py-2.5 px-1.5 text-center">Trận</th>
-              <th class="py-2.5 px-1.5 text-center">T-H-B</th>
-              <th class="py-2.5 px-1.5 text-center">HS Hiệp</th>
-              <th class="py-2.5 px-1.5 text-center">HS Điểm</th>
-              <th class="py-2.5 px-2.5 text-right">Điểm</th>
+              <th class="py-2.5 px-2 text-center">Trận</th>
+              <th class="py-2.5 px-2 text-center">T-H-B</th>
+              <th class="py-2.5 px-2 text-center">HS Hiệp</th>
+              <th class="py-2.5 px-2 text-center">HS Điểm</th>
+              <th class="py-2.5 px-3 text-right">Điểm</th>
             </tr>
           </thead>
-          <tbody id="standingsBody" class="divide-y divide-orange-500/15"></tbody>
+          <tbody id="standingsBody" class="divide-y divide-white/[0.06]"></tbody>
         </table>
       </div>
-      <p class="text-[11px] text-amber-200/55 px-1">* Thắng 3đ, Hòa 2đ, Thua 1đ, Bỏ cuộc 0đ. Bằng điểm xét Đối đầu → HS Hiệp → HS Điểm.</p>
+      <p class="text-[11px] text-slate-400 px-1">* Thắng 3đ, Hòa 2đ, Thua 1đ, Bỏ cuộc 0đ. Bằng điểm xét Đối đầu → HS Hiệp → HS Điểm.</p>
     </section>
 
   </main>
 
-  <!-- FLOATING LIQUID GLASS SLIDER NAV -->
-  <div class="fixed bottom-3 left-3 right-3 z-40 flex justify-center pointer-events-none">
+  <!-- MOBILE FLOATING LIQUID GLASS SLIDER NAV -->
+  <div class="lg:hidden fixed bottom-3 left-3 right-3 z-40 flex justify-center pointer-events-none">
     <nav id="pubIosNav" class="ios-glass-nav pointer-events-auto relative w-full max-w-md rounded-full p-1.5 grid grid-cols-3 select-none">
       <div id="pubIosPill" class="ios-pill"></div>
       <button onclick="switchPubTab('live')" data-tab="live" class="pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-orange-400 transition-colors">
         <i data-lucide="radio" class="w-5 h-5"></i>
         <span class="text-[10px] font-bold leading-none">Sân Live</span>
       </button>
-      <button onclick="switchPubTab('ties')" data-tab="ties" class="pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-gray-400 transition-colors">
+      <button onclick="switchPubTab('ties')" data-tab="ties" class="pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-slate-400 transition-colors">
         <i data-lucide="swords" class="w-5 h-5"></i>
         <span class="text-[10px] font-bold leading-none">Lượt đấu</span>
       </button>
-      <button onclick="switchPubTab('standings')" data-tab="standings" class="pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-gray-400 transition-colors">
+      <button onclick="switchPubTab('standings')" data-tab="standings" class="pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-slate-400 transition-colors">
         <i data-lucide="trophy" class="w-5 h-5"></i>
         <span class="text-[10px] font-bold leading-none">Xếp hạng</span>
       </button>
@@ -179,6 +186,7 @@
     const pill = document.getElementById('pubIosPill');
 
     function updatePill(idx, animate = true) {
+      if (!pill) return;
       pill.style.transition = animate ? 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)' : 'none';
       pill.style.transform = `translateX(${idx * 100}%)`;
     }
@@ -191,7 +199,12 @@
         document.getElementById(PANELS[t]).classList.toggle('hidden', t !== tab);
       });
       document.querySelectorAll('.pub-nav-btn').forEach(b => {
-        b.className = `pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 transition-colors ${b.dataset.tab === tab ? 'text-orange-400' : 'text-gray-400'}`;
+        b.className = `pub-nav-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 transition-colors ${b.dataset.tab === tab ? 'text-orange-400' : 'text-slate-400'}`;
+      });
+      document.querySelectorAll('.desk-tab').forEach(b => {
+        b.className = b.dataset.tab === tab
+          ? 'desk-tab px-3.5 py-1.5 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/40'
+          : 'desk-tab px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/[0.06]';
       });
     };
 
@@ -229,12 +242,12 @@
         if (m) activeCount++;
         if (!m) {
           return `
-            <div class="fire-card rounded-2xl p-4 opacity-60">
+            <div class="sc-card rounded-2xl p-4 opacity-65">
               <div class="flex justify-between items-center mb-2">
-                <span class="font-black text-xs text-amber-200/60 uppercase">${c.name}</span>
-                <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-amber-200/40 font-bold">TRỐNG</span>
+                <span class="font-black text-xs text-slate-300 uppercase">${c.name}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-slate-400 font-bold">TRỐNG</span>
               </div>
-              <p class="text-xs text-amber-200/40 text-center py-4">Đang chờ trận đấu tiếp theo</p>
+              <p class="text-xs text-slate-400 text-center py-4">Đang chờ trận đấu tiếp theo</p>
             </div>`;
         }
 
@@ -253,12 +266,12 @@
         const isDone = m.status === 'finished';
 
         return `
-          <div class="fire-card rounded-2xl overflow-hidden">
-            <div class="bg-gradient-to-r from-red-600/25 via-orange-600/20 to-transparent px-3.5 py-2 border-b border-orange-500/25 flex items-center justify-between gap-2">
+          <div class="sc-card rounded-2xl overflow-hidden">
+            <div class="bg-white/[0.04] px-3.5 py-2 border-b border-white/10 flex items-center justify-between gap-2">
               <span class="font-black text-xs text-amber-300 uppercase truncate">${c.name}</span>
               <div class="flex items-center gap-1.5 shrink-0">
                 ${tieBadge}
-                <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isDone ? 'bg-white/10 text-gray-300' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">${isDone ? 'XONG' : '● LIVE'}</span>
+                <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">${isDone ? 'XONG' : '● LIVE'}</span>
               </div>
             </div>
             <div class="p-3.5 space-y-2">
@@ -269,9 +282,9 @@
                     <span class="text-sm font-bold truncate ${m.winner === 'A' ? 'text-emerald-400' : 'text-white'}">${m.teamA.name}</span>
                     ${!isDone && isA ? `<span class="text-[10px] text-amber-400 font-black">${dots}</span>` : ''}
                   </div>
-                  <div class="text-[10px] text-amber-200/60 truncate">${m.isDreambreaker ? 'Đơn 21 điểm' : (m.teamA.players || []).join(' / ')}</div>
+                  <div class="text-[10px] text-slate-400 truncate">${m.isDreambreaker ? 'Đơn 21 điểm' : (m.teamA.players || []).filter(Boolean).join(' / ')}</div>
                 </div>
-                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg shrink-0 ${isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">${m.teamA.score}</span>
+                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg tabular-nums shrink-0 ${isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/[0.08] text-slate-100'}">${m.teamA.score}</span>
               </div>
               <div class="flex items-center justify-between">
                 <div class="min-w-0 pr-2">
@@ -279,13 +292,13 @@
                     <span class="text-sm font-bold truncate ${m.winner === 'B' ? 'text-emerald-400' : 'text-white'}">${m.teamB.name}</span>
                     ${!isDone && !isA ? `<span class="text-[10px] text-amber-400 font-black">${dots}</span>` : ''}
                   </div>
-                  <div class="text-[10px] text-amber-200/60 truncate">${m.isDreambreaker ? 'Đơn 21 điểm' : (m.teamB.players || []).join(' / ')}</div>
+                  <div class="text-[10px] text-slate-400 truncate">${m.isDreambreaker ? 'Đơn 21 điểm' : (m.teamB.players || []).filter(Boolean).join(' / ')}</div>
                 </div>
-                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg shrink-0 ${!isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/10 text-amber-100'}">${m.teamB.score}</span>
+                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg tabular-nums shrink-0 ${!isA ? 'bg-gradient-to-br from-orange-500 to-red-600 text-white shadow' : 'bg-white/[0.08] text-slate-100'}">${m.teamB.score}</span>
               </div>
             </div>
           </div>`;
-      }).join('') || '<p class="text-xs text-amber-200/50">Chưa có sân nào.</p>';
+      }).join('') || '<p class="text-xs text-slate-400">Chưa có sân nào.</p>';
       document.getElementById('liveCountBadge').textContent = `${activeCount} sân đang đấu`;
 
       const tiesArr = Object.values(ties).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -294,24 +307,24 @@
         let wA = 0, wB = 0;
         subMatches.forEach(m => { if (m.winner === 'A') wA++; if (m.winner === 'B') wB++; });
         return `
-          <div class="fire-card rounded-2xl p-3.5 space-y-2.5">
-            <div class="flex items-center justify-between border-b border-orange-500/20 pb-2">
+          <div class="sc-card rounded-2xl p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-white/10 pb-2">
               <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-orange-500/20 text-amber-300">${tie.stage === 'knockout' ? 'Loại trực tiếp' : 'Vòng bảng'}</span>
-              <div class="font-black text-sm text-white">${tie.teamAName} <span class="text-orange-400 mx-1.5 text-base">${wA} - ${wB}</span> ${tie.teamBName}</div>
+              <div class="font-black text-sm text-white">${tie.teamAName} <span class="text-orange-400 mx-1.5 text-base tabular-nums">${wA} - ${wB}</span> ${tie.teamBName}</div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               ${subMatches.map(m => `
-                <div class="bg-[#0c0908] border border-orange-500/15 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs">
+                <div class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs">
                   <div class="min-w-0">
-                    <div class="text-[10px] font-bold text-amber-300/80">${m.category.split('(')[0]}</div>
-                    <div class="text-[11px] text-gray-300 truncate">${(m.teamA.players || []).join('/')} vs ${(m.teamB.players || []).join('/')}</div>
+                    <div class="text-[10px] font-bold text-amber-300/90">${(m.category || '').split('(')[0]}</div>
+                    <div class="text-[11px] text-slate-300 truncate">${(m.teamA.players || []).filter(Boolean).join('/')} vs ${(m.teamB.players || []).filter(Boolean).join('/')}</div>
                   </div>
-                  <span class="shrink-0 font-black text-sm ${m.status === 'live' ? 'text-emerald-400' : 'text-orange-400'}">${m.teamA.score} - ${m.teamB.score}</span>
+                  <span class="shrink-0 font-black text-sm tabular-nums ${m.status === 'live' ? 'text-emerald-400' : 'text-orange-400'}">${m.teamA.score} - ${m.teamB.score}</span>
                 </div>
               `).join('')}
             </div>
           </div>`;
-      }).join('') || '<p class="text-xs text-amber-200/50 text-center py-6">Chưa có lượt đấu đồng đội nào.</p>';
+      }).join('') || '<p class="text-xs text-slate-400 text-center py-6 col-span-full">Chưa có lượt đấu đồng đội nào.</p>';
 
       const stats = {}; const h2h = {};
       const initTeam = (n) => { if (!stats[n]) stats[n] = { name: n, played: 0, w: 0, d: 0, l: 0, setDiff: 0, ptDiff: 0, pts: 0 }; if (!h2h[n]) h2h[n] = {}; };
@@ -346,16 +359,16 @@
       });
 
       document.getElementById('standingsBody').innerHTML = arr.map((r, i) => `
-        <tr class="hover:bg-orange-500/5">
-          <td class="py-2.5 px-2.5 font-black ${i < 2 ? 'text-amber-400' : 'text-amber-200/40'}">${i + 1}</td>
+        <tr class="hover:bg-white/[0.03]">
+          <td class="py-2.5 px-3 font-black ${i < 2 ? 'text-amber-400' : 'text-slate-500'}">${i + 1}</td>
           <td class="py-2.5 px-2 font-bold text-white">${r.name}</td>
-          <td class="py-2.5 px-1.5 text-center text-amber-200/60">${r.played}</td>
-          <td class="py-2.5 px-1.5 text-center text-gray-300">${r.w}-${r.d}-${r.l}</td>
-          <td class="py-2.5 px-1.5 text-center font-bold ${r.setDiff >= 0 ? 'text-emerald-400' : 'text-red-400'}">${r.setDiff > 0 ? '+' : ''}${r.setDiff}</td>
-          <td class="py-2.5 px-1.5 text-center font-bold ${r.ptDiff >= 0 ? 'text-amber-200' : 'text-red-400'}">${r.ptDiff > 0 ? '+' : ''}${r.ptDiff}</td>
-          <td class="py-2.5 px-2.5 text-right font-black text-orange-400 text-sm">${r.pts}</td>
+          <td class="py-2.5 px-2 text-center text-slate-400 tabular-nums">${r.played}</td>
+          <td class="py-2.5 px-2 text-center text-slate-300 tabular-nums">${r.w}-${r.d}-${r.l}</td>
+          <td class="py-2.5 px-2 text-center font-bold tabular-nums ${r.setDiff >= 0 ? 'text-emerald-400' : 'text-red-400'}">${r.setDiff > 0 ? '+' : ''}${r.setDiff}</td>
+          <td class="py-2.5 px-2 text-center font-bold tabular-nums ${r.ptDiff >= 0 ? 'text-amber-200' : 'text-red-400'}">${r.ptDiff > 0 ? '+' : ''}${r.ptDiff}</td>
+          <td class="py-2.5 px-3 text-right font-black text-orange-400 text-sm tabular-nums">${r.pts}</td>
         </tr>
-      `).join('') || '<tr><td colspan="7" class="py-6 text-center text-amber-200/50">Chưa có dữ liệu xếp hạng.</td></tr>';
+      `).join('') || '<tr><td colspan="7" class="py-6 text-center text-slate-400">Chưa có dữ liệu xếp hạng.</td></tr>';
     });
 
     lucide.createIcons();
