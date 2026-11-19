@@ -24,6 +24,18 @@
     .player-token {
       transition: all 0.25s cubic-bezier(0.32, 0.72, 0, 1);
     }
+    @keyframes dotBlink {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.22); opacity: 0.65; }
+    }
+    .blink-serve {
+      animation: dotBlink 1s ease-in-out infinite;
+      box-shadow: 0 0 12px #facc15;
+    }
+    .blink-receive {
+      animation: dotBlink 1.2s ease-in-out infinite;
+      box-shadow: 0 0 10px #34d399;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col p-3 max-w-md mx-auto select-none">
@@ -77,7 +89,7 @@
       </div>
     </div>
 
-    <!-- SƠ ĐỒ SÂN PICKLEBALL 2D CHIỀU NGANG (VỊ TRÍ THỰC TẾ + ĐƯỜNG CHÉO PHÁT BÓNG) -->
+    <!-- SƠ ĐỒ SÂN PICKLEBALL 2D CHIỀU NGANG -->
     <div id="court2DWrapper" class="fire-card rounded-2xl p-2.5 space-y-2">
       <div class="flex justify-between items-center text-[10px] text-gray-400 px-1">
         <span class="font-bold text-orange-400">SÂN 2D THỰC TẾ</span>
@@ -88,14 +100,14 @@
         <div class="court-surface h-40 text-xs font-bold">
           <!-- NỬA SÂN TRÁI (ĐỘI A) -->
           <div class="grid grid-rows-2 divide-y divide-white/75 h-full">
-            <div id="boxA1" class="relative flex items-center px-2 transition-colors">
+            <div id="boxA1" class="relative flex items-center px-2">
               <span class="absolute top-0.5 left-1.5 text-[8px] text-white/45 uppercase">Trái (Lẻ)</span>
               <div id="tokA1" class="player-token flex flex-col items-center max-w-[78px]">
                 <span id="dotA1" class="w-4 h-4 rounded-full border-2 border-white bg-sky-400 shadow"></span>
                 <span id="pA1" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
               </div>
             </div>
-            <div id="boxA0" class="relative flex items-center px-2 transition-colors">
+            <div id="boxA0" class="relative flex items-center px-2">
               <span class="absolute bottom-0.5 left-1.5 text-[8px] text-white/45 uppercase">Phải (Chẵn)</span>
               <div id="tokA0" class="player-token flex flex-col items-center max-w-[78px]">
                 <span id="dotA0" class="w-4 h-4 rounded-full border-2 border-white bg-sky-400 shadow"></span>
@@ -114,14 +126,14 @@
 
           <!-- NỬA SÂN PHẢI (ĐỘI B) -->
           <div class="grid grid-rows-2 divide-y divide-white/75 h-full">
-            <div id="boxB0" class="relative flex items-center px-2 transition-colors">
+            <div id="boxB0" class="relative flex items-center px-2">
               <span class="absolute top-0.5 right-1.5 text-[8px] text-white/45 uppercase">Phải (Chẵn)</span>
               <div id="tokB0" class="player-token flex flex-col items-center max-w-[78px]">
                 <span id="dotB0" class="w-4 h-4 rounded-full border-2 border-white bg-emerald-400 shadow"></span>
                 <span id="pB0" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
               </div>
             </div>
-            <div id="boxB1" class="relative flex items-center px-2 transition-colors">
+            <div id="boxB1" class="relative flex items-center px-2">
               <span class="absolute bottom-0.5 right-1.5 text-[8px] text-white/45 uppercase">Trái (Lẻ)</span>
               <div id="tokB1" class="player-token flex flex-col items-center max-w-[78px]">
                 <span id="dotB1" class="w-4 h-4 rounded-full border-2 border-white bg-emerald-400 shadow"></span>
@@ -131,16 +143,16 @@
           </div>
         </div>
 
-        <!-- SVG VẼ ĐƯỜNG CHÉO PHÁT BÓNG -->
+        <!-- SVG VẼ ĐƯỜNG CHÉO PHÁT BÓNG NGẮN, GỌN -->
         <svg id="serveSvg" viewBox="0 0 300 160" preserveAspectRatio="none" class="absolute inset-0 w-full h-full pointer-events-none z-20">
           <defs>
-            <marker id="serveArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-              <path d="M0,0 L0,6 L7,3 z" fill="#facc15" />
+            <marker id="serveArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0.5 L0,5.5 L5.5,3 z" fill="#facc15" />
             </marker>
           </defs>
-          <line id="serveLine" x1="28" y1="120" x2="272" y2="40"
-            stroke="#facc15" stroke-width="2.5" stroke-dasharray="6 4"
-            marker-end="url(#serveArrow)" opacity="0.92" />
+          <line id="serveLine" x1="72" y1="112" x2="228" y2="48"
+            stroke="#facc15" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"
+            marker-end="url(#serveArrow)" opacity="0.95" />
         </svg>
       </div>
 
@@ -259,7 +271,6 @@
       await set(ref(db, `matches/${currentMatchId}`), newState);
     }
 
-    // Chọn người giao / người đỡ: Đổi vị trí 2 VĐV trong 1 đội
     window.swapTeamPlayers = async (side) => {
       if (!currentMatch || !currentMatchId) return;
       const key = side === 'A' ? 'teamA' : 'teamB';
@@ -269,7 +280,6 @@
       await update(ref(db, `matches/${currentMatchId}/${key}`), { players: swapped });
     };
 
-    // Chọn đội giao bóng
     window.toggleServingTeam = async () => {
       if (!currentMatch || !currentMatchId) return;
       const nextTeam = currentMatch.servingTeam === 'A' ? 'B' : 'A';
@@ -330,43 +340,42 @@
         const activeScore = isA ? m.teamA.score : m.teamB.score;
         const isEven = activeScore % 2 === 0;
 
-        // Xác định ô giao bóng & ô đỡ bóng (chéo sân)
         const serverBox = isA ? (isEven ? 'boxA0' : 'boxA1') : (isEven ? 'boxB0' : 'boxB1');
         const receiverBox = isA ? (isEven ? 'boxB0' : 'boxB1') : (isEven ? 'boxA0' : 'boxA1');
         const netPartnerBox = isA ? (isEven ? 'boxB1' : 'boxB0') : (isEven ? 'boxA1' : 'boxA0');
 
-        // Đẩy vị trí đứng thực tế:
-        // - Đội A (bên trái): cuối sân = justify-start, gần lưới = justify-end
-        // - Đội B (bên phải): cuối sân = justify-end, gần lưới = justify-start
-        const setPos = (boxId, justifyClass, bg) => {
+        // Giữ nguyên màu mặt sân (không đổi màu nền), chỉ đổi vị trí đứng
+        const setPos = (boxId, justifyClass) => {
           const el = document.getElementById(boxId);
-          el.className = `relative flex items-center px-2 transition-colors ${justifyClass}`;
-          el.style.background = bg;
+          el.className = `relative flex items-center px-2 ${justifyClass}`;
         };
 
         if (isA) {
-          // Đội A giao -> cả 2 đứng cuối sân (trái)
-          setPos('boxA0', 'justify-start', serverBox === 'boxA0' ? 'rgba(249, 115, 22, 0.32)' : 'transparent');
-          setPos('boxA1', 'justify-start', serverBox === 'boxA1' ? 'rgba(249, 115, 22, 0.32)' : 'transparent');
-          // Đội B đỡ -> người đỡ cuối sân (phải), đồng đội gần lưới (trái)
-          setPos('boxB0', receiverBox === 'boxB0' ? 'justify-end' : 'justify-start', receiverBox === 'boxB0' ? 'rgba(16, 185, 129, 0.22)' : 'transparent');
-          setPos('boxB1', receiverBox === 'boxB1' ? 'justify-end' : 'justify-start', receiverBox === 'boxB1' ? 'rgba(16, 185, 129, 0.22)' : 'transparent');
+          setPos('boxA0', 'justify-start');
+          setPos('boxA1', 'justify-start');
+          setPos('boxB0', receiverBox === 'boxB0' ? 'justify-end' : 'justify-start');
+          setPos('boxB1', receiverBox === 'boxB1' ? 'justify-end' : 'justify-start');
         } else {
-          // Đội B giao -> cả 2 đứng cuối sân (phải)
-          setPos('boxB0', 'justify-end', serverBox === 'boxB0' ? 'rgba(249, 115, 22, 0.32)' : 'transparent');
-          setPos('boxB1', 'justify-end', serverBox === 'boxB1' ? 'rgba(249, 115, 22, 0.32)' : 'transparent');
-          // Đội A đỡ -> người đỡ cuối sân (trái), đồng đội gần lưới (phải)
-          setPos('boxA0', receiverBox === 'boxA0' ? 'justify-start' : 'justify-end', receiverBox === 'boxA0' ? 'rgba(16, 185, 129, 0.22)' : 'transparent');
-          setPos('boxA1', receiverBox === 'boxA1' ? 'justify-start' : 'justify-end', receiverBox === 'boxA1' ? 'rgba(16, 185, 129, 0.22)' : 'transparent');
+          setPos('boxB0', 'justify-end');
+          setPos('boxB1', 'justify-end');
+          setPos('boxA0', receiverBox === 'boxA0' ? 'justify-start' : 'justify-end');
+          setPos('boxA1', receiverBox === 'boxA1' ? 'justify-start' : 'justify-end');
         }
 
-        // Tô màu chấm tròn: Vàng (Người giao), Xanh lá (Người đỡ), Trắng/Xanh dương (Đồng đội)
+        // Chỉ nhấp nháy chấm người giao (vàng) & người đỡ (xanh lá)
         const dotStyle = (boxId, defaultColor) => {
-          if (boxId === serverBox) return 'w-4 h-4 rounded-full border-2 border-white bg-amber-400 shadow-[0_0_10px_#facc15]';
-          if (boxId === receiverBox) return 'w-4 h-4 rounded-full border-2 border-white bg-emerald-400 shadow-[0_0_8px_#34d399]';
-          if (boxId === netPartnerBox) return 'w-4 h-4 rounded-full border-2 border-white bg-cyan-400 shadow';
+          if (m.status !== 'finished' && boxId === serverBox) {
+            return 'w-4 h-4 rounded-full border-2 border-white bg-amber-400 blink-serve';
+          }
+          if (m.status !== 'finished' && boxId === receiverBox) {
+            return 'w-4 h-4 rounded-full border-2 border-white bg-emerald-400 blink-receive';
+          }
+          if (boxId === netPartnerBox) {
+            return 'w-4 h-4 rounded-full border-2 border-white bg-cyan-400 shadow';
+          }
           return `w-4 h-4 rounded-full border-2 border-white ${defaultColor} shadow`;
         };
+
         document.getElementById('dotA0').className = dotStyle('boxA0', 'bg-sky-400');
         document.getElementById('dotA1').className = dotStyle('boxA1', 'bg-sky-400');
         document.getElementById('dotB0').className = dotStyle('boxB0', 'bg-rose-400');
@@ -377,12 +386,12 @@
         document.getElementById('pB0').textContent = pB0;
         document.getElementById('pB1').textContent = pB1;
 
-        // Vẽ đường chéo phát bóng (SVG 300x160)
+        // Đường chéo phát bóng ngắn, gọn (không đè lên chấm VĐV)
         const coords = {
-          boxA0: { x: 26, y: 120 },
-          boxA1: { x: 26, y: 40 },
-          boxB0: { x: 274, y: 40 },
-          boxB1: { x: 274, y: 120 }
+          boxA0: { x: 72, y: 112 },
+          boxA1: { x: 72, y: 48 },
+          boxB0: { x: 228, y: 48 },
+          boxB1: { x: 228, y: 112 }
         };
         const line = document.getElementById('serveLine');
         if (m.status === 'finished') {
