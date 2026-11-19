@@ -916,7 +916,159 @@
       renderBoard();
     });
 
-    async function saveMatch(newState) { if (currentMatchId) await set(ref(db, `matches/${currentMatchId}`), newState); }
+    // Kiểm tra lượt đồng đội đã đấu xong toàn bộ các trận chưa
+    function isTieCompleted(tie, matchesMap) {
+      if (!tie) return true;
+      if (tie.walkoverWinner) return true;
+      const subs = (tie.matchIds || []).map(id => matchesMap[id]).filter(Boolean);
+      if (subs.length < 4) return false;
+      const fourDone = subs.slice(0, 4).every(m => isMatchFinished(m));
+      if (!fourDone) return false;
+      if (tie.stage === 'knockout') {
+        let wA = 0, wB = 0;
+        subs.slice(0, 4).forEach(m => { if (m.winner === 'A') wA++; if (m.winner === 'B') wB++; });
+        if (wA === 2 && wB === 2) return subs[4] ? isMatchFinished(subs[4]) : false;
+      }
+      return true;
+    }
+
+    // Tự động giải phóng sân đã xong & đẩy cặp tiếp theo không trùng CLB vào sân
+    async function autoDispatchAfterFinish(latestMatch) {
+      const matchesMap = { ...allMatches, [currentMatchId]: latestMatch };
+      const tie = getActiveTie(latestMatch);
+      const isTeamMode = Boolean(tie);
+
+      // Nếu là giải đồng đội mà vẫn còn trận con chưa đánh xong thì chưa đổi lượt
+      if (isTeamMode && !isTieCompleted(tie, matchesMap)) return;
+
+      const updates = {};
+      const busyTeams = new Set();
+      const recentlyFinished = new Set();
+      const freeCourts = [];
+      const playedCount = {};
+
+      // 1. Quét toàn bộ các sân: sân nào xong thì giải phóng, sân nào đang đánh thì giữ nguyên
+      Object.entries(allCourts).forEach(([cId, c]) => {
+        if (isTeamMode) {
+          const tId = c.activeTieId || matchesMap[c.activeMatchId]?.tieId || '';
+          const t = tId ? allTies[tId] : null;
+          if (!t || isTieCompleted(t, matchesMap)) {
+            if (t) { recentlyFinished.add(t.teamAName); recentlyFinished.add(t.teamBName); }
+            updates[`courts/${cId}/activeTieId`] = '';
+            updates[`courts/${cId}/activeMatchId`] = '';
+            freeCourts.push(cId);
+          } else {
+            busyTeams.add(t.teamAName);
+            busyTeams.add(t.teamBName);
+          }
+        } else {
+          const m = c.activeMatchId ? matchesMap[c.activeMatchId] : null;
+          if (!m || isMatchFinished(m)) {
+            if (m) { recentlyFinished.add(m.teamA?.name); recentlyFinished.add(m.teamB?.name); }
+            updates[`courts/${cId}/activeTieId`] = '';
+            updates[`courts/${cId}/activeMatchId`] = '';
+            freeCourts.push(cId);
+          } else {
+            busyTeams.add(m.teamA?.name);
+            busyTeams.add(m.teamB?.name);
+          }
+        }
+      });
+
+      if (!freeCourts.length) return;
+
+      // 2. Đếm số lượt đã đấu để ưu tiên đội được nghỉ
+      if (isTeamMode) {
+        Object.values(allTies).forEach(t => {
+          if (isTieCompleted(t, matchesMap)) {
+            playedCount[t.teamAName] = (playedCount[t.teamAName] || 0) + 1;
+            playedCount[t.teamBName] = (playedCount[t.teamBName] || 0) + 1;
+          }
+        });
+
+        const activeTieIds = new Set(
+          Object.entries(allCourts)
+            .filter(([cId]) => !freeCourts.includes(cId))
+            .map(([_, c]) => c.activeTieId || matchesMap[c.activeMatchId]?.tieId)
+            .filter(Boolean)
+        );
+
+        const waitingTies = Object.values(allTies)
+          .filter(t => !isTieCompleted(t, matchesMap) && !activeTieIds.has(t.id))
+          .sort((a, b) => {
+            const restA = (recentlyFinished.has(a.teamAName) ? 1 : 0) + (recentlyFinished.has(a.teamBName) ? 1 : 0);
+            const restB = (recentlyFinished.has(b.teamAName) ? 1 : 0) + (recentlyFinished.has(b.teamBName) ? 1 : 0);
+            if (restA !== restB) return restA - restB;
+            const pA = (playedCount[a.teamAName] || 0) + (playedCount[a.teamBName] || 0);
+            const pB = (playedCount[b.teamAName] || 0) + (playedCount[b.teamBName] || 0);
+            return pA - pB || (a.createdAt || 0) - (b.createdAt || 0);
+          });
+
+        for (const cId of freeCourts) {
+          const idx = waitingTies.findIndex(t => !busyTeams.has(t.teamAName) && !busyTeams.has(t.teamBName));
+          if (idx === -1) break;
+          const chosen = waitingTies.splice(idx, 1)[0];
+          const mIds = chosen.matchIds || [];
+          const nextMId = mIds.find(id => !isMatchFinished(matchesMap[id])) || mIds[0] || '';
+
+          updates[`courts/${cId}/activeTieId`] = chosen.id;
+          updates[`courts/${cId}/activeMatchId`] = nextMId;
+          if (nextMId) {
+            updates[`matches/${nextMId}/courtId`] = cId;
+            if (matchesMap[nextMId]?.status === 'waiting') updates[`matches/${nextMId}/status`] = 'live';
+          }
+          busyTeams.add(chosen.teamAName);
+          busyTeams.add(chosen.teamBName);
+        }
+      } else {
+        Object.values(matchesMap).filter(m => !m.tieId && isMatchFinished(m)).forEach(m => {
+          playedCount[m.teamA?.name] = (playedCount[m.teamA?.name] || 0) + 1;
+          playedCount[m.teamB?.name] = (playedCount[m.teamB?.name] || 0) + 1;
+        });
+
+        const activeMIds = new Set(
+          Object.entries(allCourts)
+            .filter(([cId]) => !freeCourts.includes(cId))
+            .map(([_, c]) => c.activeMatchId)
+            .filter(Boolean)
+        );
+
+        const waitingMatches = Object.values(matchesMap)
+          .filter(m => !m.tieId && !isMatchFinished(m) && !activeMIds.has(m.id))
+          .sort((a, b) => {
+            const restA = (recentlyFinished.has(a.teamA?.name) ? 1 : 0) + (recentlyFinished.has(a.teamB?.name) ? 1 : 0);
+            const restB = (recentlyFinished.has(b.teamA?.name) ? 1 : 0) + (recentlyFinished.has(b.teamB?.name) ? 1 : 0);
+            if (restA !== restB) return restA - restB;
+            const pA = (playedCount[a.teamA?.name] || 0) + (playedCount[a.teamB?.name] || 0);
+            const pB = (playedCount[b.teamA?.name] || 0) + (playedCount[b.teamB?.name] || 0);
+            return pA - pB;
+          });
+
+        for (const cId of freeCourts) {
+          const idx = waitingMatches.findIndex(m => !busyTeams.has(m.teamA?.name) && !busyTeams.has(m.teamB?.name));
+          if (idx === -1) break;
+          const chosen = waitingMatches.splice(idx, 1)[0];
+
+          updates[`courts/${cId}/activeTieId`] = '';
+          updates[`courts/${cId}/activeMatchId`] = chosen.id;
+          updates[`matches/${chosen.id}/courtId`] = cId;
+          if (chosen.status === 'waiting') updates[`matches/${chosen.id}/status`] = 'live';
+          busyTeams.add(chosen.teamA?.name);
+          busyTeams.add(chosen.teamB?.name);
+        }
+      }
+
+      await update(ref(db, '/'), updates);
+    }
+
+    async function saveMatch(newState) {
+      if (!currentMatchId) return;
+      await set(ref(db, `matches/${currentMatchId}`), newState);
+      if (isMatchFinished(newState)) {
+        // Đợi 2.5 giây để trọng tài nhìn thấy thông báo Kết thúc trận rồi tự đẩy cặp mới vào sân
+        setTimeout(() => autoDispatchAfterFinish(newState), 2500);
+      }
+    }
 
     window.handlePointServing = () => {
       if (!currentMatch || isMatchFinished(currentMatch)) return;
