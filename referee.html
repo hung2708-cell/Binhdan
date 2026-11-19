@@ -105,7 +105,7 @@
       <div id="tieSubMatchesBar" class="flex gap-1.5 overflow-x-auto no-scrollbar flex-1"></div>
     </div>
 
-    <!-- CỘT TRÁI (XOAY NGANG): BẢNG ĐIỂM + SÂN 2D GIÃN TRỌN CHIỀU CAO -->
+    <!-- CỘT TRÁI (XOAY NGANG): BẢNG ĐIỂM + SÂN 2D -->
     <div class="flex flex-col gap-2.5 landscape:gap-2 landscape:col-span-7 landscape:h-full landscape:min-h-0 landscape:justify-between">
 
       <!-- CẢNH BÁO -->
@@ -254,8 +254,57 @@
     </div>
   </main>
 
+  <!-- POPUP CHỌN VĐV TRƯỚC KHI THI ĐẤU (LỌC NAM/NỮ + ẨN VĐV ĐÃ CHỌN - ĐỒNG BỘ KHUNG PIN) -->
+  <div id="lineupSetupModal" class="hidden fixed inset-0 z-[9999] bg-[#0a0807]/92 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-[#17110e] border border-orange-500/45 rounded-2xl p-5 shadow-2xl space-y-3.5 max-h-[92dvh] overflow-y-auto">
+      <div class="text-center space-y-1">
+        <div class="w-11 h-11 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl">🏓</div>
+        <h2 id="setupTitle" class="font-black text-orange-400 uppercase text-sm tracking-wide">CHỌN VĐV THI ĐẤU</h2>
+        <p class="text-[11px] text-amber-200/70">Chọn VĐV trước khi bắt đầu. VĐV đã chọn sẽ ẩn đi.</p>
+      </div>
+
+      <!-- ĐỘI A -->
+      <div class="bg-[#0a0807] border border-white/10 rounded-xl p-2.5 space-y-2 text-xs">
+        <div class="flex items-center justify-between gap-1">
+          <span id="setupNameA" class="font-black text-amber-300 truncate">Đội A</span>
+          <div id="setupFilterA" class="flex gap-1 shrink-0"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5">
+          <button type="button" onclick="openSetupSlotPicker('A', 0)" class="btn-tap py-2 px-2 rounded-lg bg-[#17110e] border border-white/15 text-white font-semibold truncate">
+            <span id="lblSlotA0">-- VĐV 1 --</span>
+          </button>
+          <button type="button" onclick="openSetupSlotPicker('A', 1)" class="btn-tap py-2 px-2 rounded-lg bg-[#17110e] border border-white/15 text-white font-semibold truncate">
+            <span id="lblSlotA1">-- VĐV 2 --</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ĐỘI B -->
+      <div class="bg-[#0a0807] border border-white/10 rounded-xl p-2.5 space-y-2 text-xs">
+        <div class="flex items-center justify-between gap-1">
+          <span id="setupNameB" class="font-black text-amber-300 truncate">Đội B</span>
+          <div id="setupFilterB" class="flex gap-1 shrink-0"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5">
+          <button type="button" onclick="openSetupSlotPicker('B', 0)" class="btn-tap py-2 px-2 rounded-lg bg-[#17110e] border border-white/15 text-white font-semibold truncate">
+            <span id="lblSlotB0">-- VĐV 1 --</span>
+          </button>
+          <button type="button" onclick="openSetupSlotPicker('B', 1)" class="btn-tap py-2 px-2 rounded-lg bg-[#17110e] border border-white/15 text-white font-semibold truncate">
+            <span id="lblSlotB1">-- VĐV 2 --</span>
+          </button>
+        </div>
+      </div>
+
+      <p id="setupErr" class="hidden text-center text-xs text-red-400 font-bold">Vui lòng chọn đủ 4 VĐV!</p>
+
+      <button onclick="confirmMatchLineupSetup()" class="btn-tap w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-sm shadow-lg">
+        XÁC NHẬN VÀO SÂN
+      </button>
+    </div>
+  </div>
+
   <!-- POPUP CHỌN DANH SÁCH DÙNG CHUNG -->
-  <div id="pickerModal" onclick="if(event.target === this) closePickerModal()" class="hidden fixed inset-0 z-[9999] bg-[#0a0807]/90 backdrop-blur-md flex items-center justify-center p-4">
+  <div id="pickerModal" onclick="if(event.target === this) closePickerModal()" class="hidden fixed inset-0 z-[10000] bg-[#0a0807]/90 backdrop-blur-md flex items-center justify-center p-4">
     <div class="w-full max-w-xs bg-[#17110e] border border-orange-500/40 rounded-2xl p-5 text-center shadow-2xl space-y-3.5">
       <div id="pickerIcon" class="w-11 h-11 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl">🏓</div>
       <h2 id="pickerTitle" class="font-black text-orange-400 uppercase text-sm tracking-wide">Lựa chọn</h2>
@@ -277,7 +326,7 @@
       <button id="btnRunToss" onclick="runCoinToss()" class="btn-tap w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-sm shadow-lg">
         TUNG ĐỒNG XU
       </button>
-      <div id="tossChoices" class="hidden grid grid-cols-2 gap-2">
+      <div id="tossChoices" class="hidden grid-cols-2 gap-2">
         <button onclick="applyTossChoice('serve')" class="btn-tap py-2.5 rounded-xl bg-emerald-600 text-white font-black text-xs">🏓 Chọn Giao bóng</button>
         <button onclick="applyTossChoice('side')" class="btn-tap py-2.5 rounded-xl bg-amber-500 text-black font-black text-xs">⇄ Chọn Sân (Đổi)</button>
       </div>
@@ -296,9 +345,7 @@
       <button id="btnGoNextMatch" onclick="goNextTieMatch()" class="hidden btn-tap w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-sm shadow-lg">
         CHUYỂN SANG TRẬN TIẾP THEO →
       </button>
-      <button onclick="closeNextMatchModal()" class="block w-full text-xs text-gray-400 hover:text-white font-semibold">
-        Đóng
-      </button>
+      <button onclick="closeNextMatchModal()" class="block w-full text-xs text-gray-400 hover:text-white font-semibold">Đóng</button>
     </div>
   </div>
 
@@ -342,15 +389,18 @@
     let currentCourtId = params.get('court') || 'court_1';
     let currentMatchId = null;
     let currentMatch = null;
+    let allTeams = {};
     let allCourts = {};
     let allMatches = {};
     let allTies = {};
     let soundEnabled = true;
     let switchPopupShownForMatch = null;
     let finishedPopupShownForMatch = null;
+    let lineupSetupShownForMatch = null;
     let pendingNextMatchId = null;
     let timeoutInterval = null;
     let tossWinner = null;
+    let setupState = null;
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playBeep(freq = 800, duration = 0.12, type = 'sine') {
@@ -374,6 +424,12 @@
       return [arr[0] || `${fallbackPrefix}1`, arr[1] || `${fallbackPrefix}2`];
     }
 
+    function hasSelectedPlayers(m) {
+      const [a0, a1] = getPlayers(m.teamA, '');
+      const [b0, b1] = getPlayers(m.teamB, '');
+      return Boolean(a0 && a1 && b0 && b1);
+    }
+
     function isMatchStarted(m) {
       return Boolean(
         (m.teamA && m.teamA.score > 0) ||
@@ -390,6 +446,129 @@
       return m.switchPoint || Math.ceil((Number(m.targetScore) || 11) / 2);
     }
 
+    // --- CHỌN VĐV TRƯỚC KHI THI ĐẤU (LỌC NAM/NỮ + ẨN VĐV ĐÃ CHỌN) ---
+    function openLineupSetupIfNeeded(m) {
+      if (!m || m.isDreambreaker || isMatchStarted(m) || hasSelectedPlayers(m)) return;
+      if (lineupSetupShownForMatch === currentMatchId) return;
+      lineupSetupShownForMatch = currentMatchId;
+
+      const tie = m.tieId ? allTies[m.tieId] : null;
+      const tA = tie ? allTeams[tie.teamAId] : null;
+      const tB = tie ? allTeams[tie.teamBId] : null;
+
+      const fallbackPool = [
+        { name: 'VĐV 1', gender: 'Nam' },
+        { name: 'VĐV 2', gender: 'Nam' },
+        { name: 'VĐV 3', gender: 'Nữ' },
+        { name: 'VĐV 4', gender: 'Nữ' }
+      ];
+      const rosterA = (tA?.rosterDetails && tA.rosterDetails.length)
+        ? tA.rosterDetails
+        : ((tA?.roster || []).length ? tA.roster.map(n => ({ name: n, gender: '' })) : fallbackPool);
+      const rosterB = (tB?.rosterDetails && tB.rosterDetails.length)
+        ? tB.rosterDetails
+        : ((tB?.roster || []).length ? tB.roster.map(n => ({ name: n, gender: '' })) : fallbackPool);
+
+      const usedA = new Set();
+      const usedB = new Set();
+      if (tie) {
+        (tie.matchIds || []).forEach(otherId => {
+          if (otherId === currentMatchId) return;
+          const om = allMatches[otherId];
+          if (!om) return;
+          (om.teamA?.players || []).forEach(p => { if (p) usedA.add(p); });
+          (om.teamB?.players || []).forEach(p => { if (p) usedB.add(p); });
+        });
+      }
+
+      const catLower = (m.category || '').toLowerCase();
+      let defFilter = 'ALL';
+      if (catLower.includes('đôi nữ')) defFilter = 'Nữ';
+      else if (catLower.includes('đôi nam') && !catLower.includes('nam nữ')) defFilter = 'Nam';
+
+      setupState = {
+        rosterA, rosterB, usedA, usedB,
+        filterA: defFilter, filterB: defFilter,
+        pairA: ['', ''], pairB: ['', '']
+      };
+
+      document.getElementById('setupTitle').textContent = (m.category || 'CHỌN VĐV').split('(')[0].trim();
+      document.getElementById('setupNameA').textContent = m.teamA.name;
+      document.getElementById('setupNameB').textContent = m.teamB.name;
+      document.getElementById('setupErr').classList.add('hidden');
+      renderSetupUI();
+      document.getElementById('lineupSetupModal').classList.remove('hidden');
+    }
+
+    function renderSetupUI() {
+      if (!setupState) return;
+      const mkFilter = (side, cur) => ['ALL', 'Nam', 'Nữ'].map(g => `
+        <button type="button" onclick="setSetupFilter('${side}','${g}')" class="px-1.5 py-0.5 rounded text-[9px] font-bold ${
+          cur === g ? 'bg-orange-500 text-black' : 'bg-white/10 text-gray-300'
+        }">${g === 'ALL' ? 'Tất cả' : g}</button>
+      `).join('');
+
+      document.getElementById('setupFilterA').innerHTML = mkFilter('A', setupState.filterA);
+      document.getElementById('setupFilterB').innerHTML = mkFilter('B', setupState.filterB);
+      document.getElementById('lblSlotA0').textContent = setupState.pairA[0] || '-- VĐV 1 --';
+      document.getElementById('lblSlotA1').textContent = setupState.pairA[1] || '-- VĐV 2 --';
+      document.getElementById('lblSlotB0').textContent = setupState.pairB[0] || '-- VĐV 1 --';
+      document.getElementById('lblSlotB1').textContent = setupState.pairB[1] || '-- VĐV 2 --';
+    }
+
+    window.setSetupFilter = (side, g) => {
+      if (!setupState) return;
+      if (side === 'A') { setupState.filterA = g; setupState.pairA = ['', '']; }
+      else { setupState.filterB = g; setupState.pairB = ['', '']; }
+      renderSetupUI();
+    };
+
+    window.openSetupSlotPicker = (side, idx) => {
+      if (!setupState) return;
+      const roster = side === 'A' ? setupState.rosterA : setupState.rosterB;
+      const usedSet = side === 'A' ? setupState.usedA : setupState.usedB;
+      const filterG = side === 'A' ? setupState.filterA : setupState.filterB;
+      const pair = side === 'A' ? setupState.pairA : setupState.pairB;
+      const otherVal = pair[idx === 0 ? 1 : 0];
+
+      const available = roster.filter(p => {
+        if (filterG !== 'ALL' && p.gender && p.gender !== filterG) return false;
+        if (p.name === pair[idx]) return true;
+        if (p.name === otherVal) return false;
+        if (usedSet.has(p.name)) return false;
+        return true;
+      });
+
+      openPickerModal({
+        icon: side === 'A' ? '🔵' : '🔴',
+        title: `Chọn VĐV ${side === 'A' ? currentMatch.teamA.name : currentMatch.teamB.name} (#${idx + 1})`,
+        options: available.length ? available.map(p => ({
+          label: `${p.name}${p.gender ? ` • ${p.gender}` : ''}`,
+          active: p.name === pair[idx],
+          onSelect: () => {
+            pair[idx] = p.name;
+            renderSetupUI();
+          }
+        })) : [{ label: 'Hết VĐV khả dụng cho bộ lọc này', active: false, onSelect: () => {} }]
+      });
+    };
+
+    window.confirmMatchLineupSetup = async () => {
+      if (!setupState || !currentMatchId) return;
+      if (!setupState.pairA[0] || !setupState.pairA[1] || !setupState.pairB[0] || !setupState.pairB[1]) {
+        document.getElementById('setupErr').classList.remove('hidden');
+        return;
+      }
+      await update(ref(db, `matches/${currentMatchId}`), {
+        'teamA/players': setupState.pairA,
+        'teamB/players': setupState.pairB
+      });
+      document.getElementById('lineupSetupModal').classList.add('hidden');
+      setupState = null;
+      playBeep(750, 0.12);
+    };
+
+    // --- POPUP CHỌN DÙNG CHUNG ---
     function openPickerModal({ icon = '🏓', title = 'Lựa chọn', options = [] }) {
       document.getElementById('pickerIcon').textContent = icon;
       document.getElementById('pickerTitle').textContent = title;
@@ -512,6 +691,7 @@
       playBeep(620, 0.08);
       switchPopupShownForMatch = null;
       finishedPopupShownForMatch = null;
+      lineupSetupShownForMatch = null;
       const updates = { [`courts/${currentCourtId}/activeMatchId`]: subMatchId };
       const targetMatch = allMatches[subMatchId];
       if (targetMatch && targetMatch.status === 'waiting') {
@@ -531,6 +711,7 @@
 
     onValue(ref(db, '/'), (snap) => {
       const data = snap.val() || {};
+      allTeams = data.teams || {};
       allCourts = data.courts || {};
       allMatches = data.matches || {};
       allTies = data.ties || {};
@@ -548,6 +729,7 @@
 
       document.getElementById('emptyState').classList.add('hidden');
       document.getElementById('refereeBoard').classList.remove('hidden');
+      openLineupSetupIfNeeded(currentMatch);
       renderBoard();
     });
 
