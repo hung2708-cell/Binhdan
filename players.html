@@ -1,298 +1,324 @@
-
 <!DOCTYPE html>
 <html lang="vi" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Danh Bạ VĐV & Điểm Trình - Bính Dần 1986</title>
+  <title>Điểm Trình VĐV - Bính Dần 1986 Pickleball</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body {
-      background-color: #0c0908;
+      background-color: #090b0f;
       background-image:
-        radial-gradient(circle at 15% 0%, rgba(234, 88, 12, 0.16), transparent 45%),
-        radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.08), transparent 40%);
-      color: #f5f0eb;
+        radial-gradient(circle at 15% 0%, rgba(249, 115, 22, 0.12), transparent 45%),
+        radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.06), transparent 40%);
+      color: #f8fafc;
       font-family: system-ui, -apple-system, sans-serif;
     }
-    .fire-card {
-      background: linear-gradient(145deg, #17110e 0%, #110d0b 100%);
-      border: 1px solid rgba(249, 115, 22, 0.3);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+    .sc-card {
+      background: #12161f;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
     }
-    .fire-btn { background: linear-gradient(135deg, #f97316, #dc2626); }
+    .fire-btn {
+      background: linear-gradient(135deg, #f97316, #dc2626);
+    }
     .fire-btn:active { transform: scale(0.97); }
-    .fire-gradient-text {
-      background: linear-gradient(90deg, #fbbf24, #f97316, #ef4444);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
     .ios-glass-nav {
-      background: rgba(24, 17, 14, 0.75);
-      backdrop-filter: blur(22px) saturate(180%);
-      -webkit-backdrop-filter: blur(22px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.18);
+      background: rgba(18, 22, 31, 0.82);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.16);
     }
   </style>
 </head>
 <body class="min-h-screen pb-28">
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-30 bg-[#0c0908]/90 backdrop-blur-md border-b border-orange-500/30 px-3.5 py-2.5">
-    <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
+  <header class="sticky top-0 z-30 bg-[#090b0f]/90 backdrop-blur-md border-b border-white/10 px-3.5 py-2.5">
+    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-2.5 min-w-0">
-        <img src="logo.jpg" onerror="this.style.display='none'" class="w-9 h-9 rounded-xl object-cover border border-orange-500/60 bg-black shrink-0" alt="Logo" />
+        <img src="logo.jpg" onerror="this.style.display='none'" class="w-9 h-9 rounded-xl object-cover border border-orange-500/50 bg-black shrink-0" alt="Logo" />
         <div class="min-w-0">
-          <h1 class="font-black text-sm uppercase tracking-wider truncate fire-gradient-text">Điểm Trình VĐV</h1>
-          <p class="text-[11px] text-amber-200/60 truncate">CLB Bính Dần 1986 • Rating</p>
+          <h1 class="font-black text-orange-400 tracking-wide text-sm uppercase leading-tight truncate">Điểm Trình VĐV</h1>
+          <p id="plTourName" class="text-[11px] text-slate-400 truncate">Giải Pickleball Bính Dần 1986</p>
         </div>
       </div>
-      <div class="flex items-center gap-1.5 shrink-0">
-        <button id="btnAdminMode" onclick="toggleAdminMode()" class="whitespace-nowrap text-[11px] font-bold px-3 py-1.5 rounded-full bg-orange-500/15 border border-orange-500/40 text-orange-300">
-          🔒 Quản lý
-        </button>
-      </div>
+
+      <a href="admin.html" class="whitespace-nowrap shrink-0 text-[11px] px-3 py-1.5 rounded-full bg-white/[0.06] border border-white/10 text-slate-200 font-semibold">
+        Quản trị
+      </a>
     </div>
   </header>
 
-  <main class="max-w-4xl mx-auto p-4 space-y-4">
+  <main class="max-w-6xl mx-auto p-4 lg:p-6 space-y-4">
 
-    <!-- CÔNG CỤ KIỂM TRA TỔNG TRÌNH GHÉP CẶP -->
-    <section class="fire-card rounded-2xl p-4 space-y-3">
-      <div class="flex items-center justify-between">
-        <h2 class="font-black text-orange-400 uppercase text-xs flex items-center gap-1.5">
-          <i data-lucide="calculator" class="w-4 h-4"></i> Kiểm tra tổng trình ghép cặp
-        </h2>
-        <div class="flex items-center gap-1.5 text-xs">
-          <span class="text-amber-200/60">Giới hạn:</span>
-          <input id="inpMaxRating" type="number" step="0.1" value="5.5" oninput="checkPairRating()" class="w-16 bg-[#0c0908] border border-orange-500/40 rounded-lg px-2 py-1 text-center font-black text-amber-300 outline-none" />
+    <!-- CÔNG CỤ TÍNH TỔNG TRÌNH GHÉP CẶP NHANH -->
+    <section class="sc-card rounded-2xl p-4 space-y-3">
+      <div class="flex items-center justify-between gap-2">
+        <h2 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Tính điểm trình ghép cặp</h2>
+        <span id="pairCalcBadge" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-orange-500/20 text-amber-300 border border-orange-500/30 tabular-nums">
+          Tổng: 0.0
+        </span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <button type="button" onclick="openPairSlotPicker(1)" class="w-full bg-[#090b0f] border border-white/10 hover:border-orange-500/40 rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between gap-2 text-xs">
+          <span id="pairSlot1Label" class="font-bold text-slate-200 truncate">-- Chọn VĐV 1 --</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        </button>
+        <button type="button" onclick="openPairSlotPicker(2)" class="w-full bg-[#090b0f] border border-white/10 hover:border-orange-500/40 rounded-xl px-3.5 py-2.5 text-left flex items-center justify-between gap-2 text-xs">
+          <span id="pairSlot2Label" class="font-bold text-slate-200 truncate">-- Chọn VĐV 2 --</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 shrink-0"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- TÌM KIẾM & LỌC GIỚI TÍNH + THÊM VĐV -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <div class="lg:col-span-7 sc-card rounded-2xl p-4 space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <input id="searchPlayerInp" type="text" oninput="renderPlayersList()" placeholder="Tìm tên VĐV hoặc CLB..." class="flex-1 bg-[#090b0f] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-orange-500" />
+          <div class="flex gap-1.5 shrink-0">
+            <button onclick="setGenderFilter('ALL')" data-g="ALL" class="g-pill px-3 py-1.5 rounded-full text-[11px] font-black bg-orange-500 text-slate-950">Tất cả</button>
+            <button onclick="setGenderFilter('Nam')" data-g="Nam" class="g-pill px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/[0.06] text-slate-300">Nam</button>
+            <button onclick="setGenderFilter('Nữ')" data-g="Nữ" class="g-pill px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/[0.06] text-slate-300">Nữ</button>
+          </div>
         </div>
-      </div>
-      <div class="grid grid-cols-2 gap-2">
-        <select id="selPair1" onchange="checkPairRating()" class="bg-[#0c0908] border border-gray-700 rounded-xl px-2.5 py-2 text-xs"></select>
-        <select id="selPair2" onchange="checkPairRating()" class="bg-[#0c0908] border border-gray-700 rounded-xl px-2.5 py-2 text-xs"></select>
-      </div>
-      <div id="pairResult" class="hidden rounded-xl px-3 py-2 text-xs font-bold flex items-center justify-between"></div>
-    </section>
 
-    <!-- KHUNG THÊM VĐV (CHỈ HIỆN KHI MỞ KHÓA ADMIN) -->
-    <section id="adminAddBox" class="hidden fire-card rounded-2xl p-4 space-y-3 border-emerald-500/40">
-      <div class="flex items-center justify-between">
-        <h2 class="font-black text-emerald-400 uppercase text-xs">+ Thêm / Cập nhật VĐV</h2>
-        <button onclick="seedSamplePlayers()" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/10 text-amber-200 font-semibold">Nạp 8 VĐV mẫu</button>
+        <div id="playersList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
       </div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        <input id="inpName" type="text" placeholder="Họ tên VĐV" class="col-span-2 bg-[#0c0908] border border-gray-700 rounded-xl px-3 py-2 text-xs outline-none focus:border-orange-500" />
-        <select id="inpGender" class="bg-[#0c0908] border border-gray-700 rounded-xl px-2.5 py-2 text-xs">
-          <option value="Nam">Nam</option>
-          <option value="Nữ">Nữ</option>
-        </select>
-        <input id="inpRating" type="number" step="0.1" min="1.5" max="6.0" value="2.8" placeholder="Trình (VD: 2.8)" class="bg-[#0c0908] border border-gray-700 rounded-xl px-3 py-2 text-xs outline-none focus:border-orange-500" />
-      </div>
-      <div class="grid grid-cols-2 gap-2">
-        <input id="inpClub" type="text" placeholder="CLB (VD: Bính Dần 1986)" value="Bính Dần 1986" class="bg-[#0c0908] border border-gray-700 rounded-xl px-3 py-2 text-xs outline-none" />
-        <button onclick="addPlayer()" class="fire-btn py-2 rounded-xl font-black text-xs text-white">Lưu VĐV</button>
-      </div>
-    </section>
 
-    <!-- TÌM KIẾM & LỌC -->
-    <section class="flex gap-2">
-      <input id="inpSearch" type="text" oninput="renderPlayers()" placeholder="🔍 Tìm tên VĐV hoặc CLB..." class="flex-1 bg-[#17110e] border border-orange-500/30 rounded-xl px-3.5 py-2.5 text-xs outline-none focus:border-orange-500" />
-      <select id="filterGender" onchange="renderPlayers()" class="bg-[#17110e] border border-orange-500/30 rounded-xl px-3 py-2.5 text-xs font-bold text-amber-200">
-        <option value="ALL">Tất cả</option>
-        <option value="Nam">Nam</option>
-        <option value="Nữ">Nữ</option>
-      </select>
-    </section>
-
-    <!-- DANH SÁCH VĐV -->
-    <section class="space-y-2">
-      <div class="flex justify-between items-center text-[11px] text-amber-200/60 px-1">
-        <span>Tổng số: <b id="totalPlayersCount" class="text-orange-400">0</b> VĐV</span>
-        <span>Sắp xếp theo Điểm trình giảm dần</span>
+      <div class="lg:col-span-5 sc-card rounded-2xl p-4 space-y-3 h-fit">
+        <h2 class="font-bold text-orange-400 uppercase text-xs tracking-wider">Thêm VĐV vào danh sách</h2>
+        <input id="newPlName" type="text" placeholder="Họ và tên VĐV" class="w-full bg-[#090b0f] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-orange-500" />
+        <input id="newPlClub" type="text" placeholder="CLB / Đội (không bắt buộc)" class="w-full bg-[#090b0f] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-orange-500" />
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="openNewGenderPicker()" class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 flex items-center justify-between">
+            <span id="newPlGenderLabel">Nam</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+          </button>
+          <input id="newPlRating" type="number" step="0.1" min="1.5" max="6.0" value="2.8" placeholder="Điểm trình" class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-center font-black text-amber-300 outline-none focus:border-orange-500" />
+        </div>
+        <button onclick="addCustomPlayer()" class="fire-btn w-full py-3 rounded-xl font-black text-xs text-white shadow">
+          + Lưu VĐV
+        </button>
       </div>
-      <div id="playersList" class="space-y-2"></div>
     </section>
 
   </main>
 
-  <!-- FLOATING LIQUID GLASS NAV -->
+  <!-- POPUP CHỌN & XÁC NHẬN ĐỒNG BỘ (#090b0f / #12161f) -->
+  <div id="scModal" onclick="if(event.target === this) closeScModal()" class="hidden fixed inset-0 z-[9999] bg-[#090b0f]/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/40 rounded-2xl p-5 text-center shadow-2xl space-y-3.5">
+      <div id="scModalIcon" class="w-11 h-11 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl">🏓</div>
+      <h2 id="scModalTitle" class="font-black text-orange-400 uppercase text-sm tracking-wide">Lựa chọn</h2>
+      <p id="scModalDesc" class="hidden text-xs text-slate-300 leading-relaxed"></p>
+      <div id="scModalBody" class="space-y-2 max-h-60 overflow-y-auto"></div>
+      <button onclick="closeScModal()" class="block w-full text-xs text-slate-400 hover:text-white pt-1 font-semibold">Đóng</button>
+    </div>
+  </div>
+
+  <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden bg-orange-600 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xl"></div>
+
+  <!-- THANH ĐIỀU HƯỚNG NỔI DƯỚI CÙNG ĐỒNG BỘ (MÁY TÍNH & ĐIỆN THOẠI) -->
   <div class="fixed bottom-3 left-3 right-3 z-40 flex justify-center pointer-events-none">
-    <nav class="ios-glass-nav pointer-events-auto w-full max-w-md rounded-full p-1.5 grid grid-cols-3 gap-1">
-      <a href="index.html" class="rounded-full py-2 flex flex-col items-center justify-center gap-0.5 text-gray-400">
-        <i data-lucide="radio" class="w-5 h-5"></i><span class="text-[10px] font-bold leading-none">Live Score</span>
-      </a>
-      <a href="players.html" class="rounded-full py-2 flex flex-col items-center justify-center gap-0.5 bg-orange-500/25 text-orange-400">
-        <i data-lucide="award" class="w-5 h-5"></i><span class="text-[10px] font-bold leading-none">Điểm trình</span>
-      </a>
-      <a href="admin.html" class="rounded-full py-2 flex flex-col items-center justify-center gap-0.5 text-gray-400">
-        <i data-lucide="settings" class="w-5 h-5"></i><span class="text-[10px] font-bold leading-none">Quản trị</span>
-      </a>
+    <nav class="ios-glass-nav pointer-events-auto rounded-full px-2.5 py-1.5 flex items-center gap-1.5 max-w-md lg:max-w-none overflow-x-auto no-scrollbar">
+      <a href="index.html" class="px-3.5 py-2 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06] whitespace-nowrap">Sân Live</a>
+      <a href="groups.html" class="px-3.5 py-2 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06] whitespace-nowrap">Bảng đấu A–D</a>
+      <span class="px-4 py-2 rounded-full text-xs font-black bg-orange-500/20 text-orange-400 border border-orange-500/40 whitespace-nowrap">Điểm trình</span>
+      <a href="admin.html" class="px-3.5 py-2 rounded-full text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.06] whitespace-nowrap">Quản trị</a>
     </nav>
   </div>
 
-  <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden bg-orange-600 text-white text-xs font-bold px-4 py-2 rounded-full shadow-xl"></div>
-
   <script type="module">
-    import { db, ref, set, update, remove, onValue } from './js/firebase-config.js';
-    import { requirePin } from './js/auth.js';
+    import { db, ref, set, update, onValue, remove } from './js/firebase-config.js';
 
-    let players = {};
-    let isAdmin = sessionStorage.getItem('bd_pin_unlocked_admin') === 'true';
+    let state = { settings: {}, teams: {}, doublesTeams: {}, customPlayers: {} };
+    let genderFilter = 'ALL';
+    let newPlGender = 'Nam';
+    let selectedPair = { 1: null, 2: null };
 
     function showToast(msg) {
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.classList.remove('hidden');
-      setTimeout(() => t.classList.add('hidden'), 2000);
+      setTimeout(() => t.classList.add('hidden'), 2200);
     }
 
-    function updateAdminUI() {
-      document.getElementById('adminAddBox').classList.toggle('hidden', !isAdmin);
-      const btn = document.getElementById('btnAdminMode');
-      btn.textContent = isAdmin ? '🔓 Đang quản lý' : '🔒 Quản lý';
-      btn.className = isAdmin
-        ? 'whitespace-nowrap text-[11px] font-bold px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400'
-        : 'whitespace-nowrap text-[11px] font-bold px-3 py-1.5 rounded-full bg-orange-500/15 border border-orange-500/40 text-orange-300';
-      renderPlayers();
-    }
-
-    window.toggleAdminMode = async () => {
-      if (isAdmin) {
-        isAdmin = false;
-        updateAdminUI();
-        return;
+    function openScModal({ icon = '🏓', title = 'Lựa chọn', desc = '', items = [] }) {
+      document.getElementById('scModalIcon').textContent = icon;
+      document.getElementById('scModalTitle').textContent = title;
+      const descEl = document.getElementById('scModalDesc');
+      if (desc) {
+        descEl.textContent = desc;
+        descEl.classList.remove('hidden');
+      } else {
+        descEl.classList.add('hidden');
       }
-      await requirePin('admin');
-      isAdmin = true;
-      updateAdminUI();
-    };
-
-    onValue(ref(db, 'players'), (snap) => {
-      players = snap.val() || {};
-      populatePairSelectors();
-      renderPlayers();
-    });
-
-    window.addPlayer = async () => {
-      const name = document.getElementById('inpName').value.trim();
-      const gender = document.getElementById('inpGender').value;
-      const rating = Number(document.getElementById('inpRating').value) || 2.5;
-      const club = document.getElementById('inpClub').value.trim() || 'Bính Dần 1986';
-      if (!name) return showToast('Vui lòng nhập tên VĐV');
-
-      const id = `pl_${Date.now()}`;
-      await set(ref(db, `players/${id}`), { id, name, gender, rating, club, updatedAt: Date.now() });
-      document.getElementById('inpName').value = '';
-      showToast(`Đã lưu ${name} (${rating})`);
-    };
-
-    window.adjustRating = async (id, delta) => {
-      const p = players[id];
-      if (!p) return;
-      const next = Math.max(1.5, Math.min(6.0, Math.round((Number(p.rating) + delta) * 10) / 10));
-      await update(ref(db, `players/${id}`), { rating: next });
-    };
-
-    window.deletePlayer = async (id) => {
-      if (!confirm('Xóa VĐV này khỏi danh bạ?')) return;
-      await remove(ref(db, `players/${id}`));
-      showToast('Đã xóa VĐV');
-    };
-
-    window.seedSamplePlayers = async () => {
-      const samples = [
-        { name: 'Lâm Anh Hùng', gender: 'Nam', rating: 3.0, club: 'Bính Dần 1986' },
-        { name: 'Nguyễn Nam', gender: 'Nam', rating: 2.8, club: 'Bính Dần 1986' },
-        { name: 'Trần Minh', gender: 'Nam', rating: 3.2, club: 'Bính Dần 1986' },
-        { name: 'Lê Tuấn', gender: 'Nam', rating: 2.6, club: 'CLB Độc Lập' },
-        { name: 'Phạm Lan', gender: 'Nữ', rating: 2.5, club: 'Bính Dần 1986' },
-        { name: 'Hoàng Hoa', gender: 'Nữ', rating: 2.4, club: 'Bính Dần 1986' },
-        { name: 'Đàm Thùy Dương', gender: 'Nữ', rating: 2.7, club: 'CLB Độc Lập' },
-        { name: 'Vũ Sơn', gender: 'Nam', rating: 2.9, club: 'CLB Cao Bằng' }
-      ];
-      const updates = {};
-      samples.forEach((s, i) => {
-        const id = `pl_sample_${i + 1}`;
-        updates[`players/${id}`] = { id, ...s };
+      const body = document.getElementById('scModalBody');
+      body.innerHTML = '';
+      items.forEach(it => {
+        const btn = document.createElement('button');
+        btn.className = it.danger
+          ? 'w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-700 text-white font-black text-xs shadow active:scale-95 transition'
+          : (it.active
+            ? 'w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-xs shadow active:scale-95 transition'
+            : 'w-full py-2.5 px-3 rounded-xl bg-[#090b0f] border border-white/10 text-slate-100 font-semibold text-xs hover:border-orange-500/40 active:scale-95 transition');
+        btn.textContent = it.label;
+        btn.onclick = () => { closeScModal(); it.onClick(); };
+        body.appendChild(btn);
       });
-      await update(ref(db, '/'), updates);
-      showToast('Đã nạp 8 VĐV mẫu!');
-    };
-
-    function populatePairSelectors() {
-      const arr = Object.values(players).sort((a, b) => a.name.localeCompare(b.name));
-      const opts = '<option value="">-- Chọn VĐV --</option>' +
-        arr.map(p => `<option value="${p.id}">${p.name} (${p.rating})</option>`).join('');
-      const s1 = document.getElementById('selPair1');
-      const s2 = document.getElementById('selPair2');
-      const v1 = s1.value, v2 = s2.value;
-      s1.innerHTML = opts; s2.innerHTML = opts;
-      s1.value = v1; s2.value = v2;
-      checkPairRating();
+      document.getElementById('scModal').classList.remove('hidden');
     }
 
-    window.checkPairRating = () => {
-      const p1 = players[document.getElementById('selPair1').value];
-      const p2 = players[document.getElementById('selPair2').value];
-      const limit = Number(document.getElementById('inpMaxRating').value) || 5.5;
-      const box = document.getElementById('pairResult');
+    window.closeScModal = () => document.getElementById('scModal').classList.add('hidden');
 
-      if (!p1 || !p2) { box.classList.add('hidden'); return; }
-      const sum = Math.round((Number(p1.rating) + Number(p2.rating)) * 10) / 10;
-      const ok = sum <= limit;
+    function collectAllPlayers() {
+      const map = new Map();
+      const pushPlayer = (name, gender = 'Nam', rating = 2.5, club = '', customId = null) => {
+        const clean = (name || '').trim();
+        if (!clean) return;
+        const key = clean.toLowerCase();
+        const prev = map.get(key);
+        map.set(key, {
+          name: clean,
+          gender: gender || prev?.gender || 'Nam',
+          rating: Number(rating) || prev?.rating || 2.5,
+          club: club || prev?.club || '',
+          customId: customId || prev?.customId || null
+        });
+      };
 
-      box.classList.remove('hidden');
-      box.className = ok
-        ? 'rounded-xl px-3 py-2 text-xs font-bold flex items-center justify-between bg-emerald-500/15 border border-emerald-500/40 text-emerald-400'
-        : 'rounded-xl px-3 py-2 text-xs font-bold flex items-center justify-between bg-red-500/15 border border-red-500/40 text-red-400';
-      box.innerHTML = `
-        <span>Tổng trình: <b class="text-sm">${sum.toFixed(1)}</b> / ${limit.toFixed(1)}</span>
-        <span>${ok ? '✅ HỢP LỆ' : `❌ VƯỢT ${(sum - limit).toFixed(1)}`}</span>
-      `;
+      Object.values(state.teams || {}).forEach(t => {
+        (t.rosterDetails || []).forEach(p => pushPlayer(p.name, p.gender, p.rating, t.name));
+      });
+      Object.values(state.doublesTeams || {}).forEach(d => {
+        (d.playerDetails || []).forEach(p => pushPlayer(p.name, p.gender, p.rating, d.pairType || ''));
+      });
+      Object.entries(state.customPlayers || {}).forEach(([id, p]) => {
+        pushPlayer(p.name, p.gender, p.rating, p.club, id);
+      });
+
+      return Array.from(map.values()).sort((a, b) => b.rating - a.rating);
+    }
+
+    window.setGenderFilter = (g) => {
+      genderFilter = g;
+      document.querySelectorAll('.g-pill').forEach(b => {
+        const sel = b.dataset.g === g;
+        b.className = `g-pill px-3 py-1.5 rounded-full text-[11px] transition ${
+          sel ? 'bg-orange-500 text-slate-950 font-black' : 'bg-white/[0.06] text-slate-300 font-semibold'
+        }`;
+      });
+      renderPlayersList();
     };
 
-    window.renderPlayers = () => {
-      const q = document.getElementById('inpSearch').value.trim().toLowerCase();
-      const g = document.getElementById('filterGender').value;
+    window.openNewGenderPicker = () => {
+      openScModal({
+        icon: '👤',
+        title: 'Chọn Giới Tính VĐV',
+        items: ['Nam', 'Nữ'].map(g => ({
+          label: g,
+          active: newPlGender === g,
+          onClick: () => {
+            newPlGender = g;
+            document.getElementById('newPlGenderLabel').textContent = g;
+          }
+        }))
+      });
+    };
 
-      const list = Object.values(players)
-        .filter(p => (g === 'ALL' || p.gender === g) && (!q || p.name.toLowerCase().includes(q) || (p.club || '').toLowerCase().includes(q)))
-        .sort((a, b) => Number(b.rating) - Number(a.rating));
+    window.addCustomPlayer = async () => {
+      const name = document.getElementById('newPlName').value.trim();
+      const club = document.getElementById('newPlClub').value.trim();
+      const rating = Number(document.getElementById('newPlRating').value) || 2.5;
+      if (!name) return showToast('Vui lòng nhập tên VĐV');
+      const id = `pl_${Date.now()}`;
+      await set(ref(db, `customPlayers/${id}`), { name, club, gender: newPlGender, rating });
+      document.getElementById('newPlName').value = '';
+      document.getElementById('newPlClub').value = '';
+      showToast('Đã lưu VĐV');
+    };
 
-      document.getElementById('totalPlayersCount').textContent = list.length;
+    window.confirmDeleteCustomPlayer = (customId, plName) => {
+      openScModal({
+        icon: '🗑️',
+        title: 'Xóa VĐV',
+        desc: `Xóa ${plName} khỏi danh sách điểm trình?`,
+        items: [
+          {
+            label: 'XÁC NHẬN XÓA',
+            danger: true,
+            onClick: async () => {
+              await remove(ref(db, `customPlayers/${customId}`));
+              showToast('Đã xóa VĐV');
+            }
+          }
+        ]
+      });
+    };
 
-      document.getElementById('playersList').innerHTML = list.map((p, idx) => `
-        <div class="fire-card rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-2">
-          <div class="flex items-center gap-3 min-w-0">
-            <span class="w-6 text-center font-black text-xs ${idx < 3 ? 'text-amber-400' : 'text-amber-200/40'}">${idx + 1}</span>
-            <div class="min-w-0">
-              <div class="flex items-center gap-1.5">
-                <span class="font-bold text-sm text-white truncate">${p.name}</span>
-                <span class="text-[10px] px-1.5 py-0.5 rounded font-bold ${p.gender === 'Nữ' ? 'bg-pink-500/20 text-pink-300' : 'bg-blue-500/20 text-blue-300'}">${p.gender}</span>
-              </div>
-              <div class="text-[11px] text-amber-200/60 truncate">${p.club || 'Tự do'}</div>
+    window.openPairSlotPicker = (slot) => {
+      const pool = collectAllPlayers();
+      openScModal({
+        icon: '🏓',
+        title: `Chọn VĐV ${slot}`,
+        items: pool.map(p => ({
+          label: `${p.name} (${p.gender} • ${p.rating.toFixed(1)})`,
+          active: selectedPair[slot]?.name === p.name,
+          onClick: () => {
+            selectedPair[slot] = p;
+            updatePairCalc();
+          }
+        }))
+      });
+    };
+
+    function updatePairCalc() {
+      const p1 = selectedPair[1], p2 = selectedPair[2];
+      document.getElementById('pairSlot1Label').textContent = p1 ? `${p1.name} (${p1.rating.toFixed(1)})` : '-- Chọn VĐV 1 --';
+      document.getElementById('pairSlot2Label').textContent = p2 ? `${p2.name} (${p2.rating.toFixed(1)})` : '-- Chọn VĐV 2 --';
+      const total = (p1?.rating || 0) + (p2?.rating || 0);
+      document.getElementById('pairCalcBadge').textContent = `Tổng: ${total.toFixed(1)}`;
+    }
+
+    function renderPlayersList() {
+      const q = (document.getElementById('searchPlayerInp').value || '').trim().toLowerCase();
+      const list = collectAllPlayers().filter(p => {
+        if (genderFilter !== 'ALL' && p.gender !== genderFilter) return false;
+        if (!q) return true;
+        return p.name.toLowerCase().includes(q) || (p.club || '').toLowerCase().includes(q);
+      });
+
+      document.getElementById('playersList').innerHTML = list.map(p => `
+        <div class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 flex items-center justify-between gap-2">
+          <div class="min-w-0">
+            <div class="font-bold text-xs text-white truncate">${p.name}</div>
+            <div class="text-[10px] text-slate-400 truncate">
+              <span class="${p.gender === 'Nữ' ? 'text-pink-300' : 'text-sky-300'} font-semibold">${p.gender}</span>
+              ${p.club ? ` • ${p.club}` : ''}
             </div>
           </div>
-
-          <div class="flex items-center gap-1.5 shrink-0">
-            ${isAdmin ? `<button onclick="adjustRating('${p.id}', -0.1)" class="w-6 h-6 rounded-lg bg-white/10 text-xs font-black">-</button>` : ''}
-            <span class="px-2.5 py-1 rounded-lg bg-gradient-to-br from-orange-500/25 to-red-600/25 border border-orange-500/40 font-black text-sm text-amber-300 min-w-[44px] text-center">
-              ${Number(p.rating).toFixed(1)}
-            </span>
-            ${isAdmin ? `
-              <button onclick="adjustRating('${p.id}', 0.1)" class="w-6 h-6 rounded-lg bg-white/10 text-xs font-black">+</button>
-              <button onclick="deletePlayer('${p.id}')" class="ml-1 text-red-400 text-xs font-bold px-1">✕</button>
-            ` : ''}
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="px-2 py-0.5 rounded-lg bg-orange-500/15 text-amber-300 font-black text-xs tabular-nums">${p.rating.toFixed(1)}</span>
+            ${p.customId ? `<button onclick="confirmDeleteCustomPlayer('${p.customId}','${p.name}')" class="text-xs text-red-400 font-bold px-1">✕</button>` : ''}
           </div>
         </div>
-      `).join('') || '<p class="text-xs text-amber-200/50 text-center py-8">Chưa có VĐV nào. Bấm "Quản lý" để thêm.</p>';
-    };
+      `).join('') || '<p class="text-xs text-slate-500 col-span-full text-center py-4">Không tìm thấy VĐV phù hợp.</p>';
+    }
 
-    updateAdminUI();
+    onValue(ref(db, '/'), (snap) => {
+      const data = snap.val() || {};
+      state.settings = data.settings || {};
+      state.teams = data.teams || {};
+      state.doublesTeams = data.doublesTeams || {};
+      state.customPlayers = data.customPlayers || {};
+      document.getElementById('plTourName').textContent = state.settings.name || 'Giải Pickleball Bính Dần 1986';
+      renderPlayersList();
+    });
+
     lucide.createIcons();
   </script>
 </body>
