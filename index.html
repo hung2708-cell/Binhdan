@@ -2,7 +2,7 @@
 <html lang="vi" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Bính Dần 1986 Pickleball - Giải Đồng Đội</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,8 +11,8 @@
     body {
       background-color: #090b0f;
       background-image:
-        radial-gradient(circle at 15% 0%, rgba(249, 115, 22, 0.12), transparent 45%),
-        radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.06), transparent 40%);
+        radial-gradient(circle at 15% 0%, rgba(249, 115, 22, 0.14), transparent 45%),
+        radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.07), transparent 40%);
       color: #f8fafc;
       font-family: system-ui, -apple-system, sans-serif;
     }
@@ -22,17 +22,36 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
     }
     .sc-banner {
-      background: linear-gradient(135deg, rgba(249, 115, 22, 0.14) 0%, rgba(220, 38, 38, 0.1) 60%, rgba(16, 185, 129, 0.06) 100%);
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(220, 38, 38, 0.1) 60%, rgba(16, 185, 129, 0.06) 100%);
       border: 1px solid rgba(249, 115, 22, 0.3);
     }
     .fire-btn { background: linear-gradient(135deg, #f97316, #dc2626); }
     .fire-btn:active { transform: scale(0.97); }
     .live-dot { box-shadow: 0 0 10px #10b981; }
+    .ios-dock {
+      background: rgba(18, 22, 31, 0.72);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.22);
+      touch-action: none;
+    }
+    .ios-thumb {
+      position: absolute;
+      top: 5px;
+      bottom: 5px;
+      left: 5px;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.42), rgba(220, 38, 38, 0.28));
+      box-shadow: inset 0 1px 1.5px rgba(255, 255, 255, 0.34), 0 4px 16px rgba(249, 115, 22, 0.32);
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+      pointer-events: none;
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="min-h-screen pb-10">
+<body class="min-h-screen pb-28 lg:pb-10">
 
   <!-- SVG BIỂU TƯỢNG PICKLEBALL DÙNG CHUNG -->
   <svg class="hidden" aria-hidden="true">
@@ -84,23 +103,15 @@
       </div>
     </section>
 
-    <!-- THANH ĐIỀU HƯỚNG Ở TRÊN (BẤM HIỂN THỊ NỘI DUNG NGAY BÊN DƯỚI, KHÔNG NHẢY TRANG) -->
-    <nav class="sc-card rounded-2xl p-1.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-      <button type="button" onclick="switchPubTab('live')" data-tab="live" class="pub-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-black bg-orange-500 text-slate-950 shadow flex items-center gap-1.5">
+    <!-- THANH TÁC VỤ TRÊN MÁY TÍNH -->
+    <nav class="hidden lg:flex sc-card rounded-2xl p-1.5 items-center gap-1.5">
+      <button type="button" onclick="switchPubTab('live')" data-tab="live" class="desk-tab px-3.5 py-2 rounded-xl text-xs font-black bg-orange-500 text-slate-950 shadow flex items-center gap-1.5">
         <svg class="w-3.5 h-3.5"><use href="#icon-pickleball"></use></svg> Sân Live
       </button>
-      <button type="button" onclick="switchPubTab('ties')" data-tab="ties" class="pub-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.05]">
-        Lượt đấu
-      </button>
-      <button type="button" onclick="switchPubTab('standings')" data-tab="standings" class="pub-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.05]">
-        Xếp hạng
-      </button>
-      <button type="button" onclick="switchPubTab('groups')" data-tab="groups" class="pub-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.05]">
-        Bảng đấu A–D
-      </button>
-      <button type="button" onclick="switchPubTab('players')" data-tab="players" class="pub-tab shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.05]">
-        Điểm trình
-      </button>
+      <button type="button" onclick="switchPubTab('ties')" data-tab="ties" class="desk-tab px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.05]">Lượt đấu</button>
+      <button type="button" onclick="switchPubTab('standings')" data-tab="standings" class="desk-tab px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.05]">Xếp hạng</button>
+      <button type="button" onclick="switchPubTab('groups')" data-tab="groups" class="desk-tab px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.05]">Bảng đấu A–D</button>
+      <button type="button" onclick="switchPubTab('players')" data-tab="players" class="desk-tab px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.05]">Điểm trình</button>
     </nav>
 
     <!-- MỤC 1: SÂN LIVE -->
@@ -207,7 +218,34 @@
 
   </main>
 
-  <!-- POPUP CHỌN & XÁC NHẬN ĐỒNG BỘ (BIỂU TƯỢNG PICKLEBALL) -->
+  <!-- THANH TÁC VỤ KÉO TRƯỢT KIỂU IOS DƯỚI ĐÁY (CHỈ DÀNH CHO ĐIỆN THOẠI) -->
+  <div class="lg:hidden fixed bottom-3 left-2.5 right-2.5 z-40 flex justify-center pointer-events-none">
+    <nav id="mobileSlideDock" class="ios-dock pointer-events-auto relative w-full max-w-md rounded-full p-1 grid grid-cols-5 select-none">
+      <div id="mobileSlideThumb" class="ios-thumb"></div>
+      <button type="button" onclick="switchPubTab('live')" data-tab="live" class="mob-dock-btn relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 text-orange-400">
+        <svg class="w-4 h-4"><use href="#icon-pickleball"></use></svg>
+        <span class="text-[9px] font-bold leading-none truncate max-w-full">Live</span>
+      </button>
+      <button type="button" onclick="switchPubTab('ties')" data-tab="ties" class="mob-dock-btn relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 text-slate-400">
+        <i data-lucide="swords" class="w-4 h-4"></i>
+        <span class="text-[9px] font-bold leading-none truncate max-w-full">Lượt đấu</span>
+      </button>
+      <button type="button" onclick="switchPubTab('standings')" data-tab="standings" class="mob-dock-btn relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 text-slate-400">
+        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+        <span class="text-[9px] font-bold leading-none truncate max-w-full">Xếp hạng</span>
+      </button>
+      <button type="button" onclick="switchPubTab('groups')" data-tab="groups" class="mob-dock-btn relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 text-slate-400">
+        <i data-lucide="grid" class="w-4 h-4"></i>
+        <span class="text-[9px] font-bold leading-none truncate max-w-full">Bảng A–D</span>
+      </button>
+      <button type="button" onclick="switchPubTab('players')" data-tab="players" class="mob-dock-btn relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 text-slate-400">
+        <i data-lucide="award" class="w-4 h-4"></i>
+        <span class="text-[9px] font-bold leading-none truncate max-w-full">Điểm trình</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- POPUP CHỌN & XÁC NHẬN ĐỒNG BỘ -->
   <div id="scModal" onclick="if(event.target === this) closeScModal()" class="hidden fixed inset-0 z-[9999] bg-[#090b0f]/90 backdrop-blur-md flex items-center justify-center p-4">
     <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/40 rounded-2xl p-5 text-center shadow-2xl space-y-3.5">
       <div class="w-12 h-12 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center">
@@ -225,6 +263,7 @@
   <script type="module">
     import { db, ref, set, onValue } from './js/firebase-config.js';
 
+    const TABS = ['live', 'ties', 'standings', 'groups', 'players'];
     const PANELS = {
       live: 'panelLive',
       ties: 'panelTies',
@@ -233,11 +272,36 @@
       players: 'panelPlayers'
     };
 
+    const dock = document.getElementById('mobileSlideDock');
+    const thumb = document.getElementById('mobileSlideThumb');
+
+    function syncThumbWidth() {
+      if (!dock || !thumb) return;
+      const rect = dock.getBoundingClientRect();
+      if (!rect.width) return;
+      const pad = 5;
+      const innerW = rect.width - pad * 2;
+      thumb.style.width = `${innerW / TABS.length}px`;
+    }
+
+    function moveThumbToIndex(idx, animate = true) {
+      if (!dock || !thumb) return;
+      syncThumbWidth();
+      const rect = dock.getBoundingClientRect();
+      if (!rect.width) return;
+      const pad = 5;
+      const innerW = rect.width - pad * 2;
+      const step = innerW / TABS.length;
+      thumb.style.transition = animate ? 'transform 0.32s cubic-bezier(0.32, 0.72, 0, 1)' : 'none';
+      thumb.style.transform = `translateX(${idx * step}px)`;
+    }
+
     let latestData = { settings: {}, teams: {}, doublesTeams: {}, ties: {}, courts: {}, matches: {}, groupDraw: null, customPlayers: {} };
     let activeGroupCat = 'ALL';
     let genderFilter = 'ALL';
     let selectedPair = { 1: null, 2: null };
     let modalResolver = null;
+    let draggingDock = false;
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -298,19 +362,64 @@
     }
 
     window.switchPubTab = (tab) => {
-      if (!PANELS[tab]) return;
+      const idx = TABS.indexOf(tab);
+      if (idx === -1) return;
+      moveThumbToIndex(idx, true);
+
       Object.entries(PANELS).forEach(([key, panelId]) => {
         document.getElementById(panelId).classList.toggle('hidden', key !== tab);
       });
-      document.querySelectorAll('.pub-tab').forEach(btn => {
+
+      document.querySelectorAll('.mob-dock-btn').forEach(b => {
+        b.className = `mob-dock-btn relative z-10 py-1.5 flex flex-col items-center justify-center gap-0.5 ${
+          b.dataset.tab === tab ? 'text-orange-400' : 'text-slate-400'
+        }`;
+      });
+
+      document.querySelectorAll('.desk-tab').forEach(btn => {
         const sel = btn.dataset.tab === tab;
-        btn.className = `pub-tab shrink-0 px-3.5 py-2 rounded-xl text-xs transition flex items-center gap-1.5 ${
+        btn.className = `desk-tab px-3.5 py-2 rounded-xl text-xs transition ${
           sel
             ? 'font-black bg-orange-500 text-slate-950 shadow'
             : 'font-semibold text-slate-300 hover:text-white hover:bg-white/[0.05]'
         }`;
       });
     };
+
+    // Kéo trượt thanh tác vụ trên điện thoại
+    dock.addEventListener('pointerdown', (e) => {
+      draggingDock = true;
+      dock.setPointerCapture(e.pointerId);
+      thumb.style.transition = 'none';
+    });
+
+    dock.addEventListener('pointermove', (e) => {
+      if (!draggingDock) return;
+      const rect = dock.getBoundingClientRect();
+      const pad = 5;
+      const innerW = rect.width - pad * 2;
+      const thumbW = innerW / TABS.length;
+      const rawX = e.clientX - rect.left - pad - thumbW / 2;
+      const clampedX = Math.max(0, Math.min(innerW - thumbW, rawX));
+      thumb.style.transform = `translateX(${clampedX}px)`;
+    });
+
+    dock.addEventListener('pointerup', (e) => {
+      if (!draggingDock) return;
+      draggingDock = false;
+      const rect = dock.getBoundingClientRect();
+      const pad = 5;
+      const innerW = rect.width - pad * 2;
+      const relX = Math.max(0, Math.min(innerW - 1, e.clientX - rect.left - pad));
+      const targetIdx = Math.floor((relX / innerW) * TABS.length);
+      window.switchPubTab(TABS[targetIdx]);
+    });
+
+    window.addEventListener('resize', () => {
+      const activeBtn = document.querySelector('.mob-dock-btn.text-orange-400');
+      const idx = activeBtn ? TABS.indexOf(activeBtn.dataset.tab) : 0;
+      moveThumbToIndex(Math.max(0, idx), false);
+    });
 
     window.selectGroupCat = (cat) => {
       activeGroupCat = cat;
@@ -643,6 +752,7 @@
     });
 
     lucide.createIcons();
+    moveThumbToIndex(0, false);
   </script>
 </body>
 </html>
