@@ -1509,41 +1509,34 @@
             </div>`;
         }
 
-        if (tie) {
+                if (tie) {
           const subMatches = (tie.matchIds || []).map(id => matches[id]).filter(Boolean);
           let wA = 0, wB = 0;
           subMatches.forEach(sm => { if (sm.winner === 'A') wA++; if (sm.winner === 'B') wB++; });
           const allDone = subMatches.length >= 4 && subMatches.every(sm => sm.status === 'finished');
+          const curIdx = subMatches.findIndex(sm => sm.id === c.activeMatchId && sm.status !== 'finished');
+          const curSub = curIdx >= 0 ? subMatches[curIdx] : null;
+          const curLabel = curSub ? `${subShortLabels[curIdx] || `Trận ${curIdx + 1}`}` : '';
 
           return `
-            <div class="sc-card rounded-2xl overflow-hidden flex flex-col">
+            <div onclick="openCourtDetailModal('${cId}')" class="sc-card rounded-2xl overflow-hidden cursor-pointer hover:border-orange-500/40 active:scale-[0.99] transition">
               <div class="bg-white/[0.03] px-3.5 py-2 border-b border-white/[0.06] flex items-center justify-between gap-2">
                 <span class="font-extrabold text-xs text-white uppercase truncate">${c.name}</span>
                 <div class="flex items-center gap-1.5 shrink-0">
-                  <button type="button" onclick="openCourtDetailModal('${cId}')" class="px-2 py-0.5 rounded-md bg-white/[0.07] hover:bg-white/[0.12] text-slate-200 text-[10px] font-bold">Chi tiết</button>
+                  <span class="px-2 py-0.5 rounded-md bg-orange-500/15 text-orange-300 text-[10px] font-bold">Chi tiết</span>
                   <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md ${allDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${allDone ? 'FT' : '● LIVE'}</span>
                 </div>
               </div>
 
-              <div class="px-3.5 py-3 border-b border-white/[0.06] flex items-center justify-between gap-2">
+              <div class="px-3.5 py-3.5 flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2 min-w-0 flex-1">${getTeamBadge(tie.teamAName)}<span class="font-extrabold text-xs text-white truncate">${tie.teamAName}</span></div>
                 <span class="px-2.5 py-1 rounded-lg bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-sm tabular-nums shrink-0">${wA} - ${wB}</span>
                 <div class="flex items-center justify-end gap-2 min-w-0 flex-1"><span class="font-extrabold text-xs text-white truncate text-right">${tie.teamBName}</span>${getTeamBadge(tie.teamBName)}</div>
               </div>
 
-              <div class="p-3 space-y-1.5 flex-1">
-                ${subMatches.map((sm, idx) => {
-                  const isCurrent = sm.id === c.activeMatchId && sm.status !== 'finished';
-                  const stBadge = sm.status === 'finished' ? '<span class="text-[9px] text-emerald-400 font-bold">FT</span>' : (isCurrent ? '<span class="text-[9px] text-orange-400 font-extrabold">● LIVE</span>' : '<span class="text-[9px] text-slate-500">Chờ</span>');
-                  return `
-                    <div class="rounded-xl px-2.5 py-1.5 flex items-center justify-between gap-2 text-xs ${isCurrent ? 'bg-orange-500/12 border border-orange-500/35' : 'sc-subcard'}">
-                      <div class="min-w-0">
-                        <div class="flex items-center gap-1.5"><span class="font-bold text-slate-200 truncate">${subShortLabels[idx] || `Trận ${idx + 1}`}</span>${stBadge}</div>
-                        <div class="text-[10px] text-slate-400 truncate">${formatPlayersSide(sm.teamA)} vs ${formatPlayersSide(sm.teamB)}</div>
-                      </div>
-                      <span class="font-black tabular-nums shrink-0 ${isCurrent ? 'text-orange-400 text-sm' : 'text-slate-200'}">${sm.teamA.score} - ${sm.teamB.score}</span>
-                    </div>`;
-                }).join('')}
+              <div class="px-3.5 pb-2.5 flex items-center justify-between text-[10px] text-slate-400">
+                <span>${curSub ? `Đang đấu: <b class="text-amber-300">${curLabel}</b>` : `${subMatches.filter(sm => sm.status === 'finished').length}/${subMatches.length} trận đã xong`}</span>
+                <span class="text-slate-500 font-semibold">Bấm xem chi tiết →</span>
               </div>
             </div>`;
         }
