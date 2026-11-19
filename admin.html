@@ -8,16 +8,16 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    body { background-color: #0c0908; color: #f5f0eb; font-family: system-ui, -apple-system, sans-serif; }
-    .fire-card { background: #17110e; border: 1px solid rgba(249, 115, 22, 0.3); }
+    body { background-color: #090b0f; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+    .fire-card { background: #12161f; border: 1px solid rgba(255, 255, 255, 0.08); }
     .fire-btn { background: linear-gradient(135deg, #f97316, #dc2626); }
     .fire-btn:active { transform: scale(0.97); }
     .ios-glass-nav {
-      background: rgba(24, 17, 14, 0.72);
+      background: rgba(18, 22, 31, 0.78);
       backdrop-filter: blur(24px) saturate(190%);
       -webkit-backdrop-filter: blur(24px) saturate(190%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.16);
       touch-action: pan-y;
     }
     .ios-pill {
@@ -32,16 +32,16 @@
 <body class="pb-28 lg:pb-6">
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-30 bg-[#0c0908]/90 backdrop-blur-md border-b border-orange-500/30 px-3.5 py-2.5 flex items-center justify-between gap-2">
+  <header class="sticky top-0 z-30 bg-[#090b0f]/90 backdrop-blur-md border-b border-white/10 px-3.5 py-2.5 flex items-center justify-between gap-2">
     <div class="flex items-center gap-2.5 min-w-0">
-      <img id="clubLogoImg" src="logo.jpg" onerror="this.style.display='none'" class="w-9 h-9 rounded-xl object-cover border border-orange-500/60 bg-black shrink-0" alt="Logo" />
+      <img id="clubLogoImg" src="logo.jpg" onerror="this.style.display='none'" class="w-9 h-9 rounded-xl object-cover border border-orange-500/50 bg-black shrink-0" alt="Logo" />
       <div class="min-w-0">
         <h1 class="font-black text-orange-400 tracking-wide text-sm uppercase leading-tight truncate">Bính Dần 1986 Admin</h1>
-        <p id="headerTourName" class="text-[11px] text-amber-200/60 truncate">Đang kết nối Firebase...</p>
+        <p id="headerTourName" class="text-[11px] text-slate-400 truncate">Đang kết nối Firebase...</p>
       </div>
     </div>
     <div class="flex items-center gap-1.5 shrink-0">
-      <a href="index.html" class="whitespace-nowrap text-[11px] px-2.5 py-1.5 rounded-full bg-white/10 text-amber-100 font-semibold">Khán giả</a>
+      <a href="index.html" class="whitespace-nowrap text-[11px] px-2.5 py-1.5 rounded-full bg-white/[0.06] border border-white/10 text-slate-200 font-semibold">Khán giả</a>
       <span id="dbStatus" class="whitespace-nowrap text-[11px] px-2.5 py-1.5 rounded-full bg-amber-500/20 text-amber-400 font-semibold">● Nối...</span>
     </div>
   </header>
@@ -52,13 +52,13 @@
       <button onclick="switchTab('ties')" data-tab="ties" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-left bg-orange-500/15 text-orange-400 border border-orange-500/40">
         <i data-lucide="swords" class="w-5 h-5"></i> Lịch & Trận đấu
       </button>
-      <button onclick="switchTab('teams')" data-tab="teams" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-left text-gray-400 hover:bg-white/5 border border-transparent">
+      <button onclick="switchTab('teams')" data-tab="teams" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-left text-slate-400 hover:bg-white/5 border border-transparent">
         <i data-lucide="users" class="w-5 h-5"></i> Đội & VĐV
       </button>
-      <button onclick="switchTab('courts')" data-tab="courts" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-left text-gray-400 hover:bg-white/5 border border-transparent">
+      <button onclick="switchTab('courts')" data-tab="courts" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-left text-slate-400 hover:bg-white/5 border border-transparent">
         <i data-lucide="tv" class="w-5 h-5"></i> Sân & OBS
       </button>
-      <button onclick="switchTab('settings')" data-tab="settings" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-left text-gray-400 hover:bg-white/5 border border-transparent">
+      <button onclick="switchTab('settings')" data-tab="settings" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-left text-slate-400 hover:bg-white/5 border border-transparent">
         <i data-lucide="settings" class="w-5 h-5"></i> Cài đặt giải
       </button>
     </aside>
@@ -71,7 +71,7 @@
         <button id="btnModeTeam" onclick="setTournamentFormat('team')" class="py-2.5 rounded-xl font-black text-xs uppercase transition flex items-center justify-center gap-1.5 fire-btn text-white shadow">
           🏆 Giải Đồng Đội
         </button>
-        <button id="btnModeDoubles" onclick="setTournamentFormat('doubles')" class="py-2.5 rounded-xl font-black text-xs uppercase transition flex items-center justify-center gap-1.5 text-amber-200/60 hover:bg-white/5">
+        <button id="btnModeDoubles" onclick="setTournamentFormat('doubles')" class="py-2.5 rounded-xl font-black text-xs uppercase transition flex items-center justify-center gap-1.5 text-slate-400 hover:bg-white/5">
           👥 Nội Dung Đôi
         </button>
       </div>
@@ -82,9 +82,9 @@
           <div class="fire-card rounded-2xl p-4 space-y-3">
             <h2 class="font-bold text-orange-400 uppercase text-sm">Tạo lượt đấu Đồng đội (4 trận đôi)</h2>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <select id="selTeamA" class="bg-[#0c0908] border border-gray-700 rounded-xl px-3 py-2.5 text-sm"></select>
-              <select id="selTeamB" class="bg-[#0c0908] border border-gray-700 rounded-xl px-3 py-2.5 text-sm"></select>
-              <select id="selStage" class="bg-[#0c0908] border border-gray-700 rounded-xl px-3 py-2.5 text-sm">
+              <select id="selTeamA" class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 text-sm outline-none"></select>
+              <select id="selTeamB" class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 text-sm outline-none"></select>
+              <select id="selStage" class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 text-sm outline-none">
                 <option value="group">Vòng bảng (Chạm 15đ)</option>
                 <option value="knockout">Loại trực tiếp (15đ, Max 18đ + Đơn 21đ)</option>
               </select>
@@ -100,14 +100,14 @@
           <div class="fire-card rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
               <h2 class="font-bold text-orange-400 uppercase text-sm">Tạo lịch thi đấu Nội dung Đôi</h2>
-              <select id="doublesTargetScore" class="bg-[#0c0908] border border-orange-500/40 rounded-lg px-2.5 py-1 text-xs font-bold text-amber-300">
+              <select id="doublesTargetScore" class="bg-[#090b0f] border border-white/10 rounded-lg px-2.5 py-1 text-xs font-bold text-amber-300 outline-none">
                 <option value="11">Chạm 11đ</option>
                 <option value="15">Chạm 15đ</option>
               </select>
             </div>
             <div class="grid grid-cols-2 gap-2">
               <button onclick="generateDoublesRoundRobin()" class="fire-btn py-3 rounded-xl font-bold text-xs text-white">⚡ Sinh lịch Vòng tròn</button>
-              <a href="groups.html" class="py-3 rounded-xl bg-white/10 text-center font-bold text-xs text-amber-200">🎲 Chia bảng A–D</a>
+              <a href="groups.html" class="py-3 rounded-xl bg-white/[0.06] border border-white/10 text-center font-bold text-xs text-amber-200">🎲 Chia bảng A–D</a>
             </div>
           </div>
           <div class="fire-card rounded-2xl p-4 space-y-2.5">
@@ -123,18 +123,18 @@
           <div class="fire-card rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
               <h2 class="font-bold text-orange-400 uppercase text-sm">Thêm CLB Đồng đội & VĐV</h2>
-              <button onclick="seedSampleClubs()" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/10 text-amber-200 font-semibold">Nạp 4 CLB mẫu</button>
+              <button onclick="seedSampleClubs()" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/[0.06] border border-white/10 text-amber-200 font-semibold">Nạp 4 CLB mẫu</button>
             </div>
-            <input id="inpTeamName" type="text" placeholder="Tên CLB / Đội (VD: Bính Dần 1)" class="w-full bg-[#0c0908] border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:border-orange-500" />
-            <div class="bg-[#0c0908] border border-orange-500/20 rounded-xl p-2.5 space-y-2">
+            <input id="inpTeamName" type="text" placeholder="Tên CLB / Đội (VD: Bính Dần 1)" class="w-full bg-[#090b0f] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:border-orange-500" />
+            <div class="bg-[#090b0f] border border-white/10 rounded-xl p-2.5 space-y-2">
               <div class="text-[11px] font-bold text-amber-300/80">Thêm VĐV vào danh sách CLB:</div>
               <div class="grid grid-cols-12 gap-1.5">
-                <input id="inpClubPlName" type="text" placeholder="Tên VĐV" class="col-span-5 bg-[#17110e] border border-gray-700 rounded-lg px-2.5 py-2 text-xs outline-none focus:border-orange-500" />
-                <select id="inpClubPlGender" class="col-span-3 bg-[#17110e] border border-gray-700 rounded-lg px-1.5 py-2 text-xs font-bold">
+                <input id="inpClubPlName" type="text" placeholder="Tên VĐV" class="col-span-5 bg-[#12161f] border border-white/10 rounded-lg px-2.5 py-2 text-xs outline-none focus:border-orange-500" />
+                <select id="inpClubPlGender" class="col-span-3 bg-[#12161f] border border-white/10 rounded-lg px-1.5 py-2 text-xs font-bold outline-none">
                   <option value="Nam">Nam</option>
                   <option value="Nữ">Nữ</option>
                 </select>
-                <input id="inpClubPlRating" type="number" step="0.1" min="1.5" max="6.0" value="2.8" placeholder="Trình" class="col-span-2 bg-[#17110e] border border-gray-700 rounded-lg px-1.5 py-2 text-xs text-center font-bold text-amber-300 outline-none" />
+                <input id="inpClubPlRating" type="number" step="0.1" min="1.5" max="6.0" value="2.8" placeholder="Trình" class="col-span-2 bg-[#12161f] border border-white/10 rounded-lg px-1.5 py-2 text-xs text-center font-bold text-amber-300 outline-none" />
                 <button onclick="addTempClubPlayer()" class="col-span-2 rounded-lg bg-emerald-600 text-white font-black text-sm">+</button>
               </div>
               <div id="tempRosterChips" class="flex flex-wrap gap-1.5 pt-1"></div>
@@ -152,27 +152,27 @@
           <div class="fire-card rounded-2xl p-4 space-y-3">
             <div class="flex items-center justify-between">
               <h2 class="font-bold text-orange-400 uppercase text-sm">Thêm Cặp đôi thi đấu</h2>
-              <button onclick="seedSampleDoubles()" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/10 text-amber-200 font-semibold">Nạp 4 đôi mẫu</button>
+              <button onclick="seedSampleDoubles()" class="text-[11px] px-2.5 py-1 rounded-lg bg-white/[0.06] border border-white/10 text-amber-200 font-semibold">Nạp 4 đôi mẫu</button>
             </div>
             <div class="grid grid-cols-12 gap-1.5">
-              <input id="dP1Name" type="text" oninput="updateDoublesPreview()" placeholder="Tên VĐV 1" class="col-span-6 bg-[#0c0908] border border-gray-700 rounded-xl px-3 py-2.5 text-xs outline-none focus:border-orange-500" />
-              <select id="dP1Gender" onchange="updateDoublesPreview()" class="col-span-3 bg-[#0c0908] border border-gray-700 rounded-xl px-2 py-2.5 text-xs font-bold">
+              <input id="dP1Name" type="text" oninput="updateDoublesPreview()" placeholder="Tên VĐV 1" class="col-span-6 bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs outline-none focus:border-orange-500" />
+              <select id="dP1Gender" onchange="updateDoublesPreview()" class="col-span-3 bg-[#090b0f] border border-white/10 rounded-xl px-2 py-2.5 text-xs font-bold outline-none">
                 <option value="Nam">Nam</option>
                 <option value="Nữ">Nữ</option>
               </select>
-              <input id="dP1Rating" type="number" step="0.1" value="2.8" oninput="updateDoublesPreview()" class="col-span-3 bg-[#0c0908] border border-gray-700 rounded-xl px-2 py-2.5 text-xs text-center font-black text-amber-300 outline-none" />
+              <input id="dP1Rating" type="number" step="0.1" value="2.8" oninput="updateDoublesPreview()" class="col-span-3 bg-[#090b0f] border border-white/10 rounded-xl px-2 py-2.5 text-xs text-center font-black text-amber-300 outline-none" />
             </div>
             <div class="grid grid-cols-12 gap-1.5">
-              <input id="dP2Name" type="text" oninput="updateDoublesPreview()" placeholder="Tên VĐV 2" class="col-span-6 bg-[#0c0908] border border-gray-700 rounded-xl px-3 py-2.5 text-xs outline-none focus:border-orange-500" />
-              <select id="dP2Gender" onchange="updateDoublesPreview()" class="col-span-3 bg-[#0c0908] border border-gray-700 rounded-xl px-2 py-2.5 text-xs font-bold">
+              <input id="dP2Name" type="text" oninput="updateDoublesPreview()" placeholder="Tên VĐV 2" class="col-span-6 bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs outline-none focus:border-orange-500" />
+              <select id="dP2Gender" onchange="updateDoublesPreview()" class="col-span-3 bg-[#090b0f] border border-white/10 rounded-xl px-2 py-2.5 text-xs font-bold outline-none">
                 <option value="Nam">Nam</option>
                 <option value="Nữ">Nữ</option>
               </select>
-              <input id="dP2Rating" type="number" step="0.1" value="2.7" oninput="updateDoublesPreview()" class="col-span-3 bg-[#0c0908] border border-gray-700 rounded-xl px-2 py-2.5 text-xs text-center font-black text-amber-300 outline-none" />
+              <input id="dP2Rating" type="number" step="0.1" value="2.7" oninput="updateDoublesPreview()" class="col-span-3 bg-[#090b0f] border border-white/10 rounded-xl px-2 py-2.5 text-xs text-center font-black text-amber-300 outline-none" />
             </div>
-            <div id="doublesPreview" class="bg-[#0c0908] border border-orange-500/25 rounded-xl px-3 py-2 flex items-center justify-between text-xs">
-              <span class="text-amber-200/70">Loại: <b id="prevPairType" class="text-white">Đôi Nam</b></span>
-              <span class="text-amber-200/70">Tổng trình: <b id="prevTotalRating" class="text-orange-400 text-sm">5.5</b></span>
+            <div id="doublesPreview" class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2 flex items-center justify-between text-xs">
+              <span class="text-slate-400">Loại: <b id="prevPairType" class="text-white">Đôi Nam</b></span>
+              <span class="text-slate-400">Tổng trình: <b id="prevTotalRating" class="text-orange-400 text-sm">5.5</b></span>
             </div>
             <button onclick="addDoublesPair()" class="fire-btn w-full py-3 rounded-xl font-bold text-sm text-white">+ Thêm Cặp đôi</button>
           </div>
@@ -198,8 +198,8 @@
         <div class="fire-card rounded-2xl p-4 space-y-3">
           <h2 class="font-bold text-orange-400 uppercase text-sm">Thông tin giải đấu</h2>
           <div>
-            <label class="text-xs text-gray-400">Tên giải đấu</label>
-            <input id="setTourName" type="text" class="mt-1 w-full bg-[#0c0908] border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm" />
+            <label class="text-xs text-slate-400">Tên giải đấu</label>
+            <input id="setTourName" type="text" class="mt-1 w-full bg-[#090b0f] border border-white/10 rounded-xl px-3.5 py-2.5 text-sm outline-none" />
           </div>
           <button onclick="saveSettings()" class="fire-btn w-full py-3 rounded-xl font-bold text-sm text-white">Lưu tên giải</button>
         </div>
@@ -213,20 +213,20 @@
     </main>
   </div>
 
-  <!-- MODAL XẾP ĐỘI HÌNH KÍN TỪNG ĐỘI (4 TRẬN ĐÔI) -->
-  <div id="blindLineupModal" class="hidden fixed inset-0 z-[9999] bg-[#0c0908]/92 backdrop-blur-md flex items-center justify-center p-3">
-    <div class="w-full max-w-md bg-[#17110e] border border-orange-500/45 rounded-2xl p-5 shadow-2xl space-y-3.5 max-h-[92dvh] overflow-y-auto">
+  <!-- MODAL XẾP ĐỘI HÌNH KÍN TỪNG ĐỘI (ĐỒNG BỘ #090b0f / #12161f) -->
+  <div id="blindLineupModal" class="hidden fixed inset-0 z-[9999] bg-[#090b0f]/92 backdrop-blur-md flex items-center justify-center p-3">
+    <div class="w-full max-w-md bg-[#12161f] border border-orange-500/40 rounded-2xl p-5 shadow-2xl space-y-3.5 max-h-[92dvh] overflow-y-auto">
       <div class="text-center space-y-1">
         <div class="w-11 h-11 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl">🔒</div>
         <h3 id="blindTitle" class="font-black text-orange-400 text-sm uppercase">Xếp đội hình kín</h3>
-        <p class="text-[11px] text-amber-200/70">Chọn đủ 2 VĐV cho cả 4 trận. Sau khi xác nhận sẽ khóa kín để đội bạn không biết.</p>
+        <p class="text-[11px] text-slate-400">Chọn đủ 2 VĐV cho cả 4 trận. Sau khi xác nhận sẽ khóa kín để đội bạn không biết.</p>
       </div>
       <div id="blindRows" class="space-y-2.5 text-xs"></div>
       <p id="blindError" class="hidden text-center text-xs text-red-400 font-bold"></p>
       <button onclick="confirmBlindLineup()" class="fire-btn w-full py-3 rounded-xl font-black text-sm text-white shadow-lg">
         XÁC NHẬN & KHÓA ĐỘI HÌNH
       </button>
-      <button onclick="closeBlindModal()" class="block w-full text-center text-xs text-gray-400 hover:text-white font-semibold">
+      <button onclick="closeBlindModal()" class="block w-full text-center text-xs text-slate-400 hover:text-white font-semibold">
         Hủy bỏ
       </button>
     </div>
@@ -239,13 +239,13 @@
       <button onclick="switchTab('ties')" data-tab="ties" class="mob-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-orange-400 transition-colors">
         <i data-lucide="swords" class="w-5 h-5"></i><span class="text-[10px] font-bold leading-none">Trận đấu</span>
       </button>
-      <button onclick="switchTab('teams')" data-tab="teams" class="mob-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-gray-400 transition-colors">
+      <button onclick="switchTab('teams')" data-tab="teams" class="mob-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-slate-400 transition-colors">
         <i data-lucide="users" class="w-5 h-5"></i><span class="text-[10px] font-bold leading-none">Đội & VĐV</span>
       </button>
-      <button onclick="switchTab('courts')" data-tab="courts" class="mob-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-gray-400 transition-colors">
+      <button onclick="switchTab('courts')" data-tab="courts" class="mob-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-slate-400 transition-colors">
         <i data-lucide="tv" class="w-5 h-5"></i><span class="text-[10px] font-bold leading-none">Sân & OBS</span>
       </button>
-      <button onclick="switchTab('settings')" data-tab="settings" class="mob-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-gray-400 transition-colors">
+      <button onclick="switchTab('settings')" data-tab="settings" class="mob-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 text-slate-400 transition-colors">
         <i data-lucide="settings" class="w-5 h-5"></i><span class="text-[10px] font-bold leading-none">Cài đặt</span>
       </button>
     </nav>
@@ -261,17 +261,17 @@
     function uiConfirm({ title = 'Xác nhận', message = '', icon = '⚠️', confirmText = 'XÁC NHẬN', danger = false } = {}) {
       return new Promise((resolve) => {
         const overlay = document.createElement('div');
-        overlay.className = 'fixed inset-0 z-[9999] bg-[#0c0908]/90 backdrop-blur-md flex items-center justify-center p-4';
+        overlay.className = 'fixed inset-0 z-[9999] bg-[#090b0f]/92 backdrop-blur-md flex items-center justify-center p-4';
         const btnClass = danger ? 'bg-gradient-to-r from-red-600 to-rose-700' : 'bg-gradient-to-r from-orange-500 to-red-600';
         overlay.innerHTML = `
-          <div class="w-full max-w-xs bg-[#17110e] border border-orange-500/40 rounded-2xl p-6 text-center shadow-2xl space-y-4">
+          <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/40 rounded-2xl p-6 text-center shadow-2xl space-y-4">
             <div class="w-12 h-12 mx-auto rounded-xl ${danger ? 'bg-red-500/20 text-red-400' : 'bg-orange-500/20 text-orange-400'} flex items-center justify-center text-2xl">${icon}</div>
             <div>
               <h2 class="font-black ${danger ? 'text-red-400' : 'text-orange-400'} uppercase text-sm tracking-wide">${title}</h2>
-              <p class="text-xs text-amber-200/70 mt-1.5 leading-relaxed">${message}</p>
+              <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">${message}</p>
             </div>
             <button id="uiOk" class="w-full py-3 rounded-xl ${btnClass} text-white font-black text-sm shadow-lg active:scale-95 transition">${confirmText}</button>
-            <button id="uiCancel" class="block w-full text-xs text-gray-400 hover:text-white pt-1 font-semibold">Hủy bỏ</button>
+            <button id="uiCancel" class="block w-full text-xs text-slate-400 hover:text-white pt-1 font-semibold">Hủy bỏ</button>
           </div>`;
         document.body.appendChild(overlay);
         const done = (v) => { overlay.remove(); resolve(v); };
@@ -294,12 +294,12 @@
       document.querySelectorAll('.tab-section').forEach(s => s.classList.add('hidden'));
       document.getElementById(`tab-${tabName}`).classList.remove('hidden');
       document.querySelectorAll('.mob-btn').forEach(b => {
-        b.className = `mob-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 transition-colors ${b.dataset.tab === tabName ? 'text-orange-400' : 'text-gray-400'}`;
+        b.className = `mob-btn relative z-10 py-2 flex flex-col items-center justify-center gap-0.5 transition-colors ${b.dataset.tab === tabName ? 'text-orange-400' : 'text-slate-400'}`;
       });
       document.querySelectorAll('.nav-btn').forEach(b => {
         b.className = b.dataset.tab === tabName
           ? 'nav-btn flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-left bg-orange-500/15 text-orange-400 border border-orange-500/40'
-          : 'nav-btn flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-left text-gray-400 hover:bg-white/5 border border-transparent';
+          : 'nav-btn flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-left text-slate-400 hover:bg-white/5 border border-transparent';
       });
     };
 
@@ -326,7 +326,7 @@
       teams: {}, doublesTeams: {}, ties: {}, courts: {}, matches: {}
     };
     let tempRoster = [];
-    let blindCtx = null; // { tieId, side: 'A' | 'B' }
+    let blindCtx = null;
 
     onValue(ref(db, '/'), (snap) => {
       const data = snap.val() || {};
@@ -368,17 +368,16 @@
       const isTeam = (state.settings.format || 'team') === 'team';
       document.getElementById('btnModeTeam').className = isTeam
         ? 'py-2.5 rounded-xl font-black text-xs uppercase transition flex items-center justify-center gap-1.5 fire-btn text-white shadow'
-        : 'py-2.5 rounded-xl font-black text-xs uppercase transition flex items-center justify-center gap-1.5 text-amber-200/60 hover:bg-white/5';
+        : 'py-2.5 rounded-xl font-black text-xs uppercase transition flex items-center justify-center gap-1.5 text-slate-400 hover:bg-white/5';
       document.getElementById('btnModeDoubles').className = !isTeam
         ? 'py-2.5 rounded-xl font-black text-xs uppercase transition flex items-center justify-center gap-1.5 fire-btn text-white shadow'
-        : 'py-2.5 rounded-xl font-black text-xs uppercase transition flex items-center justify-center gap-1.5 text-amber-200/60 hover:bg-white/5';
+        : 'py-2.5 rounded-xl font-black text-xs uppercase transition flex items-center justify-center gap-1.5 text-slate-400 hover:bg-white/5';
       document.getElementById('tiesModeTeam').classList.toggle('hidden', !isTeam);
       document.getElementById('tiesModeDoubles').classList.toggle('hidden', isTeam);
       document.getElementById('teamsModeTeam').classList.toggle('hidden', !isTeam);
       document.getElementById('teamsModeDoubles').classList.toggle('hidden', isTeam);
     }
 
-    // --- THÊM CLB & VĐV ---
     window.addTempClubPlayer = () => {
       const name = document.getElementById('inpClubPlName').value.trim();
       const gender = document.getElementById('inpClubPlGender').value;
@@ -392,13 +391,13 @@
 
     function renderTempRoster() {
       document.getElementById('tempRosterChips').innerHTML = tempRoster.map((p, i) => `
-        <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#17110e] border border-orange-500/30 text-[11px]">
+        <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#12161f] border border-white/10 text-[11px]">
           <b class="text-white">${p.name}</b>
           <span class="px-1 rounded text-[9px] font-bold ${p.gender === 'Nữ' ? 'bg-pink-500/20 text-pink-300' : 'bg-blue-500/20 text-blue-300'}">${p.gender}</span>
           <span class="text-amber-300 font-black">${p.rating.toFixed(1)}</span>
           <button onclick="removeTempClubPlayer(${i})" class="text-red-400 font-black ml-0.5">✕</button>
         </span>
-      `).join('') || '<span class="text-[11px] text-gray-500">Chưa thêm VĐV nào vào CLB.</span>';
+      `).join('') || '<span class="text-[11px] text-slate-500">Chưa thêm VĐV nào vào CLB.</span>';
     }
 
     window.addClubTeam = async () => {
@@ -416,8 +415,8 @@
     window.seedSampleClubs = async () => {
       const mk = (arr) => arr.map(([name, gender, rating]) => ({ name, gender, rating }));
       const clubs = [
-        { id: 'club_1', name: 'Bính Dần 1', rosterDetails: mk([['Hùng','Nam',3.0],['Nam','Nam',2.8],['Lan','Nữ',2.5],['Hoa','Nữ',2.4]]) },
-        { id: 'club_2', name: 'Bính Dần 2', rosterDetails: mk([['Minh','Nam',3.1],['Tuấn','Nam',2.7],['Mai','Nữ',2.6],['Cúc','Nữ',2.3]]) },
+        { id: 'club_1', name: 'Bính Dần 1', rosterDetails: mk([['Hùng','Nam',3.0],['Nam','Nam',2.8],['Sơn','Nam',2.9],['Lan','Nữ',2.5],['Hoa','Nữ',2.4],['Mai','Nữ',2.6]]) },
+        { id: 'club_2', name: 'Bính Dần 2', rosterDetails: mk([['Minh','Nam',3.1],['Tuấn','Nam',2.7],['Dũng','Nam',2.8],['Cúc','Nữ',2.6],['Hương','Nữ',2.3],['Thảo','Nữ',2.5]]) },
         { id: 'club_3', name: 'CLB Độc Lập', rosterDetails: mk([['Hiếu','Nam',2.9],['Khang','Nam',2.8],['Ngọc','Nữ',2.5],['Linh','Nữ',2.5]]) },
         { id: 'club_4', name: 'CLB Cao Bằng', rosterDetails: mk([['Huy','Nam',3.0],['Đức','Nam',2.9],['Vy','Nữ',2.6],['Anh','Nữ',2.4]]) }
       ];
@@ -434,7 +433,6 @@
       showToast('Đã xóa CLB');
     };
 
-    // --- NỘI DUNG ĐÔI ---
     window.updateDoublesPreview = () => {
       const g1 = document.getElementById('dP1Gender').value, g2 = document.getElementById('dP2Gender').value;
       const r1 = Number(document.getElementById('dP1Rating').value) || 0, r2 = Number(document.getElementById('dP2Rating').value) || 0;
@@ -500,7 +498,6 @@
       showToast(`Đã tạo ${count} trận đôi vòng tròn!`);
     };
 
-    // --- TẠO LƯỢT ĐẤU ĐỒNG ĐỘI & XẾP ĐỘI HÌNH KÍN ---
     window.createTeamTie = async () => {
       const idA = document.getElementById('selTeamA').value, idB = document.getElementById('selTeamB').value;
       const stage = document.getElementById('selStage').value;
@@ -527,7 +524,6 @@
       showToast('Đã tạo lượt đấu! Mời từng CLB xếp đội hình kín.');
     };
 
-    // Mở khung xếp đội hình kín cho Đội A hoặc Đội B
     window.openBlindLineup = (tieId, side) => {
       const tie = state.ties[tieId];
       if (!tie) return;
@@ -547,11 +543,11 @@
       }).join('');
 
       document.getElementById('blindRows').innerHTML = labels.map((lbl, idx) => `
-        <div class="bg-[#0c0908] border border-orange-500/20 rounded-xl p-2.5 space-y-1.5">
+        <div class="bg-[#090b0f] border border-white/10 rounded-xl p-2.5 space-y-1.5">
           <div class="font-bold text-amber-300 text-[11px]">${lbl}</div>
           <div class="grid grid-cols-2 gap-2">
-            <select id="bl_${idx}_1" class="bg-[#17110e] border border-gray-700 rounded-lg px-2 py-2 text-xs text-white outline-none">${optsHtml}</select>
-            <select id="bl_${idx}_2" class="bg-[#17110e] border border-gray-700 rounded-lg px-2 py-2 text-xs text-white outline-none">${optsHtml}</select>
+            <select id="bl_${idx}_1" class="bg-[#12161f] border border-white/10 rounded-lg px-2 py-2 text-xs text-white outline-none">${optsHtml}</select>
+            <select id="bl_${idx}_2" class="bg-[#12161f] border border-white/10 rounded-lg px-2 py-2 text-xs text-white outline-none">${optsHtml}</select>
           </div>
         </div>
       `).join('');
@@ -575,12 +571,12 @@
         const p1 = document.getElementById(`bl_${i}_1`).value;
         const p2 = document.getElementById(`bl_${i}_2`).value;
         if (!p1 || !p2) {
-          errEl.textContent = `⚠️ Vui lòng chọn đủ 2 VĐV cho Trận ${i + 1}!`;
+          errEl.textContent = `Vui lòng chọn đủ 2 VĐV cho Trận ${i + 1}.`;
           errEl.classList.remove('hidden');
           return;
         }
         if (p1 === p2) {
-          errEl.textContent = `⚠️ Trận ${i + 1} không thể chọn trùng 1 VĐV!`;
+          errEl.textContent = `Trận ${i + 1} không thể chọn trùng 1 VĐV.`;
           errEl.classList.remove('hidden');
           return;
         }
@@ -596,7 +592,7 @@
       await update(ref(db, '/'), updates);
       const tName = side === 'A' ? tie.teamAName : tie.teamBName;
       closeBlindModal();
-      showToast(`🔒 Đã khóa đội hình ${tName}!`);
+      showToast(`Đã khóa đội hình ${tName}!`);
     };
 
     window.openDreambreaker = async (tieId) => {
@@ -646,7 +642,7 @@
         if (m && m.tieId && state.ties[m.tieId]) {
           const tie = state.ties[m.tieId];
           if (!tie.lineupA || !tie.lineupB) {
-            showToast('🔒 Cần cả 2 CLB chốt đội hình kín trước khi đẩy ra sân!');
+            showToast('Cần cả 2 CLB chốt đội hình kín trước khi đẩy ra sân!');
             renderAll();
             return;
           }
@@ -686,51 +682,50 @@
       document.getElementById('teamsList').innerHTML = teamsArr.map(t => {
         const details = t.rosterDetails || (t.roster || []).map(n => ({ name: n }));
         return `
-          <div class="bg-[#0c0908] p-3 rounded-xl border border-orange-500/20 space-y-1.5">
+          <div class="bg-[#090b0f] p-3 rounded-xl border border-white/10 space-y-1.5">
             <div class="flex justify-between items-center">
-              <span class="font-bold text-sm text-orange-300">${t.name}</span>
+              <span class="font-bold text-sm text-orange-400">${t.name}</span>
               <button onclick="deleteTeam('${t.id}')" class="text-xs text-red-400 font-bold px-2">Xóa</button>
             </div>
             <div class="flex flex-wrap gap-1.5">
               ${details.map(p => `
-                <span class="text-[11px] px-2 py-0.5 rounded bg-white/5 text-gray-200">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-white/[0.06] text-slate-200">
                   ${p.name}${p.gender ? ` <span class="${p.gender === 'Nữ' ? 'text-pink-300' : 'text-blue-300'}">${p.gender}</span>` : ''}${p.rating ? ` <b class="text-amber-300">${Number(p.rating).toFixed(1)}</b>` : ''}
                 </span>
               `).join('')}
             </div>
           </div>`;
-      }).join('') || '<p class="text-xs text-gray-500 text-center py-3">Chưa có CLB nào.</p>';
+      }).join('') || '<p class="text-xs text-slate-500 text-center py-3">Chưa có CLB nào.</p>';
 
       const dblArr = Object.values(state.doublesTeams);
       document.getElementById('doublesTeamCount').textContent = dblArr.length;
       document.getElementById('doublesTeamsList').innerHTML = dblArr.map(d => `
-        <div class="bg-[#0c0908] p-3 rounded-xl border border-orange-500/20 flex justify-between items-center gap-2">
+        <div class="bg-[#090b0f] p-3 rounded-xl border border-white/10 flex justify-between items-center gap-2">
           <div class="min-w-0">
             <div class="flex items-center gap-2">
               <span class="font-bold text-sm text-white truncate">${d.name}</span>
               <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/20 text-amber-300 font-bold">${d.pairType}</span>
             </div>
-            <div class="text-[11px] text-gray-400 mt-0.5">${(d.playerDetails || []).map(p => `${p.name} (${p.gender} ${Number(p.rating).toFixed(1)})`).join(' • ')}</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">${(d.playerDetails || []).map(p => `${p.name} (${p.gender} ${Number(p.rating).toFixed(1)})`).join(' • ')}</div>
           </div>
           <div class="flex items-center gap-2 shrink-0">
             <span class="px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 font-black text-xs">${Number(d.totalRating).toFixed(1)}</span>
             <button onclick="deleteDoublesPair('${d.id}')" class="text-xs text-red-400 font-bold">✕</button>
           </div>
         </div>
-      `).join('') || '<p class="text-xs text-gray-500 text-center py-3">Chưa có cặp đôi nào.</p>';
+      `).join('') || '<p class="text-xs text-slate-500 text-center py-3">Chưa có cặp đôi nào.</p>';
 
       const matchesArr = Object.values(state.matches);
       const dblMatches = matchesArr.filter(m => !m.tieId);
       document.getElementById('doublesMatchCount').textContent = dblMatches.length;
       document.getElementById('doublesMatchesList').innerHTML = dblMatches.map(m => `
-        <div class="bg-[#0c0908] border border-gray-800 rounded-xl px-3 py-2.5 flex items-center justify-between text-xs">
+        <div class="bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 flex items-center justify-between text-xs">
           <span class="font-bold truncate w-2/5">${m.teamA.name}</span>
           <span class="font-black text-orange-400">${m.teamA.score} - ${m.teamB.score}</span>
           <span class="font-bold truncate w-2/5 text-right">${m.teamB.name}</span>
         </div>
-      `).join('') || '<p class="text-xs text-gray-500 text-center py-3">Chưa có trận đôi nào.</p>';
+      `).join('') || '<p class="text-xs text-slate-500 text-center py-3">Chưa có trận đôi nào.</p>';
 
-      // RENDER LƯỢT ĐẤU ĐỒNG ĐỘI (CÓ KHÓA ĐỘI HÌNH KÍN)
       const tiesArr = Object.values(state.ties).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
       document.getElementById('tiesList').innerHTML = tiesArr.map(tie => {
         const subMatches = (tie.matchIds || []).map(id => state.matches[id]).filter(Boolean);
@@ -743,56 +738,56 @@
 
         return `
           <div class="fire-card rounded-2xl p-4 space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-orange-500/20 pb-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-2.5">
               <div>
                 <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-orange-500/20 text-orange-400">${tie.stage === 'knockout' ? 'Loại trực tiếp' : 'Vòng bảng'}</span>
                 <div class="font-black text-base text-white mt-1">${tie.teamAName} <span class="text-orange-400 mx-1">${winsA} - ${winsB}</span> ${tie.teamBName}</div>
               </div>
               <div class="flex gap-1.5">
-                <button onclick="setWalkover('${tie.id}','A')" class="text-[10px] px-2 py-1 rounded bg-white/5 text-gray-400">Bỏ cuộc B</button>
-                <button onclick="setWalkover('${tie.id}','B')" class="text-[10px] px-2 py-1 rounded bg-white/5 text-gray-400">Bỏ cuộc A</button>
+                <button onclick="setWalkover('${tie.id}','A')" class="text-[10px] px-2 py-1 rounded bg-white/[0.06] text-slate-300">Bỏ cuộc B</button>
+                <button onclick="setWalkover('${tie.id}','B')" class="text-[10px] px-2 py-1 rounded bg-white/[0.06] text-slate-300">Bỏ cuộc A</button>
               </div>
             </div>
 
             ${!bothReady ? `
-              <div class="bg-[#0c0908] border border-amber-500/30 rounded-xl p-3 space-y-2">
-                <div class="text-[11px] text-amber-300 font-bold text-center">🔒 Xếp đội hình kín — Chỉ công bố khi cả 2 CLB cùng xác nhận</div>
+              <div class="bg-[#090b0f] border border-white/10 rounded-xl p-3 space-y-2">
+                <div class="text-[11px] text-amber-300 font-bold text-center">Xếp đội hình kín — Chỉ công bố khi cả 2 CLB cùng xác nhận</div>
                 <div class="grid grid-cols-2 gap-2">
                   ${tie.lineupA
                     ? `<div class="py-2.5 px-2 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-black text-xs text-center">✓ ${tie.teamAName} đã chốt</div>`
-                    : `<button onclick="openBlindLineup('${tie.id}','A')" class="fire-btn py-2.5 px-2 rounded-xl text-white font-black text-xs">📝 Xếp ${tie.teamAName}</button>`
+                    : `<button onclick="openBlindLineup('${tie.id}','A')" class="fire-btn py-2.5 px-2 rounded-xl text-white font-black text-xs">Xếp ${tie.teamAName}</button>`
                   }
                   ${tie.lineupB
                     ? `<div class="py-2.5 px-2 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-black text-xs text-center">✓ ${tie.teamBName} đã chốt</div>`
-                    : `<button onclick="openBlindLineup('${tie.id}','B')" class="fire-btn py-2.5 px-2 rounded-xl text-white font-black text-xs">📝 Xếp ${tie.teamBName}</button>`
+                    : `<button onclick="openBlindLineup('${tie.id}','B')" class="fire-btn py-2.5 px-2 rounded-xl text-white font-black text-xs">Xếp ${tie.teamBName}</button>`
                   }
                 </div>
               </div>
             ` : `
-              ${overplayed.length ? `<div class="text-xs bg-red-500/20 border border-red-500/50 text-red-300 px-3 py-2 rounded-xl font-bold">⚠️ Quá 2 trận/VĐV: ${overplayed.join(', ')}</div>` : ''}
+              ${overplayed.length ? `<div class="text-xs bg-red-500/20 border border-red-500/50 text-red-300 px-3 py-2 rounded-xl font-bold">Quá 2 trận/VĐV: ${overplayed.join(', ')}</div>` : ''}
               <div class="space-y-2">
                 ${subMatches.map(m => `
-                  <div class="bg-[#0c0908] border border-gray-800 rounded-xl p-2.5 flex items-center justify-between gap-2 text-xs">
+                  <div class="bg-[#090b0f] border border-white/10 rounded-xl p-2.5 flex items-center justify-between gap-2 text-xs">
                     <div class="min-w-0 flex-1">
                       <div class="font-bold text-amber-300 truncate">${m.category.split('(')[0]}</div>
-                      <div class="text-[11px] text-gray-300 truncate">${(m.teamA.players || []).join('/')} <b class="text-white mx-1">${m.teamA.score}-${m.teamB.score}</b> ${(m.teamB.players || []).join('/')}</div>
+                      <div class="text-[11px] text-slate-300 truncate">${(m.teamA.players || []).join('/')} <b class="text-white mx-1">${m.teamA.score}-${m.teamB.score}</b> ${(m.teamB.players || []).join('/')}</div>
                     </div>
                   </div>
                 `).join('')}
               </div>
             `}
 
-            ${needDB ? `<button onclick="openDreambreaker('${tie.id}')" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-black text-xs animate-pulse">⚡ HÒA 2-2! MỞ TRẬN 5 ĐƠN 21Đ</button>` : ''}
+            ${needDB ? `<button onclick="openDreambreaker('${tie.id}')" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-black text-xs animate-pulse">HÒA 2-2 • MỞ TRẬN 5 ĐƠN 21Đ</button>` : ''}
           </div>`;
-      }).join('') || '<p class="text-xs text-gray-500 text-center py-6">Chưa có lượt đấu đồng đội nào.</p>';
+      }).join('') || '<p class="text-xs text-slate-500 text-center py-6">Chưa có lượt đấu đồng đội nào.</p>';
 
       document.getElementById('courtsManagerList').innerHTML = Object.entries(state.courts).map(([cId, c]) => `
         <div class="fire-card rounded-2xl p-4 space-y-3">
           <div class="flex justify-between items-center">
             <h3 class="font-black text-orange-400 uppercase text-sm">${c.name}</h3>
-            <span class="text-[11px] text-gray-500">${cId}</span>
+            <span class="text-[11px] text-slate-500">${cId}</span>
           </div>
-          <select onchange="assignMatchToCourt('${cId}', this.value)" class="w-full bg-[#0c0908] border border-gray-700 rounded-xl px-3 py-2.5 text-xs">
+          <select onchange="assignMatchToCourt('${cId}', this.value)" class="w-full bg-[#090b0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs outline-none">
             <option value="">-- Chọn trận đẩy ra sân --</option>
             ${matchesArr.map(m => {
               const locked = m.tieId && state.ties[m.tieId] && !(state.ties[m.tieId].lineupA && state.ties[m.tieId].lineupB);
@@ -801,7 +796,7 @@
           </select>
           <div class="grid grid-cols-2 gap-2">
             <a href="referee.html?court=${cId}" target="_blank" class="fire-btn py-2.5 rounded-xl text-center text-xs font-bold text-white">Mở Trọng tài</a>
-            <button onclick="copyLink('overlay.html?court=${cId}')" class="py-2.5 rounded-xl bg-white/10 text-xs font-bold text-orange-300">Copy Link OBS</button>
+            <button onclick="copyLink('overlay.html?court=${cId}')" class="py-2.5 rounded-xl bg-white/[0.06] border border-white/10 text-xs font-bold text-orange-300">Copy Link OBS</button>
           </div>
         </div>
       `).join('');
