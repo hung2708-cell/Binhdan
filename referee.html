@@ -3,15 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Trọng Tài Đồng Đội - Bính Dần 1986</title>
+  <title>Trọng Tài 2D - Bính Dần 1986</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { background: #0c0908; color: #f5f0eb; font-family: system-ui, -apple-system, sans-serif; touch-action: manipulation; }
     .fire-card { background: #17110e; border: 1px solid rgba(249, 115, 22, 0.3); }
     .btn-tap:active { transform: scale(0.96); }
-    .court-surface { background: #1e3a5f; border: 2px solid #f8fafc; }
-    .kitchen-zone { background: rgba(249, 115, 22, 0.28); border-top: 2px solid #f8fafc; border-bottom: 2px solid #f8fafc; }
+    .court-surface {
+      background: #1e3a5f;
+      border: 2px solid #f8fafc;
+      display: grid;
+      grid-template-columns: 1fr 48px 1fr;
+    }
+    .kitchen-zone-v {
+      background: rgba(249, 115, 22, 0.32);
+      border-left: 2px solid #f8fafc;
+      border-right: 2px solid #f8fafc;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col p-3 max-w-md mx-auto select-none">
@@ -43,7 +52,7 @@
       <span id="tieTeamB" class="truncate w-2/5 text-right text-amber-200">CLB B</span>
     </div>
 
-    <!-- CẢNH BÁO (ĐỔI CẶP 4Đ / ĐỔI SÂN / GAME POINT / KẾT THÚC) -->
+    <!-- CẢNH BÁO -->
     <div id="alertBanner" class="hidden rounded-xl px-3 py-2 text-center font-black text-xs uppercase tracking-wide"></div>
 
     <!-- THANH ĐIỂM SỐ & ĐỌC ĐIỂM -->
@@ -65,38 +74,50 @@
       </div>
     </div>
 
-    <!-- SƠ ĐỒ SÂN PICKLEBALL 2D -->
+    <!-- SƠ ĐỒ SÂN PICKLEBALL 2D CHIỀU NGANG -->
     <div id="court2DWrapper" class="fire-card rounded-2xl p-2.5">
       <div class="flex justify-between items-center text-[10px] text-gray-400 mb-1.5 px-1">
-        <span class="font-bold text-orange-400">SƠ ĐỒ VỊ TRÍ 2D</span>
-        <span id="serveHint" class="font-semibold text-amber-300">Đội A giao bóng #2</span>
+        <span class="font-bold text-orange-400">SÂN 2D (NGANG)</span>
+        <span id="serveHint" class="font-semibold text-amber-300 truncate max-w-[65%] text-right">Đội A giao bóng #2</span>
       </div>
 
-      <div class="court-surface rounded-lg overflow-hidden text-xs font-bold">
-        <div class="grid grid-cols-2 divide-x divide-white/80 h-16">
+      <div class="court-surface rounded-lg overflow-hidden h-36 text-xs font-bold">
+        <!-- NỬA SÂN TRÁI (ĐỘI A) -->
+        <div class="grid grid-rows-2 divide-y divide-white/80 h-full">
+          <div id="boxA1" class="flex flex-col items-center justify-center p-1 text-center transition-colors">
+            <span class="text-[9px] text-white/60 uppercase">Trái (Lẻ)</span>
+            <span id="pA1" class="truncate max-w-full text-white text-xs mt-0.5">-</span>
+          </div>
+          <div id="boxA0" class="flex flex-col items-center justify-center p-1 text-center transition-colors">
+            <span class="text-[9px] text-white/60 uppercase">Phải (Chẵn)</span>
+            <span id="pA0" class="truncate max-w-full text-white text-xs mt-0.5">-</span>
+          </div>
+        </div>
+
+        <!-- KHU VỰC BẾP (KITCHEN / NVZ) + LƯỚI DỌC Ở GIỮA -->
+        <div class="kitchen-zone-v h-full flex items-center justify-center relative">
+          <div class="h-full border-l-2 border-dashed border-white/90 absolute"></div>
+          <span class="relative z-10 bg-[#0c0908]/85 text-[8px] px-1.5 py-0.5 rounded text-orange-300 font-black tracking-widest -rotate-90 whitespace-nowrap">
+            LƯỚI / NVZ
+          </span>
+        </div>
+
+        <!-- NỬA SÂN PHẢI (ĐỘI B) -->
+        <div class="grid grid-rows-2 divide-y divide-white/80 h-full">
           <div id="boxB0" class="flex flex-col items-center justify-center p-1 text-center transition-colors">
             <span class="text-[9px] text-white/60 uppercase">Phải (Chẵn)</span>
-            <span id="pB0" class="truncate max-w-full text-white text-xs">-</span>
+            <span id="pB0" class="truncate max-w-full text-white text-xs mt-0.5">-</span>
           </div>
           <div id="boxB1" class="flex flex-col items-center justify-center p-1 text-center transition-colors">
             <span class="text-[9px] text-white/60 uppercase">Trái (Lẻ)</span>
-            <span id="pB1" class="truncate max-w-full text-white text-xs">-</span>
+            <span id="pB1" class="truncate max-w-full text-white text-xs mt-0.5">-</span>
           </div>
         </div>
-        <div class="kitchen-zone h-8 flex items-center justify-center relative">
-          <div class="w-full border-t-2 border-dashed border-white/90 absolute"></div>
-          <span class="relative z-10 bg-[#0c0908]/80 text-[9px] px-2 py-0.5 rounded text-orange-300 font-black tracking-widest">LƯỚI / KITCHEN</span>
-        </div>
-        <div class="grid grid-cols-2 divide-x divide-white/80 h-16">
-          <div id="boxA1" class="flex flex-col items-center justify-center p-1 text-center transition-colors">
-            <span id="pA1" class="truncate max-w-full text-white text-xs">-</span>
-            <span class="text-[9px] text-white/60 uppercase">Trái (Lẻ)</span>
-          </div>
-          <div id="boxA0" class="flex flex-col items-center justify-center p-1 text-center transition-colors">
-            <span id="pA0" class="truncate max-w-full text-white text-xs">-</span>
-            <span class="text-[9px] text-white/60 uppercase">Phải (Chẵn)</span>
-          </div>
-        </div>
+      </div>
+
+      <div class="flex justify-between text-[10px] text-amber-200/60 font-bold mt-1 px-1">
+        <span id="sideLabelA" class="truncate max-w-[45%]">← Đội A</span>
+        <span id="sideLabelB" class="truncate max-w-[45%] text-right">Đội B →</span>
       </div>
     </div>
 
@@ -217,7 +238,7 @@
       document.getElementById('modeBadge').textContent =
         `${m.scoringMode === 'rally' ? 'Rally' : 'Side-out'} • ${m.targetScore}đ${capText}`;
 
-      // Tỷ số tổng đồng đội (nếu có tieId)
+      // Tỷ số tổng đồng đội
       const tieBar = document.getElementById('tieScoreBar');
       if (m.tieId && allTies[m.tieId]) {
         const tie = allTies[m.tieId];
@@ -240,7 +261,9 @@
       document.getElementById('nameB').textContent = m.teamB.name;
       document.getElementById('scoreB').textContent = m.teamB.score;
 
-      // Ẩn sơ đồ 2D nếu là Trận 5 Đơn 21đ
+      document.getElementById('sideLabelA').textContent = `← ${m.teamA.name}`;
+      document.getElementById('sideLabelB').textContent = `${m.teamB.name} →`;
+
       const isDB = Boolean(m.isDreambreaker);
       document.getElementById('court2DWrapper').classList.toggle('hidden', isDB);
       document.getElementById('dreambreakerBox').classList.toggle('hidden', !isDB);
