@@ -15,23 +15,22 @@
       height: 100dvh;
       overflow: hidden;
       overscroll-behavior: none;
-      background: #0a0807;
-      color: #f5f0eb;
+      background: #090b0f;
+      color: #f8fafc;
       font-family: system-ui, -apple-system, sans-serif;
       touch-action: manipulation;
       -webkit-user-select: none;
       user-select: none;
     }
-    .sc-card {
-      background: rgba(255, 255, 255, 0.035);
+    .sc-panel {
+      background: #12161f;
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .btn-tap { transition: transform 0.12s ease, opacity 0.12s ease; }
-    .btn-tap:active { transform: scale(0.96); opacity: 0.9; }
+    .btn-tap { transition: transform 0.1s ease, opacity 0.12s ease; }
+    .btn-tap:active { transform: scale(0.97); opacity: 0.92; }
     .court-surface {
-      background: linear-gradient(180deg, #1b3b64 0%, #142c4c 100%);
+      background: linear-gradient(180deg, #163a63 0%, #102b4a 100%);
       border: 1.5px solid rgba(255, 255, 255, 0.85);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
       display: grid;
       grid-template-columns: 1fr 34px 1fr;
     }
@@ -41,22 +40,22 @@
       border-right: 1.5px solid rgba(255, 255, 255, 0.8);
     }
     .player-pill {
-      transition: all 0.25s cubic-bezier(0.32, 0.72, 0, 1);
-      background: rgba(10, 8, 7, 0.84);
+      transition: all 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+      background: rgba(9, 11, 15, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.16);
       backdrop-filter: blur(6px);
     }
     .pill-serve {
-      border-color: rgba(250, 204, 21, 0.85);
-      box-shadow: 0 0 12px rgba(250, 204, 21, 0.32);
+      border-color: #facc15;
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.35);
     }
     .pill-receive {
-      border-color: rgba(52, 211, 153, 0.8);
-      box-shadow: 0 0 12px rgba(52, 211, 153, 0.28);
+      border-color: #34d399;
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.3);
     }
     @keyframes dotBlink {
       0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.3); opacity: 0.5; }
+      50% { transform: scale(1.28); opacity: 0.55; }
     }
     .blink-serve { animation: dotBlink 0.95s ease-in-out infinite; box-shadow: 0 0 10px #facc15; }
     .blink-receive { animation: dotBlink 1.15s ease-in-out infinite; box-shadow: 0 0 10px #34d399; }
@@ -74,72 +73,72 @@
 
   <!-- TOP BAR -->
   <header class="flex items-center justify-between gap-2 mb-2 landscape:mb-1.5 shrink-0">
-    <button id="btnCourtPicker" onclick="openCourtPicker()" class="btn-tap bg-white/[0.06] border border-white/10 text-orange-400 font-bold text-xs rounded-full px-3 py-1.5 flex items-center gap-1.5 shrink-0">
+    <button id="btnCourtPicker" onclick="openCourtPicker()" class="btn-tap sc-panel text-orange-400 font-bold text-xs rounded-full px-3 py-1.5 flex items-center gap-1.5 shrink-0">
       <span id="courtNameLabel">Sân 1</span>
       <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-70"></i>
     </button>
-    <span id="matchCategory" class="text-xs text-gray-300 truncate flex-1 text-center font-semibold">Đang tải...</span>
-    <button id="btnSound" onclick="toggleSound()" class="btn-tap w-8 h-8 rounded-full bg-white/[0.06] border border-white/10 text-orange-400 flex items-center justify-center shrink-0">
+    <span id="matchCategory" class="text-xs text-slate-300 truncate flex-1 text-center font-semibold">Đang tải...</span>
+    <button id="btnSound" onclick="toggleSound()" class="btn-tap sc-panel w-8 h-8 rounded-full text-orange-400 flex items-center justify-center shrink-0">
       <i data-lucide="volume-2" class="w-4 h-4"></i>
     </button>
-    <a href="admin.html" class="btn-tap text-[11px] px-3 py-1.5 rounded-full bg-white/[0.06] border border-white/10 text-gray-300 font-semibold shrink-0">Admin</a>
+    <a href="admin.html" class="btn-tap sc-panel text-[11px] px-3 py-1.5 rounded-full text-slate-200 font-semibold shrink-0">Quản trị</a>
   </header>
 
-  <!-- TRẠNG THÁI SÂN TRỐNG -->
-  <div id="emptyState" class="hidden flex-1 flex flex-col items-center justify-center text-center p-6 sc-card rounded-2xl">
-    <div class="text-4xl mb-3">🏓</div>
-    <h2 class="font-black text-orange-400 text-base uppercase">Sân đang trống</h2>
-    <p class="text-xs text-gray-400 mt-1">Vào trang Admin để gán trận đấu vào sân này.</p>
+  <!-- SÂN TRỐNG -->
+  <div id="emptyState" class="hidden flex-1 flex flex-col items-center justify-center text-center p-6 sc-panel rounded-2xl">
+    <i data-lucide="calendar-clock" class="w-10 h-10 text-orange-400 mb-2.5"></i>
+    <h2 class="font-black text-orange-400 text-sm uppercase">Chưa có trận đang diễn ra</h2>
+    <p class="text-xs text-slate-400 mt-1">Vào trang Quản trị để gán trận đấu vào sân này.</p>
   </div>
 
   <!-- BÀN CHẤM ĐIỂM CHÍNH -->
   <main id="refereeBoard" class="hidden flex-1 min-h-0 flex flex-col justify-between gap-2 landscape:grid landscape:grid-cols-12 landscape:gap-2.5">
 
-    <!-- THANH ĐỒNG ĐỘI -->
+    <!-- THANH LƯỢT ĐẤU ĐỒNG ĐỘI -->
     <div id="tieWrapper" class="hidden shrink-0 landscape:col-span-12 flex flex-col landscape:flex-row landscape:items-center gap-1.5">
-      <div class="rounded-xl bg-gradient-to-r from-orange-600/20 via-red-600/15 to-orange-600/20 border border-orange-500/25 px-3 py-1 flex items-center justify-between gap-2 text-[11px] font-bold shrink-0">
-        <span id="tieTeamA" class="truncate max-w-[95px] text-amber-100">CLB A</span>
-        <span id="tieScoreText" class="px-2 py-0.5 rounded-md bg-orange-500 text-black font-black text-[10px] shrink-0">0 - 0</span>
-        <span id="tieTeamB" class="truncate max-w-[95px] text-right text-amber-100">CLB B</span>
+      <div class="rounded-xl bg-orange-500/10 border border-orange-500/25 px-3 py-1 flex items-center justify-between gap-2 text-[11px] font-bold shrink-0">
+        <span id="tieTeamA" class="truncate max-w-[95px] text-amber-100">Đội A</span>
+        <span id="tieScoreText" class="px-2 py-0.5 rounded-md bg-orange-500 text-slate-950 font-black text-[10px] shrink-0">0 - 0</span>
+        <span id="tieTeamB" class="truncate max-w-[95px] text-right text-amber-100">Đội B</span>
       </div>
       <div id="tieSubMatchesBar" class="flex gap-1.5 overflow-x-auto no-scrollbar flex-1"></div>
     </div>
 
-    <!-- CỘT TRÁI (XOAY NGANG): BẢNG ĐIỂM + SÂN 2D -->
+    <!-- CỘT TRÁI: ĐIỂM SỐ + SÂN 2D -->
     <div class="flex flex-col gap-2.5 landscape:gap-2 landscape:col-span-7 landscape:h-full landscape:min-h-0 landscape:justify-between">
 
-      <!-- CẢNH BÁO -->
+      <!-- CẢNH BÁO TRẠNG THÁI -->
       <div id="alertBanner" class="hidden shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase tracking-wide"></div>
 
-      <!-- BẢNG ĐIỂM -->
-      <div class="sc-card shrink-0 rounded-2xl p-2 landscape:p-1.5 flex items-center justify-between gap-2">
+      <!-- BẢNG ĐIỂM KIỂU SCOREBOARD -->
+      <div class="sc-panel shrink-0 rounded-2xl p-2 landscape:p-1.5 flex items-center justify-between gap-2">
         <div class="flex-1 flex items-center gap-1.5 min-w-0">
-          <button onclick="handleSubtractPoint('A')" class="btn-tap w-7 h-7 rounded-full bg-white/[0.06] hover:bg-red-500/20 text-gray-400 hover:text-red-400 font-bold text-base flex items-center justify-center shrink-0">−</button>
+          <button onclick="handleSubtractPoint('A')" aria-label="Trừ 1 điểm đội A" class="btn-tap w-7 h-7 rounded-full bg-white/[0.06] hover:bg-red-500/20 text-slate-300 hover:text-red-400 font-bold text-base flex items-center justify-center shrink-0">−</button>
           <div class="flex-1 text-center min-w-0">
-            <div id="nameA" class="text-[11px] font-semibold text-gray-300 truncate">Đội A</div>
+            <div id="nameA" class="text-[11px] font-semibold text-slate-300 truncate">Đội A</div>
             <div id="scoreA" class="text-3xl landscape:text-2xl font-black text-white tabular-nums leading-none mt-1 landscape:mt-0.5">0</div>
           </div>
         </div>
 
-        <div class="px-3.5 py-1.5 landscape:py-1 rounded-xl bg-black/50 border border-orange-500/30 text-center shrink-0">
-          <div class="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Đọc điểm</div>
-          <div id="callScore" class="text-lg landscape:text-base font-black text-orange-500 tabular-nums leading-tight">0 - 0 - 2</div>
-          <div id="modeBadge" class="text-[9px] text-amber-200/60 font-medium">Side-out • 15đ</div>
+        <div class="px-3.5 py-1.5 landscape:py-1 rounded-xl bg-[#090b0f] border border-orange-500/30 text-center shrink-0">
+          <div class="text-[8px] uppercase tracking-widest text-slate-400 font-bold">Call</div>
+          <div id="callScore" class="text-lg landscape:text-base font-black text-orange-400 tabular-nums leading-tight">0 - 0 - 2</div>
+          <div id="modeBadge" class="text-[9px] text-slate-400 font-medium">Side-out • 15đ</div>
         </div>
 
         <div class="flex-1 flex items-center gap-1.5 min-w-0">
           <div class="flex-1 text-center min-w-0">
-            <div id="nameB" class="text-[11px] font-semibold text-gray-300 truncate">Đội B</div>
+            <div id="nameB" class="text-[11px] font-semibold text-slate-300 truncate">Đội B</div>
             <div id="scoreB" class="text-3xl landscape:text-2xl font-black text-white tabular-nums leading-none mt-1 landscape:mt-0.5">0</div>
           </div>
-          <button onclick="handleSubtractPoint('B')" class="btn-tap w-7 h-7 rounded-full bg-white/[0.06] hover:bg-red-500/20 text-gray-400 hover:text-red-400 font-bold text-base flex items-center justify-center shrink-0">−</button>
+          <button onclick="handleSubtractPoint('B')" aria-label="Trừ 1 điểm đội B" class="btn-tap w-7 h-7 rounded-full bg-white/[0.06] hover:bg-red-500/20 text-slate-300 hover:text-red-400 font-bold text-base flex items-center justify-center shrink-0">−</button>
         </div>
       </div>
 
-      <!-- SƠ ĐỒ SÂN PICKLEBALL 2D -->
+      <!-- SÂN 2D -->
       <div id="court2DWrapper" class="space-y-1.5 landscape:space-y-1 landscape:flex-1 landscape:min-h-0 landscape:flex landscape:flex-col">
         <div class="flex justify-between items-center text-[10px] px-1 shrink-0">
-          <span class="font-bold text-gray-400 uppercase tracking-wider">Sân 2D</span>
+          <span class="font-bold text-slate-400 uppercase tracking-wider">Sân 2D</span>
           <span id="serveHint" class="font-semibold text-amber-300 truncate max-w-[75%] text-right">Đội A giao #2</span>
         </div>
 
@@ -182,19 +181,19 @@
         </div>
       </div>
 
-      <!-- KHUNG TRẬN 5 ĐƠN QUYẾT ĐỊNH 21Đ -->
-      <div id="dreambreakerBox" class="hidden sc-card rounded-2xl p-4 text-center space-y-1">
-        <div class="text-xs font-black text-emerald-400 uppercase">⚡ Trận 5: Đơn quyết định 21 điểm (Rally)</div>
-        <div id="pairSlotInfo" class="text-base font-black text-white">Đang thi đấu: Cặp VĐV số 1</div>
-        <div class="text-[11px] text-gray-400">Đổi cặp sau mỗi 4 điểm • 11 điểm đổi sân</div>
+      <!-- TRẬN 5 ĐƠN 21Đ -->
+      <div id="dreambreakerBox" class="hidden sc-panel rounded-2xl p-4 text-center space-y-1">
+        <div class="text-xs font-black text-emerald-400 uppercase">Trận 5 • Đơn 21 điểm (Rally)</div>
+        <div id="pairSlotInfo" class="text-base font-black text-white">Cặp VĐV số 1</div>
+        <div class="text-[11px] text-slate-400">Đổi cặp mỗi 4 điểm • Đổi sân tại 11 điểm</div>
       </div>
     </div>
 
-    <!-- CỘT PHẢI (XOAY NGANG): THIẾT LẬP + CỤM NÚT ĐIỀU KHIỂN -->
+    <!-- CỘT PHẢI: THIẾT LẬP ĐẦU TRẬN + NÚT GHI ĐIỂM -->
     <div class="shrink-0 flex flex-col gap-2 landscape:gap-1.5 landscape:col-span-5 landscape:h-full landscape:min-h-0 landscape:justify-between">
 
       <!-- THIẾT LẬP TRƯỚC TRẬN (0-0) -->
-      <div id="preMatchSetup" class="sc-card shrink-0 rounded-2xl p-1 grid grid-cols-4 gap-1 text-[10px]">
+      <div id="preMatchSetup" class="sc-panel shrink-0 rounded-2xl p-1 grid grid-cols-4 gap-1 text-[10px]">
         <button onclick="openCoinTossModal()" class="btn-tap py-2 landscape:py-1.5 px-1 rounded-xl bg-amber-500/15 text-amber-300 font-bold flex flex-col items-center justify-center gap-0.5">
           <svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="9" fill="rgba(251,191,36,0.2)" />
@@ -203,39 +202,39 @@
           <span class="truncate max-w-full">Bốc thăm</span>
         </button>
         <button onclick="openTeamServePicker()" class="btn-tap py-2 landscape:py-1.5 px-1 rounded-xl bg-white/[0.04] text-orange-300 font-semibold flex flex-col items-center justify-center leading-tight">
-          <span class="text-[8px] text-gray-400">Đội giao</span>
+          <span class="text-[8px] text-slate-400">Đội giao</span>
           <span id="lblPickTeam" class="truncate max-w-full mt-0.5">Đội A</span>
         </button>
         <button onclick="openRolePicker('server')" class="btn-tap py-2 landscape:py-1.5 px-1 rounded-xl bg-white/[0.04] text-amber-200 font-semibold flex flex-col items-center justify-center leading-tight">
-          <span class="text-[8px] text-gray-400">Giao bóng</span>
+          <span class="text-[8px] text-slate-400">Giao bóng</span>
           <span id="lblPickServer" class="truncate max-w-full mt-0.5">-</span>
         </button>
         <button onclick="openRolePicker('receiver')" class="btn-tap py-2 landscape:py-1.5 px-1 rounded-xl bg-white/[0.04] text-emerald-300 font-semibold flex flex-col items-center justify-center leading-tight">
-          <span class="text-[8px] text-gray-400">Đỡ bóng</span>
+          <span class="text-[8px] text-slate-400">Đỡ bóng</span>
           <span id="lblPickReceiver" class="truncate max-w-full mt-0.5">-</span>
         </button>
       </div>
 
-      <!-- NÚT BẤM CHÍNH (SIDE-OUT) -->
+      <!-- NÚT GHI ĐIỂM SIDE-OUT -->
       <div id="sideoutControls" class="flex flex-col gap-2 landscape:gap-1.5 landscape:flex-1 landscape:min-h-0">
-        <button onclick="handlePointServing()" class="btn-tap w-full py-4 landscape:flex-1 landscape:py-2 rounded-2xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-base tracking-wide shadow-lg shadow-orange-600/25">
+        <button onclick="handlePointServing()" class="btn-tap w-full py-4 landscape:flex-1 landscape:py-2 rounded-2xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-base tracking-wide shadow-lg shadow-orange-600/20">
           +1 ĐIỂM (<span id="btnServingName">ĐỘI GIAO</span>)
         </button>
         <button onclick="handleSideOut()" class="btn-tap w-full py-3 landscape:py-2.5 rounded-2xl bg-white/[0.05] border border-white/10 text-orange-400 font-bold text-xs sm:text-sm tracking-wide">
-          LỖI GIAO / ĐỔI NGƯỜI (SIDE-OUT)
+          SIDE-OUT / ĐỔI TAY
         </button>
       </div>
 
-      <!-- NÚT BẤM CHÍNH (RALLY - TRẬN 5 ĐƠN 21Đ) -->
+      <!-- NÚT GHI ĐIỂM RALLY -->
       <div id="rallyControls" class="hidden grid-cols-2 gap-2 landscape:flex-1 landscape:min-h-0">
         <button onclick="handleRallyPoint('A')" class="btn-tap py-4 landscape:py-2 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 text-white font-black text-base shadow-lg">+1 ĐỘI A</button>
         <button onclick="handleRallyPoint('B')" class="btn-tap py-4 landscape:py-2 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white font-black text-base shadow-lg">+1 ĐỘI B</button>
       </div>
 
-      <!-- THANH TIỆN ÍCH -->
+      <!-- TIỆN ÍCH -->
       <div class="shrink-0 grid grid-cols-4 gap-1.5">
-        <button onclick="handleUndo()" class="btn-tap py-2.5 landscape:py-1.5 rounded-xl bg-white/[0.05] border border-white/[0.07] text-gray-300 font-semibold text-[10px] flex flex-col items-center justify-center gap-1">
-          <i data-lucide="undo-2" class="w-4 h-4 text-gray-300"></i>
+        <button onclick="handleUndo()" class="btn-tap py-2.5 landscape:py-1.5 rounded-xl bg-white/[0.05] border border-white/[0.07] text-slate-300 font-semibold text-[10px] flex flex-col items-center justify-center gap-1">
+          <i data-lucide="undo-2" class="w-4 h-4 text-slate-300"></i>
           <span>Hoàn tác</span>
         </button>
         <button onclick="handleTimeout('A')" class="btn-tap py-2.5 landscape:py-1.5 rounded-xl bg-white/[0.05] border border-white/[0.07] text-amber-300 font-semibold text-[10px] flex flex-col items-center justify-center gap-1">
@@ -246,50 +245,48 @@
           <i data-lucide="timer" class="w-4 h-4 text-amber-400"></i>
           <span>Hội ý B (<span id="toB">2</span>)</span>
         </button>
-        <button onclick="handleSwitchSides()" class="btn-tap py-2.5 landscape:py-1.5 rounded-xl bg-white/[0.05] border border-white/[0.07] text-gray-300 font-semibold text-[10px] flex flex-col items-center justify-center gap-1">
-          <i data-lucide="arrow-left-right" class="w-4 h-4 text-gray-300"></i>
+        <button onclick="handleSwitchSides()" class="btn-tap py-2.5 landscape:py-1.5 rounded-xl bg-white/[0.05] border border-white/[0.07] text-slate-300 font-semibold text-[10px] flex flex-col items-center justify-center gap-1">
+          <i data-lucide="arrow-left-right" class="w-4 h-4 text-slate-300"></i>
           <span>Đổi sân</span>
         </button>
       </div>
     </div>
   </main>
 
-  <!-- POPUP CHỌN VĐV TRƯỚC KHI THI ĐẤU (LỌC NAM/NỮ + ẨN VĐV ĐÃ CHỌN - ĐỒNG BỘ KHUNG PIN) -->
-  <div id="lineupSetupModal" class="hidden fixed inset-0 z-[9999] bg-[#0a0807]/92 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="w-full max-w-xs bg-[#17110e] border border-orange-500/45 rounded-2xl p-5 shadow-2xl space-y-3.5 max-h-[92dvh] overflow-y-auto">
+  <!-- POPUP CHỌN VĐV TRƯỚC KHI THI ĐẤU -->
+  <div id="lineupSetupModal" class="hidden fixed inset-0 z-[9999] bg-[#090b0f]/92 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/40 rounded-2xl p-5 shadow-2xl space-y-3.5 max-h-[92dvh] overflow-y-auto">
       <div class="text-center space-y-1">
         <div class="w-11 h-11 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl">🏓</div>
         <h2 id="setupTitle" class="font-black text-orange-400 uppercase text-sm tracking-wide">CHỌN VĐV THI ĐẤU</h2>
-        <p class="text-[11px] text-amber-200/70">Chọn VĐV trước khi bắt đầu. VĐV đã chọn sẽ ẩn đi.</p>
+        <p class="text-[11px] text-slate-400">Chọn VĐV trước trận. VĐV đã chọn sẽ ẩn đi.</p>
       </div>
 
-      <!-- ĐỘI A -->
-      <div class="bg-[#0a0807] border border-white/10 rounded-xl p-2.5 space-y-2 text-xs">
+      <div class="bg-[#090b0f] border border-white/10 rounded-xl p-2.5 space-y-2 text-xs">
         <div class="flex items-center justify-between gap-1">
           <span id="setupNameA" class="font-black text-amber-300 truncate">Đội A</span>
           <div id="setupFilterA" class="flex gap-1 shrink-0"></div>
         </div>
         <div class="grid grid-cols-2 gap-1.5">
-          <button type="button" onclick="openSetupSlotPicker('A', 0)" class="btn-tap py-2 px-2 rounded-lg bg-[#17110e] border border-white/15 text-white font-semibold truncate">
+          <button type="button" onclick="openSetupSlotPicker('A', 0)" class="btn-tap py-2 px-2 rounded-lg bg-[#12161f] border border-white/15 text-white font-semibold truncate">
             <span id="lblSlotA0">-- VĐV 1 --</span>
           </button>
-          <button type="button" onclick="openSetupSlotPicker('A', 1)" class="btn-tap py-2 px-2 rounded-lg bg-[#17110e] border border-white/15 text-white font-semibold truncate">
+          <button type="button" onclick="openSetupSlotPicker('A', 1)" class="btn-tap py-2 px-2 rounded-lg bg-[#12161f] border border-white/15 text-white font-semibold truncate">
             <span id="lblSlotA1">-- VĐV 2 --</span>
           </button>
         </div>
       </div>
 
-      <!-- ĐỘI B -->
-      <div class="bg-[#0a0807] border border-white/10 rounded-xl p-2.5 space-y-2 text-xs">
+      <div class="bg-[#090b0f] border border-white/10 rounded-xl p-2.5 space-y-2 text-xs">
         <div class="flex items-center justify-between gap-1">
           <span id="setupNameB" class="font-black text-amber-300 truncate">Đội B</span>
           <div id="setupFilterB" class="flex gap-1 shrink-0"></div>
         </div>
         <div class="grid grid-cols-2 gap-1.5">
-          <button type="button" onclick="openSetupSlotPicker('B', 0)" class="btn-tap py-2 px-2 rounded-lg bg-[#17110e] border border-white/15 text-white font-semibold truncate">
+          <button type="button" onclick="openSetupSlotPicker('B', 0)" class="btn-tap py-2 px-2 rounded-lg bg-[#12161f] border border-white/15 text-white font-semibold truncate">
             <span id="lblSlotB0">-- VĐV 1 --</span>
           </button>
-          <button type="button" onclick="openSetupSlotPicker('B', 1)" class="btn-tap py-2 px-2 rounded-lg bg-[#17110e] border border-white/15 text-white font-semibold truncate">
+          <button type="button" onclick="openSetupSlotPicker('B', 1)" class="btn-tap py-2 px-2 rounded-lg bg-[#12161f] border border-white/15 text-white font-semibold truncate">
             <span id="lblSlotB1">-- VĐV 2 --</span>
           </button>
         </div>
@@ -304,58 +301,58 @@
   </div>
 
   <!-- POPUP CHỌN DANH SÁCH DÙNG CHUNG -->
-  <div id="pickerModal" onclick="if(event.target === this) closePickerModal()" class="hidden fixed inset-0 z-[10000] bg-[#0a0807]/90 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="w-full max-w-xs bg-[#17110e] border border-orange-500/40 rounded-2xl p-5 text-center shadow-2xl space-y-3.5">
+  <div id="pickerModal" onclick="if(event.target === this) closePickerModal()" class="hidden fixed inset-0 z-[10000] bg-[#090b0f]/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/40 rounded-2xl p-5 text-center shadow-2xl space-y-3.5">
       <div id="pickerIcon" class="w-11 h-11 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl">🏓</div>
       <h2 id="pickerTitle" class="font-black text-orange-400 uppercase text-sm tracking-wide">Lựa chọn</h2>
       <div id="pickerOptions" class="space-y-2 max-h-56 overflow-y-auto"></div>
-      <button onclick="closePickerModal()" class="block w-full text-xs text-gray-400 hover:text-white pt-1 font-semibold">Đóng</button>
+      <button onclick="closePickerModal()" class="block w-full text-xs text-slate-400 hover:text-white pt-1 font-semibold">Đóng</button>
     </div>
   </div>
 
   <!-- POPUP BỐC THĂM ĐỒNG XU -->
-  <div id="tossModal" onclick="if(event.target === this) closeTossModal()" class="hidden fixed inset-0 z-[9999] bg-[#0a0807]/90 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="w-full max-w-xs bg-[#17110e] border border-orange-500/40 rounded-2xl p-5 text-center shadow-2xl space-y-4">
+  <div id="tossModal" onclick="if(event.target === this) closeTossModal()" class="hidden fixed inset-0 z-[9999] bg-[#090b0f]/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/40 rounded-2xl p-5 text-center shadow-2xl space-y-4">
       <div id="coinVisual" class="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-yellow-300 via-amber-400 to-orange-500 border-4 border-yellow-200 shadow-lg shadow-amber-500/30 flex items-center justify-center">
-        <span class="font-black text-lg text-[#0a0807] tracking-tight">86</span>
+        <span class="font-black text-lg text-[#090b0f] tracking-tight">86</span>
       </div>
       <div>
         <h2 class="font-black text-amber-400 uppercase text-sm tracking-wide">BỐC THĂM CHỌN BÓNG / SÂN</h2>
-        <p id="tossResultText" class="text-xs text-amber-100/80 mt-1.5">Bấm tung đồng xu ngẫu nhiên giữa 2 đội.</p>
+        <p id="tossResultText" class="text-xs text-slate-300 mt-1.5">Tung đồng xu ngẫu nhiên giữa 2 đội.</p>
       </div>
       <button id="btnRunToss" onclick="runCoinToss()" class="btn-tap w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-sm shadow-lg">
         TUNG ĐỒNG XU
       </button>
       <div id="tossChoices" class="hidden grid-cols-2 gap-2">
-        <button onclick="applyTossChoice('serve')" class="btn-tap py-2.5 rounded-xl bg-emerald-600 text-white font-black text-xs">🏓 Chọn Giao bóng</button>
-        <button onclick="applyTossChoice('side')" class="btn-tap py-2.5 rounded-xl bg-amber-500 text-black font-black text-xs">⇄ Chọn Sân (Đổi)</button>
+        <button onclick="applyTossChoice('serve')" class="btn-tap py-2.5 rounded-xl bg-emerald-600 text-white font-black text-xs">Giao bóng</button>
+        <button onclick="applyTossChoice('side')" class="btn-tap py-2.5 rounded-xl bg-amber-500 text-slate-950 font-black text-xs">Chọn sân</button>
       </div>
-      <button onclick="closeTossModal()" class="block w-full text-xs text-gray-400 hover:text-white font-semibold">Đóng</button>
+      <button onclick="closeTossModal()" class="block w-full text-xs text-slate-400 hover:text-white font-semibold">Đóng</button>
     </div>
   </div>
 
-  <!-- POPUP KẾT THÚC TRẬN & CHUYỂN TIẾP NỘI DUNG ĐỒNG ĐỘI -->
-  <div id="nextMatchModal" class="hidden fixed inset-0 z-[9999] bg-[#0a0807]/90 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="w-full max-w-xs bg-[#17110e] border border-emerald-500/45 rounded-2xl p-6 text-center shadow-2xl space-y-4">
+  <!-- POPUP KẾT THÚC TRẬN & CHUYỂN TIẾP -->
+  <div id="nextMatchModal" class="hidden fixed inset-0 z-[9999] bg-[#090b0f]/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-[#12161f] border border-emerald-500/45 rounded-2xl p-6 text-center shadow-2xl space-y-4">
       <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl">🏆</div>
       <div>
-        <h2 id="nextModalTitle" class="font-black text-emerald-400 uppercase text-sm tracking-wide">KẾT THÚC TRẬN ĐẤU!</h2>
-        <p id="nextModalMsg" class="text-xs text-amber-100/85 mt-1.5 leading-relaxed"></p>
+        <h2 id="nextModalTitle" class="font-black text-emerald-400 uppercase text-sm tracking-wide">KẾT THÚC TRẬN ĐẤU</h2>
+        <p id="nextModalMsg" class="text-xs text-slate-200 mt-1.5 leading-relaxed"></p>
       </div>
       <button id="btnGoNextMatch" onclick="goNextTieMatch()" class="hidden btn-tap w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-sm shadow-lg">
-        CHUYỂN SANG TRẬN TIẾP THEO →
+        CHUYỂN SANG TRẬN TIẾP THEO
       </button>
-      <button onclick="closeNextMatchModal()" class="block w-full text-xs text-gray-400 hover:text-white font-semibold">Đóng</button>
+      <button onclick="closeNextMatchModal()" class="block w-full text-xs text-slate-400 hover:text-white font-semibold">Đóng</button>
     </div>
   </div>
 
-  <!-- POPUP THÔNG BÁO ĐỔI SÂN TỰ ĐỘNG -->
-  <div id="switchModal" class="hidden fixed inset-0 z-[9999] bg-[#0a0807]/90 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="w-full max-w-xs bg-[#17110e] border border-orange-500/45 rounded-2xl p-6 text-center shadow-2xl space-y-4">
+  <!-- POPUP ĐỔI SÂN TỰ ĐỘNG -->
+  <div id="switchModal" class="hidden fixed inset-0 z-[9999] bg-[#090b0f]/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/45 rounded-2xl p-6 text-center shadow-2xl space-y-4">
       <div class="w-12 h-12 mx-auto rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl">⇄</div>
       <div>
-        <h2 class="font-black text-amber-400 uppercase text-sm tracking-wide">ĐẾN ĐIỂM ĐỔI SÂN!</h2>
-        <p id="switchModalMsg" class="text-xs text-amber-100/80 mt-1.5">Hai đội tiến hành đổi sân thi đấu.</p>
+        <h2 class="font-black text-amber-400 uppercase text-sm tracking-wide">ĐẾN ĐIỂM ĐỔI SÂN</h2>
+        <p id="switchModalMsg" class="text-xs text-slate-200 mt-1.5">Hai đội tiến hành đổi sân thi đấu.</p>
       </div>
       <button onclick="confirmSwitchSides()" class="btn-tap w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-sm shadow-lg">
         XÁC NHẬN ĐÃ ĐỔI SÂN
@@ -363,12 +360,12 @@
     </div>
   </div>
 
-  <!-- POPUP ĐỒNG HỒ HỘI Ý (TIME-OUT 60S) -->
-  <div id="timeoutModal" class="hidden fixed inset-0 z-[9999] bg-[#0a0807]/90 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="w-full max-w-xs bg-[#17110e] border border-orange-500/45 rounded-2xl p-6 text-center shadow-2xl space-y-4">
+  <!-- POPUP HỘI Ý 60S -->
+  <div id="timeoutModal" class="hidden fixed inset-0 z-[9999] bg-[#090b0f]/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-xs bg-[#12161f] border border-orange-500/45 rounded-2xl p-6 text-center shadow-2xl space-y-4">
       <div class="w-12 h-12 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl">⏱️</div>
       <div>
-        <h2 id="timeoutTitle" class="font-black text-orange-400 uppercase text-sm tracking-wide">HỘI Ý (TIME-OUT)</h2>
+        <h2 id="timeoutTitle" class="font-black text-orange-400 uppercase text-sm tracking-wide">HỘI Ý</h2>
         <div id="timeoutClock" class="text-5xl font-black text-white tabular-nums mt-2">60s</div>
       </div>
       <button onclick="closeTimeoutModal()" class="btn-tap w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-sm shadow-lg">
@@ -446,7 +443,6 @@
       return m.switchPoint || Math.ceil((Number(m.targetScore) || 11) / 2);
     }
 
-    // --- CHỌN VĐV TRƯỚC KHI THI ĐẤU (LỌC NAM/NỮ + ẨN VĐV ĐÃ CHỌN) ---
     function openLineupSetupIfNeeded(m) {
       if (!m || m.isDreambreaker || isMatchStarted(m) || hasSelectedPlayers(m)) return;
       if (lineupSetupShownForMatch === currentMatchId) return;
@@ -504,7 +500,7 @@
       if (!setupState) return;
       const mkFilter = (side, cur) => ['ALL', 'Nam', 'Nữ'].map(g => `
         <button type="button" onclick="setSetupFilter('${side}','${g}')" class="px-1.5 py-0.5 rounded text-[9px] font-bold ${
-          cur === g ? 'bg-orange-500 text-black' : 'bg-white/10 text-gray-300'
+          cur === g ? 'bg-orange-500 text-slate-950' : 'bg-white/10 text-slate-300'
         }">${g === 'ALL' ? 'Tất cả' : g}</button>
       `).join('');
 
@@ -549,7 +545,7 @@
             pair[idx] = p.name;
             renderSetupUI();
           }
-        })) : [{ label: 'Hết VĐV khả dụng cho bộ lọc này', active: false, onSelect: () => {} }]
+        })) : [{ label: 'Không còn VĐV phù hợp', active: false, onSelect: () => {} }]
       });
     };
 
@@ -568,7 +564,6 @@
       playBeep(750, 0.12);
     };
 
-    // --- POPUP CHỌN DÙNG CHUNG ---
     function openPickerModal({ icon = '🏓', title = 'Lựa chọn', options = [] }) {
       document.getElementById('pickerIcon').textContent = icon;
       document.getElementById('pickerTitle').textContent = title;
@@ -578,7 +573,7 @@
         const btn = document.createElement('button');
         btn.className = opt.active
           ? 'btn-tap w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-black text-xs shadow'
-          : 'btn-tap w-full py-2.5 px-3 rounded-xl bg-[#0a0807] border border-white/10 text-amber-100 font-semibold text-xs';
+          : 'btn-tap w-full py-2.5 px-3 rounded-xl bg-[#090b0f] border border-white/10 text-slate-100 font-semibold text-xs';
         btn.textContent = opt.label;
         btn.onclick = () => { closePickerModal(); opt.onSelect(); };
         box.appendChild(btn);
@@ -590,7 +585,7 @@
     window.openCourtPicker = () => {
       openPickerModal({
         icon: '🏟️',
-        title: 'Chọn Sân Trọng Tài',
+        title: 'Chọn Sân',
         options: Object.entries(allCourts).map(([id, c]) => ({
           label: c.name,
           active: id === currentCourtId,
@@ -603,7 +598,7 @@
       if (!currentMatch || isMatchStarted(currentMatch)) return;
       openPickerModal({
         icon: '🟡',
-        title: 'Chọn Đội Giao Bóng Trước',
+        title: 'Đội Giao Bóng Đầu',
         options: [
           { label: currentMatch.teamA.name, active: currentMatch.servingTeam === 'A', onSelect: () => setServingTeam('A') },
           { label: currentMatch.teamB.name, active: currentMatch.servingTeam === 'B', onSelect: () => setServingTeam('B') }
@@ -620,7 +615,7 @@
 
       openPickerModal({
         icon: role === 'server' ? '🏓' : '🛡️',
-        title: role === 'server' ? 'Chọn Người Giao Bóng' : 'Chọn Người Đỡ Bóng',
+        title: role === 'server' ? 'Người Giao Bóng' : 'Người Đỡ Bóng',
         options: [
           { label: p0, active: true, onSelect: () => {} },
           { label: p1, active: false, onSelect: async () => {
@@ -639,7 +634,7 @@
     window.openCoinTossModal = () => {
       if (!currentMatch || isMatchStarted(currentMatch)) return;
       tossWinner = null;
-      document.getElementById('tossResultText').textContent = `Tung đồng xu ngẫu nhiên giữa ${currentMatch.teamA.name} và ${currentMatch.teamB.name}.`;
+      document.getElementById('tossResultText').textContent = `Tung đồng xu giữa ${currentMatch.teamA.name} và ${currentMatch.teamB.name}.`;
       document.getElementById('tossChoices').classList.add('hidden');
       document.getElementById('btnRunToss').classList.remove('hidden');
       document.getElementById('tossModal').classList.remove('hidden');
@@ -657,7 +652,7 @@
       setTimeout(() => {
         tossWinner = Math.random() < 0.5 ? 'A' : 'B';
         const winName = tossWinner === 'A' ? currentMatch.teamA.name : currentMatch.teamB.name;
-        document.getElementById('tossResultText').innerHTML = `🎉 <b class="text-emerald-400 text-sm">${winName}</b> THẮNG BỐC THĂM!<br/>Mời đội thắng chọn quyền:`;
+        document.getElementById('tossResultText').innerHTML = `<b class="text-emerald-400 text-sm">${winName}</b> thắng bốc thăm.<br/>Chọn quyền:`;
         document.getElementById('btnRunToss').classList.add('hidden');
         document.getElementById('tossChoices').classList.remove('hidden');
       }, 450);
@@ -705,7 +700,7 @@
       soundEnabled = !soundEnabled;
       document.getElementById('btnSound').innerHTML = soundEnabled
         ? '<i data-lucide="volume-2" class="w-4 h-4"></i>'
-        : '<i data-lucide="volume-x" class="w-4 h-4 text-gray-500"></i>';
+        : '<i data-lucide="volume-x" class="w-4 h-4 text-slate-500"></i>';
       lucide.createIcons();
     };
 
@@ -786,7 +781,7 @@
       playBeep(660, 0.2);
 
       let sec = 60;
-      document.getElementById('timeoutTitle').textContent = `HỘI Ý: ${currentMatch[key].name}`;
+      document.getElementById('timeoutTitle').textContent = `Hội ý • ${currentMatch[key].name}`;
       document.getElementById('timeoutClock').textContent = `${sec}s`;
       document.getElementById('timeoutModal').classList.remove('hidden');
 
@@ -797,7 +792,7 @@
         if (sec <= 0) {
           clearInterval(timeoutInterval);
           playBeep(900, 0.4, 'triangle');
-          document.getElementById('timeoutClock').textContent = 'HẾT GIỜ!';
+          document.getElementById('timeoutClock').textContent = 'Hết giờ';
         }
       }, 1000);
     };
@@ -862,8 +857,8 @@
           return `
             <button onclick="switchTieSubMatch('${id}')" class="shrink-0 px-2.5 py-1 rounded-full text-[10px] font-bold transition ${
               active
-                ? 'bg-orange-500 text-black font-black shadow'
-                : (sm.status === 'finished' ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25' : 'bg-white/[0.06] text-gray-300')
+                ? 'bg-orange-500 text-slate-950 font-black shadow'
+                : (sm.status === 'finished' ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/25' : 'bg-white/[0.06] text-slate-300')
             }">
               ${label} (${sm.teamA.score}-${sm.teamB.score})${doneMark}
             </button>`;
@@ -968,12 +963,12 @@
       if (shouldSwitch && switchPopupShownForMatch !== currentMatchId) {
         switchPopupShownForMatch = currentMatchId;
         playBeep(700, 0.3, 'triangle');
-        document.getElementById('switchModalMsg').textContent = `Tỷ số đã chạm ${swPoint} điểm (trận ${m.targetScore}đ). Hai đội tiến hành đổi sân!`;
+        document.getElementById('switchModalMsg').textContent = `Tỷ số chạm ${swPoint} điểm. Hai đội đổi sân thi đấu.`;
         document.getElementById('switchModal').classList.remove('hidden');
       }
 
       const alerts = getMatchAlerts(m);
-      if (isDB) document.getElementById('pairSlotInfo').textContent = `Đang thi đấu: Cặp VĐV số ${alerts.currentPairSlot}`;
+      if (isDB) document.getElementById('pairSlotInfo').textContent = `Cặp VĐV số ${alerts.currentPairSlot}`;
 
       if (alerts.winner && finishedPopupShownForMatch !== currentMatchId) {
         finishedPopupShownForMatch = currentMatchId;
@@ -983,15 +978,15 @@
 
         if (m.tieId && nextUnfinishedId) {
           pendingNextMatchId = nextUnfinishedId;
-          document.getElementById('nextModalTitle').textContent = 'KẾT THÚC NỘI DUNG!';
-          document.getElementById('nextModalMsg').innerHTML = `<b class="text-emerald-400">${winTeamName}</b> thắng <b>${m.teamA.score} - ${m.teamB.score}</b>.<br/>Chuyển tiếp sang <b class="text-orange-300">${nextUnfinishedLabel}</b>?`;
-          btnNext.textContent = `SANG ${nextUnfinishedLabel.toUpperCase()} →`;
+          document.getElementById('nextModalTitle').textContent = 'KẾT THÚC NỘI DUNG';
+          document.getElementById('nextModalMsg').innerHTML = `<b class="text-emerald-400">${winTeamName}</b> thắng <b>${m.teamA.score} - ${m.teamB.score}</b>.<br/>Chuyển sang <b class="text-orange-300">${nextUnfinishedLabel}</b>?`;
+          btnNext.textContent = `SANG ${nextUnfinishedLabel.toUpperCase()}`;
           btnNext.classList.remove('hidden');
           document.getElementById('nextMatchModal').classList.remove('hidden');
         } else if (m.tieId) {
           pendingNextMatchId = null;
-          document.getElementById('nextModalTitle').textContent = 'HOÀN THÀNH LƯỢT ĐẤU!';
-          document.getElementById('nextModalMsg').innerHTML = `<b class="text-emerald-400">${winTeamName}</b> thắng <b>${m.teamA.score} - ${m.teamB.score}</b>.<br/>Đã đánh xong tất cả các trận của lượt đấu này!`;
+          document.getElementById('nextModalTitle').textContent = 'HOÀN THÀNH LƯỢT ĐẤU';
+          document.getElementById('nextModalMsg').innerHTML = `<b class="text-emerald-400">${winTeamName}</b> thắng <b>${m.teamA.score} - ${m.teamB.score}</b>.`;
           btnNext.classList.add('hidden');
           document.getElementById('nextMatchModal').classList.remove('hidden');
         }
@@ -999,16 +994,16 @@
 
       const banner = document.getElementById('alertBanner');
       if (alerts.winner) {
-        banner.textContent = `🏆 KẾT THÚC! ${alerts.winner === 'A' ? m.teamA.name : m.teamB.name} THẮNG!`;
-        banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-emerald-500 text-black';
+        banner.textContent = `Kết thúc • ${alerts.winner === 'A' ? m.teamA.name : m.teamB.name} thắng`;
+        banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-emerald-500 text-slate-950';
       } else if (alerts.isRotatePair) {
-        banner.textContent = `🔄 ĐỦ 4 ĐIỂM! ĐỔI CẶP VĐV SỐ ${alerts.currentPairSlot} VÀO SÂN`;
-        banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-amber-400 text-black animate-pulse';
+        banner.textContent = `Đủ 4 điểm • Đổi cặp VĐV số ${alerts.currentPairSlot}`;
+        banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-amber-400 text-slate-950 animate-pulse';
       } else if (shouldSwitch) {
-        banner.textContent = `⇄ ĐẾN ĐIỂM ĐỔI SÂN (${swPoint}Đ)! Bấm "Đổi sân"`;
-        banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-amber-400 text-black';
+        banner.textContent = `Đổi sân (${swPoint} điểm)`;
+        banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-amber-400 text-slate-950';
       } else if (alerts.isGamePoint) {
-        banner.textContent = `🔥 GAME POINT CHO ${alerts.gamePointTeam === 'A' ? m.teamA.name : m.teamB.name}`;
+        banner.textContent = `Game point • ${alerts.gamePointTeam === 'A' ? m.teamA.name : m.teamB.name}`;
         banner.className = 'shrink-0 rounded-xl px-3 py-1 text-center font-black text-[10px] uppercase bg-red-600 text-white animate-pulse';
       } else {
         banner.className = 'hidden';
