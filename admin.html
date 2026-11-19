@@ -9,10 +9,8 @@
   <style>
     body { background-color: #090b0f; color: #f3f4f6; font-family: system-ui, -apple-system, sans-serif; }
     .bd-card { background: #131720; border: 1px solid rgba(249, 115, 22, 0.25); }
-    .bd-glow { box-shadow: 0 0 15px rgba(249, 115, 22, 0.2); }
     .bd-btn { background: linear-gradient(135deg, #f97316, #ea580c); }
     .bd-btn:active { transform: scale(0.97); }
-    .tab-active { color: #f97316; border-color: #f97316; }
   </style>
 </head>
 <body class="pb-24 lg:pb-6">
@@ -26,10 +24,11 @@
       </div>
       <div>
         <h1 class="font-black text-orange-500 tracking-wide text-sm sm:text-base uppercase leading-tight">Bính Dần Pickleball</h1>
-        <p id="headerTourName" class="text-xs text-gray-400 truncate max-w-[190px] sm:max-w-xs">Đang kết nối Firebase...</p>
+        <p id="headerTourName" class="text-xs text-gray-400 truncate max-w-[180px] sm:max-w-xs">Đang kết nối Firebase...</p>
       </div>
     </div>
     <div class="flex items-center gap-2">
+      <a href="index.html" class="text-[11px] px-2.5 py-1 rounded-full bg-white/10 text-gray-300 font-semibold">Khán giả</a>
       <span id="dbStatus" class="text-[11px] px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 font-semibold">Đang nối...</span>
     </div>
   </header>
@@ -103,11 +102,16 @@
         </div>
 
         <div class="bd-card rounded-2xl p-4 space-y-3">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <h2 class="font-bold text-white text-sm">Danh sách đội (<span id="teamCountLabel">0</span>)</h2>
-            <button onclick="generateRoundRobin()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs">
-              Tạo lịch vòng tròn
-            </button>
+            <div class="flex gap-2">
+              <button onclick="generateRoundRobin()" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs">
+                Lịch vòng tròn
+              </button>
+              <button onclick="generateKnockout()" class="px-3 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-xs">
+                Nhánh Knockout
+              </button>
+            </div>
           </div>
           <div id="teamsList" class="space-y-2"></div>
         </div>
@@ -198,8 +202,11 @@
   <script type="module">
     import { db, ref, set, update, onValue, remove } from './js/firebase-config.js';
     import { createInitialMatchState } from './js/pickleball-engine.js';
+    import { generateKnockoutMatches } from './js/bracket-engine.js';
     import { requirePin } from './js/auth.js';
-await requirePin('admin');
+
+    // Yêu cầu nhập PIN Admin (mặc định: 1986)
+    await requirePin('admin');
 
     let state = {
       settings: { name: 'Giải Pickleball Bính Dần Open 2026', scoringMode: 'sideout', targetScore: 11, logo: '' },
@@ -208,7 +215,6 @@ await requirePin('admin');
       matches: {}
     };
 
-    // Khởi tạo sân mặc định nếu Firebase đang trống
     onValue(ref(db, '/'), (snap) => {
       const data = snap.val() || {};
       state.settings = { ...state.settings, ...(data.settings || {}) };
@@ -310,6 +316,14 @@ await requirePin('admin');
       showToast(`Đã tạo ${count - 1} trận vòng tròn!`);
     };
 
+    window.generateKnockout = async () => {
+      const teamList = Object.values(state.teams);
+      if (teamList.length < 2) return showToast('Cần ít nhất 2 đội để tạo nhánh!');
+      const updates = generateKnockoutMatches(teamList, state.settings);
+      await update(ref(db, '/'), updates);
+      showToast('Đã tạo sơ đồ nhánh Loại trực tiếp!');
+    };
+
     window.addCourt = async () => {
       const num = Object.keys(state.courts).length + 1;
       await set(ref(db, `courts/court_${num}`), { name: `Sân ${num}`, activeMatchId: '' });
@@ -359,7 +373,6 @@ await requirePin('admin');
     };
 
     function renderAll() {
-      // Header & Settings
       document.getElementById('headerTourName').textContent = state.settings.name;
       document.getElementById('setTourName').value = state.settings.name;
       document.getElementById('setScoringMode').value = state.settings.scoringMode || 'sideout';
@@ -420,7 +433,7 @@ await requirePin('admin');
           <span class="font-black text-orange-400">${m.teamA.score} - ${m.teamB.score}</span>
           <span class="font-semibold truncate w-2/5 text-right">${m.teamB.name}</span>
         </div>
-      `).join('') || '<p class="text-xs text-gray-500 text-center py-3">Bấm "Tạo lịch vòng tròn" để sinh trận.</p>';
+      `).join('') || '<p class="text-xs text-gray-500 text-center py-3">Bấm "Lịch vòng tròn" hoặc "Nhánh Knockout" để sinh trận.</p>';
 
       // Render Courts Manager
       document.getElementById('courtsManagerList').innerHTML = courtsEntries.map(([cId, c]) => `
@@ -433,7 +446,7 @@ await requirePin('admin');
             <option value="">-- Chọn trận đấu đẩy ra sân --</option>
             ${matchesArr.map(m => `
               <option value="${m.id}" ${c.activeMatchId === m.id ? 'selected' : ''}>
-                ${m.teamA.name} vs ${m.teamB.name} (${m.teamA.score}-${m.teamB.score})
+                ${m.bracketLabel ? `[${m.bracketLabel}] ` : ''}${m.teamA.name} vs ${m.teamB.name} (${m.teamA.score}-${m.teamB.score})
               </option>
             `).join('')}
           </select>
