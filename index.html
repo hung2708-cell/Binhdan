@@ -521,7 +521,38 @@
       completed: 'panelCompleted',
       admin: 'panelAdmin'
     };
+// XÓA CẢ CLB
+    window.deleteClub = async (clubId, clubName = '') => {
+      if (!clubId) return;
+      if (!confirm(`Xác nhận xóa CLB "${clubName || clubId}" và toàn bộ VĐV của CLB này?`)) return;
+      await set(ref(db, `teams/${clubId}`), null);
+      if (typeof showToast === 'function') showToast(`Đã xóa CLB ${clubName || ''}`);
+    };
 
+    // XÓA TỪNG VĐV TRONG CLB
+    window.deletePlayerFromClub = async (clubId, playerName) => {
+      if (!clubId || !playerName) return;
+      if (!confirm(`Xóa VĐV "${playerName}" khỏi CLB?`)) return;
+
+      const team = dataStore.teams?.[clubId];
+      if (!team) return;
+
+      const curDetails = Array.isArray(team.rosterDetails)
+        ? team.rosterDetails
+        : Object.values(team.rosterDetails || {});
+      const nextDetails = curDetails.filter(p => p && p.name !== playerName);
+
+      const curRoster = Array.isArray(team.roster)
+        ? team.roster
+        : Object.values(team.roster || {});
+      const nextRoster = curRoster.filter(n => n !== playerName);
+
+      await update(ref(db, `teams/${clubId}`), {
+        rosterDetails: nextDetails,
+        roster: nextRoster
+      });
+      if (typeof showToast === 'function') showToast(`Đã xóa VĐV ${playerName}`);
+    };
     const AVATAR_PALETTE = [
       'from-orange-500 to-red-600',
       'from-emerald-500 to-teal-600',
