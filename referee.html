@@ -21,6 +21,9 @@
       border-left: 2px solid #f8fafc;
       border-right: 2px solid #f8fafc;
     }
+    .player-token {
+      transition: all 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col p-3 max-w-md mx-auto select-none">
@@ -74,50 +77,84 @@
       </div>
     </div>
 
-    <!-- SƠ ĐỒ SÂN PICKLEBALL 2D CHIỀU NGANG -->
-    <div id="court2DWrapper" class="fire-card rounded-2xl p-2.5">
-      <div class="flex justify-between items-center text-[10px] text-gray-400 mb-1.5 px-1">
-        <span class="font-bold text-orange-400">SÂN 2D (NGANG)</span>
+    <!-- SƠ ĐỒ SÂN PICKLEBALL 2D CHIỀU NGANG (VỊ TRÍ THỰC TẾ + ĐƯỜNG CHÉO PHÁT BÓNG) -->
+    <div id="court2DWrapper" class="fire-card rounded-2xl p-2.5 space-y-2">
+      <div class="flex justify-between items-center text-[10px] text-gray-400 px-1">
+        <span class="font-bold text-orange-400">SÂN 2D THỰC TẾ</span>
         <span id="serveHint" class="font-semibold text-amber-300 truncate max-w-[65%] text-right">Đội A giao bóng #2</span>
       </div>
 
-      <div class="court-surface rounded-lg overflow-hidden h-36 text-xs font-bold">
-        <!-- NỬA SÂN TRÁI (ĐỘI A) -->
-        <div class="grid grid-rows-2 divide-y divide-white/80 h-full">
-          <div id="boxA1" class="flex flex-col items-center justify-center p-1 text-center transition-colors">
-            <span class="text-[9px] text-white/60 uppercase">Trái (Lẻ)</span>
-            <span id="pA1" class="truncate max-w-full text-white text-xs mt-0.5">-</span>
+      <div class="relative rounded-lg overflow-hidden">
+        <div class="court-surface h-40 text-xs font-bold">
+          <!-- NỬA SÂN TRÁI (ĐỘI A) -->
+          <div class="grid grid-rows-2 divide-y divide-white/75 h-full">
+            <div id="boxA1" class="relative flex items-center px-2 transition-colors">
+              <span class="absolute top-0.5 left-1.5 text-[8px] text-white/45 uppercase">Trái (Lẻ)</span>
+              <div id="tokA1" class="player-token flex flex-col items-center max-w-[78px]">
+                <span id="dotA1" class="w-4 h-4 rounded-full border-2 border-white bg-sky-400 shadow"></span>
+                <span id="pA1" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
+              </div>
+            </div>
+            <div id="boxA0" class="relative flex items-center px-2 transition-colors">
+              <span class="absolute bottom-0.5 left-1.5 text-[8px] text-white/45 uppercase">Phải (Chẵn)</span>
+              <div id="tokA0" class="player-token flex flex-col items-center max-w-[78px]">
+                <span id="dotA0" class="w-4 h-4 rounded-full border-2 border-white bg-sky-400 shadow"></span>
+                <span id="pA0" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
+              </div>
+            </div>
           </div>
-          <div id="boxA0" class="flex flex-col items-center justify-center p-1 text-center transition-colors">
-            <span class="text-[9px] text-white/60 uppercase">Phải (Chẵn)</span>
-            <span id="pA0" class="truncate max-w-full text-white text-xs mt-0.5">-</span>
+
+          <!-- KHU VỰC BẾP (KITCHEN / NVZ) + LƯỚI DỌC Ở GIỮA -->
+          <div class="kitchen-zone-v h-full flex items-center justify-center relative">
+            <div class="h-full border-l-2 border-dashed border-white/90 absolute"></div>
+            <span class="relative z-10 bg-[#0c0908]/85 text-[8px] px-1.5 py-0.5 rounded text-orange-300 font-black tracking-widest -rotate-90 whitespace-nowrap">
+              LƯỚI / NVZ
+            </span>
+          </div>
+
+          <!-- NỬA SÂN PHẢI (ĐỘI B) -->
+          <div class="grid grid-rows-2 divide-y divide-white/75 h-full">
+            <div id="boxB0" class="relative flex items-center px-2 transition-colors">
+              <span class="absolute top-0.5 right-1.5 text-[8px] text-white/45 uppercase">Phải (Chẵn)</span>
+              <div id="tokB0" class="player-token flex flex-col items-center max-w-[78px]">
+                <span id="dotB0" class="w-4 h-4 rounded-full border-2 border-white bg-emerald-400 shadow"></span>
+                <span id="pB0" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
+              </div>
+            </div>
+            <div id="boxB1" class="relative flex items-center px-2 transition-colors">
+              <span class="absolute bottom-0.5 right-1.5 text-[8px] text-white/45 uppercase">Trái (Lẻ)</span>
+              <div id="tokB1" class="player-token flex flex-col items-center max-w-[78px]">
+                <span id="dotB1" class="w-4 h-4 rounded-full border-2 border-white bg-emerald-400 shadow"></span>
+                <span id="pB1" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- KHU VỰC BẾP (KITCHEN / NVZ) + LƯỚI DỌC Ở GIỮA -->
-        <div class="kitchen-zone-v h-full flex items-center justify-center relative">
-          <div class="h-full border-l-2 border-dashed border-white/90 absolute"></div>
-          <span class="relative z-10 bg-[#0c0908]/85 text-[8px] px-1.5 py-0.5 rounded text-orange-300 font-black tracking-widest -rotate-90 whitespace-nowrap">
-            LƯỚI / NVZ
-          </span>
-        </div>
-
-        <!-- NỬA SÂN PHẢI (ĐỘI B) -->
-        <div class="grid grid-rows-2 divide-y divide-white/80 h-full">
-          <div id="boxB0" class="flex flex-col items-center justify-center p-1 text-center transition-colors">
-            <span class="text-[9px] text-white/60 uppercase">Phải (Chẵn)</span>
-            <span id="pB0" class="truncate max-w-full text-white text-xs mt-0.5">-</span>
-          </div>
-          <div id="boxB1" class="flex flex-col items-center justify-center p-1 text-center transition-colors">
-            <span class="text-[9px] text-white/60 uppercase">Trái (Lẻ)</span>
-            <span id="pB1" class="truncate max-w-full text-white text-xs mt-0.5">-</span>
-          </div>
-        </div>
+        <!-- SVG VẼ ĐƯỜNG CHÉO PHÁT BÓNG -->
+        <svg id="serveSvg" viewBox="0 0 300 160" preserveAspectRatio="none" class="absolute inset-0 w-full h-full pointer-events-none z-20">
+          <defs>
+            <marker id="serveArrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L7,3 z" fill="#facc15" />
+            </marker>
+          </defs>
+          <line id="serveLine" x1="28" y1="120" x2="272" y2="40"
+            stroke="#facc15" stroke-width="2.5" stroke-dasharray="6 4"
+            marker-end="url(#serveArrow)" opacity="0.92" />
+        </svg>
       </div>
 
-      <div class="flex justify-between text-[10px] text-amber-200/60 font-bold mt-1 px-1">
-        <span id="sideLabelA" class="truncate max-w-[45%]">← Đội A</span>
-        <span id="sideLabelB" class="truncate max-w-[45%] text-right">Đội B →</span>
+      <!-- NÚT CHỌN NHANH NGƯỜI GIAO & NGƯỜI ĐỠ BÓNG -->
+      <div class="grid grid-cols-3 gap-1.5 pt-0.5">
+        <button onclick="swapTeamPlayers('A')" class="btn-tap py-1.5 px-2 rounded-lg bg-white/10 text-[10px] font-bold text-amber-200 truncate">
+          ⇄ Đổi vị trí A
+        </button>
+        <button onclick="toggleServingTeam()" class="btn-tap py-1.5 px-2 rounded-lg bg-orange-500/20 border border-orange-500/40 text-[10px] font-black text-orange-300 truncate">
+          🟡 Đổi bên giao
+        </button>
+        <button onclick="swapTeamPlayers('B')" class="btn-tap py-1.5 px-2 rounded-lg bg-white/10 text-[10px] font-bold text-amber-200 truncate">
+          ⇄ Đổi vị trí B
+        </button>
       </div>
     </div>
 
@@ -222,6 +259,24 @@
       await set(ref(db, `matches/${currentMatchId}`), newState);
     }
 
+    // Chọn người giao / người đỡ: Đổi vị trí 2 VĐV trong 1 đội
+    window.swapTeamPlayers = async (side) => {
+      if (!currentMatch || !currentMatchId) return;
+      const key = side === 'A' ? 'teamA' : 'teamB';
+      const p = currentMatch[key].players || ['VĐV 1', 'VĐV 2'];
+      const swapped = [p[1] || 'VĐV 2', p[0] || 'VĐV 1'];
+      playBeep(520, 0.08);
+      await update(ref(db, `matches/${currentMatchId}/${key}`), { players: swapped });
+    };
+
+    // Chọn đội giao bóng
+    window.toggleServingTeam = async () => {
+      if (!currentMatch || !currentMatchId) return;
+      const nextTeam = currentMatch.servingTeam === 'A' ? 'B' : 'A';
+      playBeep(600, 0.1);
+      await update(ref(db, `matches/${currentMatchId}`), { servingTeam: nextTeam });
+    };
+
     window.changeCourt = (cId) => { window.location.search = `?court=${cId}`; };
     window.handlePointServing = () => { if (!currentMatch) return; playBeep(880, 0.12); saveMatch(awardPoint(currentMatch, currentMatch.servingTeam)); };
     window.handleSideOut = () => { if (!currentMatch) return; playBeep(440, 0.18, 'triangle'); saveMatch(faultOrSideOut(currentMatch)); };
@@ -261,9 +316,6 @@
       document.getElementById('nameB').textContent = m.teamB.name;
       document.getElementById('scoreB').textContent = m.teamB.score;
 
-      document.getElementById('sideLabelA').textContent = `← ${m.teamA.name}`;
-      document.getElementById('sideLabelB').textContent = `${m.teamB.name} →`;
-
       const isDB = Boolean(m.isDreambreaker);
       document.getElementById('court2DWrapper').classList.toggle('hidden', isDB);
       document.getElementById('dreambreakerBox').classList.toggle('hidden', !isDB);
@@ -277,17 +329,75 @@
 
         const activeScore = isA ? m.teamA.score : m.teamB.score;
         const isEven = activeScore % 2 === 0;
-        const activeBoxId = isA ? (isEven ? 'boxA0' : 'boxA1') : (isEven ? 'boxB0' : 'boxB1');
 
-        ['boxA0', 'boxA1', 'boxB0', 'boxB1'].forEach(id => {
-          document.getElementById(id).style.background = (id === activeBoxId && m.status !== 'finished') ? 'rgba(249, 115, 22, 0.45)' : 'transparent';
-        });
+        // Xác định ô giao bóng & ô đỡ bóng (chéo sân)
+        const serverBox = isA ? (isEven ? 'boxA0' : 'boxA1') : (isEven ? 'boxB0' : 'boxB1');
+        const receiverBox = isA ? (isEven ? 'boxB0' : 'boxB1') : (isEven ? 'boxA0' : 'boxA1');
+        const netPartnerBox = isA ? (isEven ? 'boxB1' : 'boxB0') : (isEven ? 'boxA1' : 'boxA0');
 
-        document.getElementById('pA0').textContent = (activeBoxId === 'boxA0' ? '🟡 ' : '') + pA0;
-        document.getElementById('pA1').textContent = (activeBoxId === 'boxA1' ? '🟡 ' : '') + pA1;
-        document.getElementById('pB0').textContent = (activeBoxId === 'boxB0' ? '🟡 ' : '') + pB0;
-        document.getElementById('pB1').textContent = (activeBoxId === 'boxB1' ? '🟡 ' : '') + pB1;
-        document.getElementById('serveHint').textContent = `${isA ? m.teamA.name : m.teamB.name} giao #${m.serverNumber} (${isEven ? 'Ô Phải' : 'Ô Trái'})`;
+        // Đẩy vị trí đứng thực tế:
+        // - Đội A (bên trái): cuối sân = justify-start, gần lưới = justify-end
+        // - Đội B (bên phải): cuối sân = justify-end, gần lưới = justify-start
+        const setPos = (boxId, justifyClass, bg) => {
+          const el = document.getElementById(boxId);
+          el.className = `relative flex items-center px-2 transition-colors ${justifyClass}`;
+          el.style.background = bg;
+        };
+
+        if (isA) {
+          // Đội A giao -> cả 2 đứng cuối sân (trái)
+          setPos('boxA0', 'justify-start', serverBox === 'boxA0' ? 'rgba(249, 115, 22, 0.32)' : 'transparent');
+          setPos('boxA1', 'justify-start', serverBox === 'boxA1' ? 'rgba(249, 115, 22, 0.32)' : 'transparent');
+          // Đội B đỡ -> người đỡ cuối sân (phải), đồng đội gần lưới (trái)
+          setPos('boxB0', receiverBox === 'boxB0' ? 'justify-end' : 'justify-start', receiverBox === 'boxB0' ? 'rgba(16, 185, 129, 0.22)' : 'transparent');
+          setPos('boxB1', receiverBox === 'boxB1' ? 'justify-end' : 'justify-start', receiverBox === 'boxB1' ? 'rgba(16, 185, 129, 0.22)' : 'transparent');
+        } else {
+          // Đội B giao -> cả 2 đứng cuối sân (phải)
+          setPos('boxB0', 'justify-end', serverBox === 'boxB0' ? 'rgba(249, 115, 22, 0.32)' : 'transparent');
+          setPos('boxB1', 'justify-end', serverBox === 'boxB1' ? 'rgba(249, 115, 22, 0.32)' : 'transparent');
+          // Đội A đỡ -> người đỡ cuối sân (trái), đồng đội gần lưới (phải)
+          setPos('boxA0', receiverBox === 'boxA0' ? 'justify-start' : 'justify-end', receiverBox === 'boxA0' ? 'rgba(16, 185, 129, 0.22)' : 'transparent');
+          setPos('boxA1', receiverBox === 'boxA1' ? 'justify-start' : 'justify-end', receiverBox === 'boxA1' ? 'rgba(16, 185, 129, 0.22)' : 'transparent');
+        }
+
+        // Tô màu chấm tròn: Vàng (Người giao), Xanh lá (Người đỡ), Trắng/Xanh dương (Đồng đội)
+        const dotStyle = (boxId, defaultColor) => {
+          if (boxId === serverBox) return 'w-4 h-4 rounded-full border-2 border-white bg-amber-400 shadow-[0_0_10px_#facc15]';
+          if (boxId === receiverBox) return 'w-4 h-4 rounded-full border-2 border-white bg-emerald-400 shadow-[0_0_8px_#34d399]';
+          if (boxId === netPartnerBox) return 'w-4 h-4 rounded-full border-2 border-white bg-cyan-400 shadow';
+          return `w-4 h-4 rounded-full border-2 border-white ${defaultColor} shadow`;
+        };
+        document.getElementById('dotA0').className = dotStyle('boxA0', 'bg-sky-400');
+        document.getElementById('dotA1').className = dotStyle('boxA1', 'bg-sky-400');
+        document.getElementById('dotB0').className = dotStyle('boxB0', 'bg-rose-400');
+        document.getElementById('dotB1').className = dotStyle('boxB1', 'bg-rose-400');
+
+        document.getElementById('pA0').textContent = pA0;
+        document.getElementById('pA1').textContent = pA1;
+        document.getElementById('pB0').textContent = pB0;
+        document.getElementById('pB1').textContent = pB1;
+
+        // Vẽ đường chéo phát bóng (SVG 300x160)
+        const coords = {
+          boxA0: { x: 26, y: 120 },
+          boxA1: { x: 26, y: 40 },
+          boxB0: { x: 274, y: 40 },
+          boxB1: { x: 274, y: 120 }
+        };
+        const line = document.getElementById('serveLine');
+        if (m.status === 'finished') {
+          line.style.display = 'none';
+        } else {
+          line.style.display = 'block';
+          line.setAttribute('x1', coords[serverBox].x);
+          line.setAttribute('y1', coords[serverBox].y);
+          line.setAttribute('x2', coords[receiverBox].x);
+          line.setAttribute('y2', coords[receiverBox].y);
+        }
+
+        const srvName = serverBox === 'boxA0' ? pA0 : serverBox === 'boxA1' ? pA1 : serverBox === 'boxB0' ? pB0 : pB1;
+        const rcvName = receiverBox === 'boxA0' ? pA0 : receiverBox === 'boxA1' ? pA1 : receiverBox === 'boxB0' ? pB0 : pB1;
+        document.getElementById('serveHint').textContent = `🟡 ${srvName} giao → ${rcvName} đỡ`;
       }
 
       document.getElementById('btnServingName').textContent = isA ? m.teamA.name : m.teamB.name;
