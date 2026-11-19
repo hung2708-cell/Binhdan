@@ -1,1 +1,228 @@
 
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bính Dần Pickleball - Live Score</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #090b0f; color: #f3f4f6; font-family: system-ui, -apple-system, sans-serif; }
+    .bd-card { background: #131720; border: 1px solid rgba(249, 115, 22, 0.25); }
+    .live-dot { box-shadow: 0 0 8px #10b981; }
+  </style>
+</head>
+<body class="min-h-screen pb-12">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-30 bg-[#0d1017]/95 backdrop-blur border-b border-orange-500/30 px-4 py-3">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-700 p-0.5 flex items-center justify-center overflow-hidden shrink-0">
+          <img id="pubLogo" src="" class="hidden w-full h-full object-cover rounded-[10px]" alt="Logo" />
+          <span id="pubLogoFallback" class="font-black text-black text-sm">BD</span>
+        </div>
+        <div class="min-w-0">
+          <h1 class="font-black text-orange-500 text-sm sm:text-base uppercase tracking-wide truncate">Bính Dần Pickleball</h1>
+          <p id="pubTourName" class="text-xs text-gray-400 truncate">Đang tải dữ liệu giải đấu...</p>
+        </div>
+      </div>
+      <a href="admin.html" class="shrink-0 text-xs font-bold px-3 py-1.5 rounded-xl bg-white/10 text-gray-300 hover:bg-orange-500/20 hover:text-orange-400">
+        Quản trị
+      </a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto p-4 space-y-6">
+
+    <!-- KHU VỰC SÂN ĐANG ĐẤU (LIVE) -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="font-black text-orange-400 uppercase text-sm flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 live-dot animate-pulse"></span>
+          Tỷ số trực tiếp các sân
+        </h2>
+        <span id="liveCountBadge" class="text-[11px] font-bold text-gray-400">0 sân đang đấu</span>
+      </div>
+      <div id="liveCourtsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div class="bd-card rounded-2xl p-6 text-center text-xs text-gray-500 col-span-full">
+          Đang kết nối tỷ số trực tiếp...
+        </div>
+      </div>
+    </section>
+
+    <!-- TABS: LỊCH THI ĐẤU & BẢNG XẾP HẠNG -->
+    <section class="space-y-3">
+      <div class="flex gap-2 border-b border-gray-800 pb-2">
+        <button id="btnTabMatches" onclick="switchPubTab('matches')" class="px-4 py-2 rounded-xl text-xs font-black uppercase bg-orange-500 text-black">
+          Lịch & Kết quả
+        </button>
+        <button id="btnTabStandings" onclick="switchPubTab('standings')" class="px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400">
+          Bảng xếp hạng
+        </button>
+      </div>
+
+      <!-- DANH SÁCH TRẬN ĐẤU -->
+      <div id="panelMatches" class="space-y-2.5"></div>
+
+      <!-- BẢNG XẾP HẠNG TỰ ĐỘNG -->
+      <div id="panelStandings" class="hidden bd-card rounded-2xl overflow-hidden">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-orange-500/15 text-orange-400 uppercase">
+            <tr>
+              <th class="py-2.5 px-3">#</th>
+              <th class="py-2.5 px-2">Đội</th>
+              <th class="py-2.5 px-2 text-center">Trận</th>
+              <th class="py-2.5 px-2 text-center">Thắng</th>
+              <th class="py-2.5 px-3 text-right">Hiệu số</th>
+            </tr>
+          </thead>
+          <tbody id="standingsBody" class="divide-y divide-gray-800"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module">
+    import { db, ref, onValue } from './js/firebase-config.js';
+
+    window.switchPubTab = (tab) => {
+      const isMatches = tab === 'matches';
+      document.getElementById('panelMatches').classList.toggle('hidden', !isMatches);
+      document.getElementById('panelStandings').classList.toggle('hidden', isMatches);
+
+      document.getElementById('btnTabMatches').className = isMatches
+        ? 'px-4 py-2 rounded-xl text-xs font-black uppercase bg-orange-500 text-black'
+        : 'px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400';
+      document.getElementById('btnTabStandings').className = !isMatches
+        ? 'px-4 py-2 rounded-xl text-xs font-black uppercase bg-orange-500 text-black'
+        : 'px-4 py-2 rounded-xl text-xs font-black uppercase bg-white/5 text-gray-400';
+    };
+
+    onValue(ref(db, '/'), (snap) => {
+      const data = snap.val() || {};
+      const settings = data.settings || {};
+      const courts = data.courts || {};
+      const matches = data.matches || {};
+      const teams = data.teams || {};
+
+      // Header
+      document.getElementById('pubTourName').textContent = settings.name || 'Giải Pickleball Bính Dần Open';
+      if (settings.logo) {
+        const img = document.getElementById('pubLogo');
+        img.src = settings.logo;
+        img.classList.remove('hidden');
+        document.getElementById('pubLogoFallback').classList.add('hidden');
+      }
+
+      // 1. Render Live Courts
+      const courtEntries = Object.entries(courts);
+      let activeCount = 0;
+
+      const courtsHtml = courtEntries.map(([cId, c]) => {
+        const m = c.activeMatchId ? matches[c.activeMatchId] : null;
+        if (m) activeCount++;
+
+        if (!m) {
+          return `
+            <div class="bd-card rounded-2xl p-4 opacity-60">
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-black text-xs text-gray-400 uppercase">${c.name}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full bg-gray-800 text-gray-500 font-bold">TRỐNG</span>
+              </div>
+              <p class="text-xs text-gray-500 text-center py-4">Đang chờ trận đấu tiếp theo</p>
+            </div>`;
+        }
+
+        const isA = m.servingTeam === 'A';
+        const dots = m.serverNumber === 2 ? '●●' : '●';
+        const isDone = m.status === 'finished';
+
+        return `
+          <div class="bd-card rounded-2xl overflow-hidden shadow-lg">
+            <div class="bg-gradient-to-r from-orange-600/25 to-transparent px-3.5 py-2 border-b border-orange-500/20 flex items-center justify-between">
+              <span class="font-black text-xs text-orange-400 uppercase">${c.name}</span>
+              <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isDone ? 'bg-gray-700 text-gray-200' : 'bg-emerald-500/20 text-emerald-400'}">
+                ${isDone ? 'KẾT THÚC' : '● LIVE'}
+              </span>
+            </div>
+            <div class="p-3.5 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="text-sm font-bold truncate ${m.winner === 'A' ? 'text-emerald-400' : 'text-white'}">${m.teamA.name}</span>
+                  ${!isDone && isA ? `<span class="text-[10px] text-orange-400 font-black">${dots}</span>` : ''}
+                </div>
+                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg ${isA ? 'bg-orange-500 text-black' : 'bg-white/10 text-white'}">
+                  ${m.teamA.score}
+                </span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 min-w-0 pr-2">
+                  <span class="text-sm font-bold truncate ${m.winner === 'B' ? 'text-emerald-400' : 'text-white'}">${m.teamB.name}</span>
+                  ${!isDone && !isA ? `<span class="text-[10px] text-orange-400 font-black">${dots}</span>` : ''}
+                </div>
+                <span class="w-9 h-8 rounded-lg flex items-center justify-center font-black text-lg ${!isA ? 'bg-orange-500 text-black' : 'bg-white/10 text-white'}">
+                  ${m.teamB.score}
+                </span>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+
+      document.getElementById('liveCourtsGrid').innerHTML = courtsHtml || '<p class="text-xs text-gray-500">Chưa có sân nào.</p>';
+      document.getElementById('liveCountBadge').textContent = `${activeCount} sân đang đấu`;
+
+      // 2. Render Matches List
+      const matchesArr = Object.values(matches);
+      document.getElementById('panelMatches').innerHTML = matchesArr.map(m => {
+        const badge = m.status === 'finished'
+          ? '<span class="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-400 font-bold">XONG</span>'
+          : (m.status === 'live'
+            ? '<span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">LIVE</span>'
+            : '<span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 font-bold">CHỜ</span>');
+
+        return `
+          <div class="bd-card rounded-xl px-3.5 py-3 flex items-center justify-between gap-2">
+            <div class="w-2/5 text-xs sm:text-sm font-bold truncate ${m.winner === 'A' ? 'text-emerald-400' : 'text-gray-200'}">${m.teamA.name}</div>
+            <div class="flex flex-col items-center shrink-0">
+              <span class="text-sm font-black text-orange-400">${m.teamA.score} - ${m.teamB.score}</span>
+              ${badge}
+            </div>
+            <div class="w-2/5 text-xs sm:text-sm font-bold truncate text-right ${m.winner === 'B' ? 'text-emerald-400' : 'text-gray-200'}">${m.teamB.name}</div>
+          </div>`;
+      }).join('') || '<p class="text-xs text-gray-500 text-center py-6">Chưa có lịch thi đấu.</p>';
+
+      // 3. Tính Bảng Xếp Hạng tự động từ các trận đã kết thúc
+      const stats = {};
+      Object.values(teams).forEach(t => {
+        stats[t.name] = { name: t.name, played: 0, wins: 0, diff: 0 };
+      });
+
+      matchesArr.filter(m => m.status === 'finished').forEach(m => {
+        if (!stats[m.teamA.name]) stats[m.teamA.name] = { name: m.teamA.name, played: 0, wins: 0, diff: 0 };
+        if (!stats[m.teamB.name]) stats[m.teamB.name] = { name: m.teamB.name, played: 0, wins: 0, diff: 0 };
+
+        stats[m.teamA.name].played++;
+        stats[m.teamB.name].played++;
+        stats[m.teamA.name].diff += (m.teamA.score - m.teamB.score);
+        stats[m.teamB.name].diff += (m.teamB.score - m.teamA.score);
+
+        if (m.winner === 'A') stats[m.teamA.name].wins++;
+        if (m.winner === 'B') stats[m.teamB.name].wins++;
+      });
+
+      const ranked = Object.values(stats).sort((a, b) => b.wins - a.wins || b.diff - a.diff);
+      document.getElementById('standingsBody').innerHTML = ranked.map((r, i) => `
+        <tr class="hover:bg-white/5">
+          <td class="py-2.5 px-3 font-black ${i < 2 ? 'text-orange-400' : 'text-gray-500'}">${i + 1}</td>
+          <td class="py-2.5 px-2 font-bold text-white">${r.name}</td>
+          <td class="py-2.5 px-2 text-center text-gray-400">${r.played}</td>
+          <td class="py-2.5 px-2 text-center font-black text-emerald-400">${r.wins}</td>
+          <td class="py-2.5 px-3 text-right font-bold ${r.diff >= 0 ? 'text-gray-200' : 'text-red-400'}">${r.diff > 0 ? '+' : ''}${r.diff}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="5" class="py-6 text-center text-gray-500">Chưa có dữ liệu xếp hạng.</td></tr>';
+    });
+  </script>
+</body>
+</html>
