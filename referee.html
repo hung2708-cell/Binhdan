@@ -26,14 +26,14 @@
     }
     @keyframes dotBlink {
       0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.22); opacity: 0.65; }
+      50% { transform: scale(1.24); opacity: 0.6; }
     }
     .blink-serve {
-      animation: dotBlink 1s ease-in-out infinite;
+      animation: dotBlink 0.95s ease-in-out infinite;
       box-shadow: 0 0 12px #facc15;
     }
     .blink-receive {
-      animation: dotBlink 1.2s ease-in-out infinite;
+      animation: dotBlink 1.15s ease-in-out infinite;
       box-shadow: 0 0 10px #34d399;
     }
   </style>
@@ -96,77 +96,68 @@
         <span id="serveHint" class="font-semibold text-amber-300 truncate max-w-[65%] text-right">Đội A giao bóng #2</span>
       </div>
 
-      <div class="relative rounded-lg overflow-hidden">
-        <div class="court-surface h-40 text-xs font-bold">
-          <!-- NỬA SÂN TRÁI (ĐỘI A) -->
-          <div class="grid grid-rows-2 divide-y divide-white/75 h-full">
-            <div id="boxA1" class="relative flex items-center px-2">
-              <span class="absolute top-0.5 left-1.5 text-[8px] text-white/45 uppercase">Trái (Lẻ)</span>
-              <div id="tokA1" class="player-token flex flex-col items-center max-w-[78px]">
-                <span id="dotA1" class="w-4 h-4 rounded-full border-2 border-white bg-sky-400 shadow"></span>
-                <span id="pA1" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
-              </div>
-            </div>
-            <div id="boxA0" class="relative flex items-center px-2">
-              <span class="absolute bottom-0.5 left-1.5 text-[8px] text-white/45 uppercase">Phải (Chẵn)</span>
-              <div id="tokA0" class="player-token flex flex-col items-center max-w-[78px]">
-                <span id="dotA0" class="w-4 h-4 rounded-full border-2 border-white bg-sky-400 shadow"></span>
-                <span id="pA0" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
-              </div>
+      <div class="court-surface rounded-lg overflow-hidden h-40 text-xs font-bold">
+        <!-- NỬA SÂN TRÁI (ĐỘI A) -->
+        <div class="grid grid-rows-2 divide-y divide-white/75 h-full">
+          <div id="boxA1" class="relative flex items-center px-2">
+            <span class="absolute top-0.5 left-1.5 text-[8px] text-white/45 uppercase">Trái (Lẻ)</span>
+            <div class="player-token flex flex-col items-center max-w-[82px]">
+              <span id="dotA1" class="w-4 h-4 rounded-full border-2 border-white bg-sky-400 shadow"></span>
+              <span id="pA1" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
             </div>
           </div>
-
-          <!-- KHU VỰC BẾP (KITCHEN / NVZ) + LƯỚI DỌC Ở GIỮA -->
-          <div class="kitchen-zone-v h-full flex items-center justify-center relative">
-            <div class="h-full border-l-2 border-dashed border-white/90 absolute"></div>
-            <span class="relative z-10 bg-[#0c0908]/85 text-[8px] px-1.5 py-0.5 rounded text-orange-300 font-black tracking-widest -rotate-90 whitespace-nowrap">
-              LƯỚI / NVZ
-            </span>
-          </div>
-
-          <!-- NỬA SÂN PHẢI (ĐỘI B) -->
-          <div class="grid grid-rows-2 divide-y divide-white/75 h-full">
-            <div id="boxB0" class="relative flex items-center px-2">
-              <span class="absolute top-0.5 right-1.5 text-[8px] text-white/45 uppercase">Phải (Chẵn)</span>
-              <div id="tokB0" class="player-token flex flex-col items-center max-w-[78px]">
-                <span id="dotB0" class="w-4 h-4 rounded-full border-2 border-white bg-emerald-400 shadow"></span>
-                <span id="pB0" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
-              </div>
-            </div>
-            <div id="boxB1" class="relative flex items-center px-2">
-              <span class="absolute bottom-0.5 right-1.5 text-[8px] text-white/45 uppercase">Trái (Lẻ)</span>
-              <div id="tokB1" class="player-token flex flex-col items-center max-w-[78px]">
-                <span id="dotB1" class="w-4 h-4 rounded-full border-2 border-white bg-emerald-400 shadow"></span>
-                <span id="pB1" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
-              </div>
+          <div id="boxA0" class="relative flex items-center px-2">
+            <span class="absolute bottom-0.5 left-1.5 text-[8px] text-white/45 uppercase">Phải (Chẵn)</span>
+            <div class="player-token flex flex-col items-center max-w-[82px]">
+              <span id="dotA0" class="w-4 h-4 rounded-full border-2 border-white bg-sky-400 shadow"></span>
+              <span id="pA0" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
             </div>
           </div>
         </div>
 
-        <!-- SVG VẼ ĐƯỜNG CHÉO PHÁT BÓNG NGẮN, GỌN -->
-        <svg id="serveSvg" viewBox="0 0 300 160" preserveAspectRatio="none" class="absolute inset-0 w-full h-full pointer-events-none z-20">
-          <defs>
-            <marker id="serveArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-              <path d="M0,0.5 L0,5.5 L5.5,3 z" fill="#facc15" />
-            </marker>
-          </defs>
-          <line id="serveLine" x1="72" y1="112" x2="228" y2="48"
-            stroke="#facc15" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"
-            marker-end="url(#serveArrow)" opacity="0.95" />
-        </svg>
+        <!-- KHU VỰC BẾP (KITCHEN / NVZ) + LƯỚI DỌC Ở GIỮA -->
+        <div class="kitchen-zone-v h-full flex items-center justify-center relative">
+          <div class="h-full border-l-2 border-dashed border-white/90 absolute"></div>
+          <span class="relative z-10 bg-[#0c0908]/85 text-[8px] px-1.5 py-0.5 rounded text-orange-300 font-black tracking-widest -rotate-90 whitespace-nowrap">
+            LƯỚI / NVZ
+          </span>
+        </div>
+
+        <!-- NỬA SÂN PHẢI (ĐỘI B) -->
+        <div class="grid grid-rows-2 divide-y divide-white/75 h-full">
+          <div id="boxB0" class="relative flex items-center px-2">
+            <span class="absolute top-0.5 right-1.5 text-[8px] text-white/45 uppercase">Phải (Chẵn)</span>
+            <div class="player-token flex flex-col items-center max-w-[82px]">
+              <span id="dotB0" class="w-4 h-4 rounded-full border-2 border-white bg-rose-400 shadow"></span>
+              <span id="pB0" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
+            </div>
+          </div>
+          <div id="boxB1" class="relative flex items-center px-2">
+            <span class="absolute bottom-0.5 right-1.5 text-[8px] text-white/45 uppercase">Trái (Lẻ)</span>
+            <div class="player-token flex flex-col items-center max-w-[82px]">
+              <span id="dotB1" class="w-4 h-4 rounded-full border-2 border-white bg-rose-400 shadow"></span>
+              <span id="pB1" class="text-[10px] text-white font-bold truncate max-w-full mt-0.5">-</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- NÚT CHỌN NHANH NGƯỜI GIAO & NGƯỜI ĐỠ BÓNG -->
-      <div class="grid grid-cols-3 gap-1.5 pt-0.5">
-        <button onclick="swapTeamPlayers('A')" class="btn-tap py-1.5 px-2 rounded-lg bg-white/10 text-[10px] font-bold text-amber-200 truncate">
-          ⇄ Đổi vị trí A
-        </button>
-        <button onclick="toggleServingTeam()" class="btn-tap py-1.5 px-2 rounded-lg bg-orange-500/20 border border-orange-500/40 text-[10px] font-black text-orange-300 truncate">
-          🟡 Đổi bên giao
-        </button>
-        <button onclick="swapTeamPlayers('B')" class="btn-tap py-1.5 px-2 rounded-lg bg-white/10 text-[10px] font-bold text-amber-200 truncate">
-          ⇄ Đổi vị trí B
-        </button>
+      <!-- CHỌN NGƯỜI GIAO / NGƯỜI ĐỠ (CHỈ HIỆN 1 LẦN TRƯỚC KHI BẮT ĐẦU TRẬN) -->
+      <div id="preMatchSetup" class="space-y-1.5 pt-0.5">
+        <div class="text-[10px] text-center text-amber-300/80 font-semibold">
+          ⚙️ Chọn người giao & người đỡ trước khi bắt đầu (0 - 0)
+        </div>
+        <div class="grid grid-cols-3 gap-1.5">
+          <button onclick="toggleServingTeam()" class="btn-tap py-2 px-1.5 rounded-lg bg-orange-500/20 border border-orange-500/40 text-[10px] font-black text-orange-300 truncate">
+            🟡 Đổi đội giao
+          </button>
+          <button onclick="swapByRole('server')" class="btn-tap py-2 px-1.5 rounded-lg bg-amber-500/15 border border-amber-500/35 text-[10px] font-bold text-amber-200 truncate">
+            🏓 Chọn người giao
+          </button>
+          <button onclick="swapByRole('receiver')" class="btn-tap py-2 px-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/35 text-[10px] font-bold text-emerald-300 truncate">
+            🛡️ Chọn người đỡ
+          </button>
+        </div>
       </div>
     </div>
 
@@ -235,6 +226,21 @@
       osc.stop(audioCtx.currentTime + duration);
     }
 
+    function getPlayers(team, fallbackPrefix) {
+      const raw = team && team.players;
+      const arr = Array.isArray(raw) ? raw : Object.values(raw || {});
+      return [arr[0] || `${fallbackPrefix}1`, arr[1] || `${fallbackPrefix}2`];
+    }
+
+    function isMatchStarted(m) {
+      return Boolean(
+        (m.teamA && m.teamA.score > 0) ||
+        (m.teamB && m.teamB.score > 0) ||
+        (m.history && m.history.length > 0) ||
+        m.status === 'finished'
+      );
+    }
+
     window.toggleSound = () => {
       soundEnabled = !soundEnabled;
       document.getElementById('btnSound').textContent = soundEnabled ? '🔊' : '🔇';
@@ -271,17 +277,20 @@
       await set(ref(db, `matches/${currentMatchId}`), newState);
     }
 
-    window.swapTeamPlayers = async (side) => {
-      if (!currentMatch || !currentMatchId) return;
-      const key = side === 'A' ? 'teamA' : 'teamB';
-      const p = currentMatch[key].players || ['VĐV 1', 'VĐV 2'];
-      const swapped = [p[1] || 'VĐV 2', p[0] || 'VĐV 1'];
+    // Chọn người giao / người đỡ (chỉ hoạt động trước khi bắt đầu trận)
+    window.swapByRole = async (role) => {
+      if (!currentMatch || !currentMatchId || isMatchStarted(currentMatch)) return;
+      const isA = currentMatch.servingTeam === 'A';
+      const targetSide = role === 'server' ? (isA ? 'A' : 'B') : (isA ? 'B' : 'A');
+      const teamKey = targetSide === 'A' ? 'teamA' : 'teamB';
+      const [p0, p1] = getPlayers(currentMatch[teamKey], targetSide);
+
       playBeep(520, 0.08);
-      await update(ref(db, `matches/${currentMatchId}/${key}`), { players: swapped });
+      await set(ref(db, `matches/${currentMatchId}/${teamKey}/players`), [p1, p0]);
     };
 
     window.toggleServingTeam = async () => {
-      if (!currentMatch || !currentMatchId) return;
+      if (!currentMatch || !currentMatchId || isMatchStarted(currentMatch)) return;
       const nextTeam = currentMatch.servingTeam === 'A' ? 'B' : 'A';
       playBeep(600, 0.1);
       await update(ref(db, `matches/${currentMatchId}`), { servingTeam: nextTeam });
@@ -330,12 +339,13 @@
       document.getElementById('court2DWrapper').classList.toggle('hidden', isDB);
       document.getElementById('dreambreakerBox').classList.toggle('hidden', !isDB);
 
+      // Ẩn cụm nút chọn người giao/đỡ ngay khi trận đấu đã bắt đầu
+      document.getElementById('preMatchSetup').classList.toggle('hidden', isMatchStarted(m));
+
       const isA = m.servingTeam === 'A';
       if (!isDB) {
-        const pA0 = (m.teamA.players && m.teamA.players[0]) || 'A1';
-        const pA1 = (m.teamA.players && m.teamA.players[1]) || 'A2';
-        const pB0 = (m.teamB.players && m.teamB.players[0]) || 'B1';
-        const pB1 = (m.teamB.players && m.teamB.players[1]) || 'B2';
+        const [pA0, pA1] = getPlayers(m.teamA, 'A');
+        const [pB0, pB1] = getPlayers(m.teamB, 'B');
 
         const activeScore = isA ? m.teamA.score : m.teamB.score;
         const isEven = activeScore % 2 === 0;
@@ -344,10 +354,9 @@
         const receiverBox = isA ? (isEven ? 'boxB0' : 'boxB1') : (isEven ? 'boxA0' : 'boxA1');
         const netPartnerBox = isA ? (isEven ? 'boxB1' : 'boxB0') : (isEven ? 'boxA1' : 'boxA0');
 
-        // Giữ nguyên màu mặt sân (không đổi màu nền), chỉ đổi vị trí đứng
+        // Di chuyển vị trí đứng thực tế (giữ nguyên màu nền mặt sân)
         const setPos = (boxId, justifyClass) => {
-          const el = document.getElementById(boxId);
-          el.className = `relative flex items-center px-2 ${justifyClass}`;
+          document.getElementById(boxId).className = `relative flex items-center px-2 ${justifyClass}`;
         };
 
         if (isA) {
@@ -362,7 +371,7 @@
           setPos('boxA1', receiverBox === 'boxA1' ? 'justify-start' : 'justify-end');
         }
 
-        // Chỉ nhấp nháy chấm người giao (vàng) & người đỡ (xanh lá)
+        // Nhấp nháy chấm người giao (vàng) và người đỡ (xanh lá)
         const dotStyle = (boxId, defaultColor) => {
           if (m.status !== 'finished' && boxId === serverBox) {
             return 'w-4 h-4 rounded-full border-2 border-white bg-amber-400 blink-serve';
@@ -386,27 +395,9 @@
         document.getElementById('pB0').textContent = pB0;
         document.getElementById('pB1').textContent = pB1;
 
-        // Đường chéo phát bóng ngắn, gọn (không đè lên chấm VĐV)
-        const coords = {
-          boxA0: { x: 72, y: 112 },
-          boxA1: { x: 72, y: 48 },
-          boxB0: { x: 228, y: 48 },
-          boxB1: { x: 228, y: 112 }
-        };
-        const line = document.getElementById('serveLine');
-        if (m.status === 'finished') {
-          line.style.display = 'none';
-        } else {
-          line.style.display = 'block';
-          line.setAttribute('x1', coords[serverBox].x);
-          line.setAttribute('y1', coords[serverBox].y);
-          line.setAttribute('x2', coords[receiverBox].x);
-          line.setAttribute('y2', coords[receiverBox].y);
-        }
-
         const srvName = serverBox === 'boxA0' ? pA0 : serverBox === 'boxA1' ? pA1 : serverBox === 'boxB0' ? pB0 : pB1;
         const rcvName = receiverBox === 'boxA0' ? pA0 : receiverBox === 'boxA1' ? pA1 : receiverBox === 'boxB0' ? pB0 : pB1;
-        document.getElementById('serveHint').textContent = `🟡 ${srvName} giao → ${rcvName} đỡ`;
+        document.getElementById('serveHint').textContent = `🟡 ${srvName} giao → 🟢 ${rcvName} đỡ`;
       }
 
       document.getElementById('btnServingName').textContent = isA ? m.teamA.name : m.teamB.name;
