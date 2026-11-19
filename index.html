@@ -491,15 +491,15 @@
     </div>
   </div>
 
-  <!-- POPUP CHI TIẾT / XÁC NHẬN -->
-  <div id="scModal" onclick="if(event.target === this) closeScModal()" class="hidden fixed inset-0 z-[9999] bg-[#0a0d14]/90 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="w-full max-w-sm bg-[#121722] border border-white/15 rounded-2xl p-5 shadow-2xl space-y-3.5 max-h-[88dvh] flex flex-col">
-      <div class="text-center space-y-1 shrink-0">
-        <h2 id="scModalTitle" class="font-black text-white uppercase text-sm tracking-wide">Chi tiết trận đấu</h2>
-        <p id="scModalDesc" class="hidden text-xs text-slate-400 leading-relaxed"></p>
+    <!-- POPUP CHI TIẾT / XÁC NHẬN (TỰ CO GIÃN CHO ĐIỆN THOẠI & MÁY TÍNH) -->
+  <div id="scModal" onclick="if(event.target === this) closeScModal()" class="hidden fixed inset-0 z-[9999] bg-[#0a0d14]/90 backdrop-blur-md flex items-end sm:items-center justify-center p-2.5 sm:p-4">
+    <div class="w-full max-w-[95vw] sm:max-w-md bg-[#121722] border border-white/15 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-3 max-h-[85dvh] flex flex-col">
+      <div class="text-center space-y-1 shrink-0 px-1">
+        <h2 id="scModalTitle" class="font-black text-white uppercase text-xs sm:text-sm tracking-wide truncate">Chi tiết trận đấu</h2>
+        <p id="scModalDesc" class="hidden text-[11px] sm:text-xs text-slate-400 leading-relaxed"></p>
       </div>
-      <div id="scModalBody" class="space-y-2 overflow-y-auto flex-1 text-xs"></div>
-      <button type="button" onclick="closeScModal()" class="shrink-0 w-full py-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/10 text-xs text-slate-200 font-bold">Đóng</button>
+      <div id="scModalBody" class="space-y-2 overflow-y-auto overscroll-contain flex-1 min-h-0 pr-0.5 text-xs"></div>
+      <button type="button" onclick="closeScModal()" class="shrink-0 w-full py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.12] border border-white/10 text-xs text-slate-100 font-bold">Đóng</button>
     </div>
   </div>
 
@@ -735,7 +735,7 @@
       showToast('Đã xóa sạch lịch & trận đấu cũ');
     };
 
-    window.openCourtDetailModal = (cId) => {
+        window.openCourtDetailModal = (cId) => {
       const court = dataStore.courts?.[cId];
       const match = court?.activeMatchId ? dataStore.matches?.[court.activeMatchId] : null;
       const tieId = court?.activeTieId || match?.tieId || '';
@@ -743,19 +743,19 @@
       if (!court || (!match && !tie)) return showToast('Sân hiện đang trống');
 
       let html = '';
-      if (match) {
+      if (match && !tie) {
         html += `
-          <div class="sc-subcard rounded-xl p-3 space-y-2.5">
-            <div class="text-[11px] font-extrabold text-orange-400 uppercase">${match.category || 'Trận đấu'}</div>
-            <div class="grid grid-cols-11 items-center gap-1.5">
-              <div class="col-span-5 text-left min-w-0">
-                <div class="font-black text-white truncate">${match.teamA.name}</div>
-                <div class="text-[10px] text-slate-400 mt-0.5 leading-snug">${formatPlayersSide(match.teamA)}</div>
+          <div class="sc-subcard rounded-xl p-3 space-y-2">
+            <div class="text-[10px] sm:text-[11px] font-extrabold text-orange-400 uppercase">${match.category || 'Trận đấu'}</div>
+            <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+              <div class="text-left min-w-0">
+                <div class="font-black text-white text-xs truncate">${match.teamA.name}</div>
+                <div class="text-[10px] text-slate-400 mt-0.5 leading-snug break-words">${formatPlayersSide(match.teamA)}</div>
               </div>
-              <div class="col-span-1 text-center font-black text-orange-400 tabular-nums text-sm">${match.teamA.score}-${match.teamB.score}</div>
-              <div class="col-span-5 text-right min-w-0">
-                <div class="font-black text-white truncate">${match.teamB.name}</div>
-                <div class="text-[10px] text-slate-400 mt-0.5 leading-snug">${formatPlayersSide(match.teamB)}</div>
+              <div class="px-2 py-1 rounded-lg bg-orange-500/15 text-orange-400 font-black tabular-nums text-xs sm:text-sm whitespace-nowrap">${match.teamA.score} - ${match.teamB.score}</div>
+              <div class="text-right min-w-0">
+                <div class="font-black text-white text-xs truncate">${match.teamB.name}</div>
+                <div class="text-[10px] text-slate-400 mt-0.5 leading-snug break-words">${formatPlayersSide(match.teamB)}</div>
               </div>
             </div>
           </div>`;
@@ -765,70 +765,27 @@
         const rows = (tie.matchIds || []).map((id, idx) => {
           const sm = dataStore.matches?.[id];
           if (!sm) return '';
-          const stText = sm.status === 'finished' ? 'Xong' : (sm.status === 'live' ? 'Đang đấu' : 'Chờ');
+          if (idx === 4 && tie.stage !== 'knockout') return '';
+          const stText = sm.status === 'finished' ? 'FT' : (sm.status === 'live' ? '● LIVE' : 'Chờ');
+          const stColor = sm.status === 'finished' ? 'text-emerald-400' : (sm.status === 'live' ? 'text-orange-400' : 'text-slate-500');
           return `
             <div class="sc-subcard rounded-xl p-2.5 space-y-1.5">
               <div class="flex items-center justify-between text-[10px]">
                 <span class="font-extrabold text-amber-300">${subNames[idx] || `Trận ${idx + 1}`}</span>
-                <span class="text-slate-400 font-semibold">${stText}</span>
+                <span class="${stColor} font-bold">${stText}</span>
               </div>
-              <div class="grid grid-cols-11 items-center gap-1 text-[11px]">
-                <div class="col-span-5 text-left text-slate-200 leading-tight">${formatPlayersSide(sm.teamA)}</div>
-                <div class="col-span-1 text-center font-black text-orange-400 tabular-nums">${sm.teamA.score}-${sm.teamB.score}</div>
-                <div class="col-span-5 text-right text-slate-200 leading-tight">${formatPlayersSide(sm.teamB)}</div>
+              <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-[11px]">
+                <div class="text-left text-slate-200 leading-tight break-words min-w-0">${formatPlayersSide(sm.teamA)}</div>
+                <div class="px-2 py-0.5 rounded-md bg-white/[0.06] font-black text-orange-400 tabular-nums whitespace-nowrap">${sm.teamA.score} - ${sm.teamB.score}</div>
+                <div class="text-right text-slate-200 leading-tight break-words min-w-0">${formatPlayersSide(sm.teamB)}</div>
               </div>
             </div>`;
         }).join('');
-        html += `<div class="space-y-1.5 pt-1"><div class="text-[11px] font-extrabold text-emerald-400 uppercase">${tie.teamAName} vs ${tie.teamBName}</div>${rows}</div>`;
+        html += `<div class="space-y-2"><div class="text-[11px] font-extrabold text-emerald-400 uppercase text-center">${tie.teamAName} vs ${tie.teamBName}</div>${rows}</div>`;
       }
       openScModal({ title: `Chi tiết • ${court.name}`, bodyHtml: html });
     };
 
-    window.openBracketMatchDetailsModal = (seriesKey, roundIdx, matchIdx) => {
-      const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
-      const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
-      if (!slot) return;
-      const liveMatch = slot.matchId ? dataStore.matches?.[slot.matchId] : null;
-      const relatedTie = Object.values(dataStore.ties || {}).find(t =>
-        (slot.team1.includes(t.teamAName) && slot.team2.includes(t.teamBName)) || (slot.team1.includes(t.teamBName) && slot.team2.includes(t.teamAName))
-      );
-
-      let subRowsHtml = '';
-      if (relatedTie) {
-        const subNames = ['Đôi Nữ', 'Đôi Nam', 'Nam Nữ 1', 'Nam Nữ 2', 'Đơn 21đ'];
-        subRowsHtml = (relatedTie.matchIds || []).map((mId, i) => {
-          const sm = dataStore.matches?.[mId];
-          if (!sm) return '';
-          return `
-            <div class="sc-subcard rounded-xl p-2.5 space-y-1">
-              <div class="font-bold text-amber-300 text-[10px]">${subNames[i] || `Trận ${i + 1}`}</div>
-              <div class="grid grid-cols-11 items-center gap-1 text-[11px]">
-                <div class="col-span-5 text-left text-slate-200">${formatPlayersSide(sm.teamA)}</div>
-                <div class="col-span-1 text-center font-black text-emerald-400 tabular-nums">${sm.teamA.score}-${sm.teamB.score}</div>
-                <div class="col-span-5 text-right text-slate-200">${formatPlayersSide(sm.teamB)}</div>
-              </div>
-            </div>`;
-        }).join('');
-      } else if (liveMatch) {
-        subRowsHtml = `
-          <div class="sc-subcard rounded-xl p-2.5 space-y-1">
-            <div class="font-bold text-amber-300 text-[10px]">${liveMatch.category || 'Trận nhánh'}</div>
-            <div class="grid grid-cols-11 items-center gap-1 text-[11px]">
-              <div class="col-span-5 text-left text-slate-200">${formatPlayersSide(liveMatch.teamA)}</div>
-              <div class="col-span-1 text-center font-black text-emerald-400 tabular-nums">${liveMatch.teamA.score}-${liveMatch.teamB.score}</div>
-              <div class="col-span-5 text-right text-slate-200">${formatPlayersSide(liveMatch.teamB)}</div>
-            </div>
-          </div>`;
-      } else {
-        subRowsHtml = '<div class="sc-subcard rounded-xl p-3 text-center text-slate-400">Chưa có tỷ số chi tiết cho cặp đấu này.</div>';
-      }
-
-      const items = [];
-      if (isAdminSession && slot.ready) {
-        items.push({ label: 'THI ĐẤU NGAY TRÊN SÂN', active: true, onClick: () => window.playBracketMatchNow(seriesKey, roundIdx, matchIdx) });
-      }
-      openScModal({ title: `${slot.team1} vs ${slot.team2}`, desc: `${slot.round} • ${seriesKey === 'serieA' ? 'Serie A' : 'Serie B'}`, bodyHtml: `<div class="space-y-1.5">${subRowsHtml}</div>`, items });
-    };
 
     window.highlightTeamJourney = (teamLabel) => {
       highlightedTeamName = teamLabel || '';
