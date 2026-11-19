@@ -90,7 +90,7 @@
               </select>
             </div>
             <button onclick="createTeamTie()" class="fire-btn w-full py-3 rounded-xl font-bold text-sm text-white">
-              + Tạo lượt đấu (Sinh sẵn 4 trận đôi)
+              + Tạo lượt đấu (Xếp đội hình kín từng đội)
             </button>
           </div>
           <div id="tiesList" class="space-y-4"></div>
@@ -106,12 +106,8 @@
               </select>
             </div>
             <div class="grid grid-cols-2 gap-2">
-              <button onclick="generateDoublesRoundRobin()" class="fire-btn py-3 rounded-xl font-bold text-xs text-white">
-                ⚡ Sinh lịch Vòng tròn
-              </button>
-              <a href="groups.html" class="py-3 rounded-xl bg-white/10 text-center font-bold text-xs text-amber-200">
-                🎲 Chia bảng A–D
-              </a>
+              <button onclick="generateDoublesRoundRobin()" class="fire-btn py-3 rounded-xl font-bold text-xs text-white">⚡ Sinh lịch Vòng tròn</button>
+              <a href="groups.html" class="py-3 rounded-xl bg-white/10 text-center font-bold text-xs text-amber-200">🎲 Chia bảng A–D</a>
             </div>
           </div>
           <div class="fire-card rounded-2xl p-4 space-y-2.5">
@@ -217,30 +213,22 @@
     </main>
   </div>
 
-  <!-- MODAL XẾP ĐỘI HÌNH 1 TRẬN CON -->
-  <div id="lineupModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
-    <div class="w-full max-w-md fire-card rounded-2xl p-4 space-y-3">
-      <div class="flex justify-between items-center">
-        <h3 id="modalTitle" class="font-black text-orange-400 text-sm uppercase">Xếp đội hình</h3>
-        <button onclick="closeLineupModal()" class="text-gray-400 text-lg font-bold px-2">✕</button>
+  <!-- MODAL XẾP ĐỘI HÌNH KÍN TỪNG ĐỘI (4 TRẬN ĐÔI) -->
+  <div id="blindLineupModal" class="hidden fixed inset-0 z-[9999] bg-[#0c0908]/92 backdrop-blur-md flex items-center justify-center p-3">
+    <div class="w-full max-w-md bg-[#17110e] border border-orange-500/45 rounded-2xl p-5 shadow-2xl space-y-3.5 max-h-[92dvh] overflow-y-auto">
+      <div class="text-center space-y-1">
+        <div class="w-11 h-11 mx-auto rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-2xl">🔒</div>
+        <h3 id="blindTitle" class="font-black text-orange-400 text-sm uppercase">Xếp đội hình kín</h3>
+        <p class="text-[11px] text-amber-200/70">Chọn đủ 2 VĐV cho cả 4 trận. Sau khi xác nhận sẽ khóa kín để đội bạn không biết.</p>
       </div>
-      <div class="space-y-2.5 text-xs">
-        <div>
-          <label id="lblTeamA" class="font-bold text-amber-300 block mb-1">Đội A</label>
-          <div class="grid grid-cols-2 gap-2">
-            <select id="mA1" class="bg-[#0c0908] border border-gray-700 rounded-xl px-2.5 py-2"></select>
-            <select id="mA2" class="bg-[#0c0908] border border-gray-700 rounded-xl px-2.5 py-2"></select>
-          </div>
-        </div>
-        <div>
-          <label id="lblTeamB" class="font-bold text-amber-300 block mb-1">Đội B</label>
-          <div class="grid grid-cols-2 gap-2">
-            <select id="mB1" class="bg-[#0c0908] border border-gray-700 rounded-xl px-2.5 py-2"></select>
-            <select id="mB2" class="bg-[#0c0908] border border-gray-700 rounded-xl px-2.5 py-2"></select>
-          </div>
-        </div>
-      </div>
-      <button onclick="saveLineup()" class="fire-btn w-full py-3 rounded-xl font-bold text-sm text-white">Lưu đội hình</button>
+      <div id="blindRows" class="space-y-2.5 text-xs"></div>
+      <p id="blindError" class="hidden text-center text-xs text-red-400 font-bold"></p>
+      <button onclick="confirmBlindLineup()" class="fire-btn w-full py-3 rounded-xl font-black text-sm text-white shadow-lg">
+        XÁC NHẬN & KHÓA ĐỘI HÌNH
+      </button>
+      <button onclick="closeBlindModal()" class="block w-full text-center text-xs text-gray-400 hover:text-white font-semibold">
+        Hủy bỏ
+      </button>
     </div>
   </div>
 
@@ -270,7 +258,6 @@
     import { createInitialMatchState } from './js/pickleball-engine.js';
     import { requirePin } from './js/auth.js';
 
-    // Popup xác nhận kính mờ đồng bộ với khung nhập PIN
     function uiConfirm({ title = 'Xác nhận', message = '', icon = '⚠️', confirmText = 'XÁC NHẬN', danger = false } = {}) {
       return new Promise((resolve) => {
         const overlay = document.createElement('div');
@@ -294,7 +281,6 @@
       });
     }
 
-    // Thanh trượt Liquid Glass
     const ADMIN_TABS = ['ties', 'teams', 'courts', 'settings'];
     const adminNav = document.getElementById('adminIosNav');
     const adminPill = document.getElementById('adminIosPill');
@@ -340,7 +326,7 @@
       teams: {}, doublesTeams: {}, ties: {}, courts: {}, matches: {}
     };
     let tempRoster = [];
-    let editingMatchId = null;
+    let blindCtx = null; // { tieId, side: 'A' | 'B' }
 
     onValue(ref(db, '/'), (snap) => {
       const data = snap.val() || {};
@@ -368,7 +354,7 @@
       const t = document.getElementById('toast');
       t.textContent = msg;
       t.classList.remove('hidden');
-      setTimeout(() => t.classList.add('hidden'), 2200);
+      setTimeout(() => t.classList.add('hidden'), 2400);
     }
 
     window.setTournamentFormat = async (fmt) => {
@@ -392,6 +378,7 @@
       document.getElementById('teamsModeDoubles').classList.toggle('hidden', isTeam);
     }
 
+    // --- THÊM CLB & VĐV ---
     window.addTempClubPlayer = () => {
       const name = document.getElementById('inpClubPlName').value.trim();
       const gender = document.getElementById('inpClubPlGender').value;
@@ -401,7 +388,6 @@
       document.getElementById('inpClubPlName').value = '';
       renderTempRoster();
     };
-
     window.removeTempClubPlayer = (idx) => { tempRoster.splice(idx, 1); renderTempRoster(); };
 
     function renderTempRoster() {
@@ -418,7 +404,7 @@
     window.addClubTeam = async () => {
       const name = document.getElementById('inpTeamName').value.trim();
       if (!name) return showToast('Nhập tên CLB / Đội');
-      if (tempRoster.length === 0) return showToast('Hãy bấm dấu + thêm ít nhất 1 VĐV');
+      if (tempRoster.length < 2) return showToast('Thêm ít nhất 2 VĐV vào CLB');
       const id = `club_${Date.now()}`;
       await set(ref(db, `teams/${id}`), { id, name, roster: tempRoster.map(p => p.name), rosterDetails: tempRoster });
       document.getElementById('inpTeamName').value = '';
@@ -448,6 +434,7 @@
       showToast('Đã xóa CLB');
     };
 
+    // --- NỘI DUNG ĐÔI ---
     window.updateDoublesPreview = () => {
       const g1 = document.getElementById('dP1Gender').value, g2 = document.getElementById('dP2Gender').value;
       const r1 = Number(document.getElementById('dP1Rating').value) || 0, r2 = Number(document.getElementById('dP2Rating').value) || 0;
@@ -467,8 +454,7 @@
         id, name: `${n1} / ${n2}`, pairType, totalRating: Math.round((r1 + r2) * 10) / 10,
         players: [n1, n2], playerDetails: [{ name: n1, gender: g1, rating: r1 }, { name: n2, gender: g2, rating: r2 }]
       });
-      document.getElementById('dP1Name').value = '';
-      document.getElementById('dP2Name').value = '';
+      document.getElementById('dP1Name').value = ''; document.getElementById('dP2Name').value = '';
       showToast('Đã thêm cặp đôi!');
     };
 
@@ -496,8 +482,7 @@
       const list = Object.values(state.doublesTeams);
       if (list.length < 2) return showToast('Cần ít nhất 2 cặp đôi!');
       const target = Number(document.getElementById('doublesTargetScore').value) || 11;
-      const updates = {};
-      let count = 0;
+      const updates = {}; let count = 0;
       for (let i = 0; i < list.length; i++) {
         for (let j = i + 1; j < list.length; j++) {
           count++;
@@ -515,6 +500,7 @@
       showToast(`Đã tạo ${count} trận đôi vòng tròn!`);
     };
 
+    // --- TẠO LƯỢT ĐẤU ĐỒNG ĐỘI & XẾP ĐỘI HÌNH KÍN ---
     window.createTeamTie = async () => {
       const idA = document.getElementById('selTeamA').value, idB = document.getElementById('selTeamB').value;
       const stage = document.getElementById('selStage').value;
@@ -528,14 +514,89 @@
           id: mId, tieId, subMatchIndex: idx + 1, stage,
           category: `${lbl} (${tA.name} vs ${tB.name})`,
           targetScore: 15, switchPoint: 8, winByTwo: stage === 'knockout', maxScore: stage === 'knockout' ? 18 : 0,
-          teamAName: tA.name, teamAPlayers: [tA.roster[0] || 'VĐV A1', tA.roster[1] || 'VĐV A2'],
-          teamBName: tB.name, teamBPlayers: [tB.roster[0] || 'VĐV B1', tB.roster[1] || 'VĐV B2']
+          teamAName: tA.name, teamAPlayers: ['', ''],
+          teamBName: tB.name, teamBPlayers: ['', '']
         });
         m.status = 'waiting'; updates[`matches/${mId}`] = m;
       });
-      updates[`ties/${tieId}`] = { id: tieId, teamAId: idA, teamAName: tA.name, teamBId: idB, teamBName: tB.name, stage, matchIds, walkoverWinner: '', createdAt: Date.now() };
+      updates[`ties/${tieId}`] = {
+        id: tieId, teamAId: idA, teamAName: tA.name, teamBId: idB, teamBName: tB.name,
+        stage, matchIds, walkoverWinner: '', lineupA: false, lineupB: false, createdAt: Date.now()
+      };
       await update(ref(db, '/'), updates);
-      showToast('Đã tạo lượt đấu 4 trận đôi!');
+      showToast('Đã tạo lượt đấu! Mời từng CLB xếp đội hình kín.');
+    };
+
+    // Mở khung xếp đội hình kín cho Đội A hoặc Đội B
+    window.openBlindLineup = (tieId, side) => {
+      const tie = state.ties[tieId];
+      if (!tie) return;
+      blindCtx = { tieId, side };
+      const teamId = side === 'A' ? tie.teamAId : tie.teamBId;
+      const teamName = side === 'A' ? tie.teamAName : tie.teamBName;
+      const teamObj = state.teams[teamId] || {};
+      const roster = teamObj.rosterDetails || (teamObj.roster || []).map(n => ({ name: n, gender: '', rating: '' }));
+
+      document.getElementById('blindTitle').textContent = `XẾP ĐỘI HÌNH KÍN: ${teamName}`;
+      document.getElementById('blindError').classList.add('hidden');
+
+      const labels = ['Trận 1: Đôi Nữ', 'Trận 2: Đôi Nam', 'Trận 3: Đôi Nam Nữ 1', 'Trận 4: Đôi Nam Nữ 2'];
+      const optsHtml = '<option value="">-- Chọn VĐV --</option>' + roster.map(p => {
+        const info = p.gender ? ` (${p.gender}${p.rating ? ' ' + p.rating : ''})` : '';
+        return `<option value="${p.name}">${p.name}${info}</option>`;
+      }).join('');
+
+      document.getElementById('blindRows').innerHTML = labels.map((lbl, idx) => `
+        <div class="bg-[#0c0908] border border-orange-500/20 rounded-xl p-2.5 space-y-1.5">
+          <div class="font-bold text-amber-300 text-[11px]">${lbl}</div>
+          <div class="grid grid-cols-2 gap-2">
+            <select id="bl_${idx}_1" class="bg-[#17110e] border border-gray-700 rounded-lg px-2 py-2 text-xs text-white outline-none">${optsHtml}</select>
+            <select id="bl_${idx}_2" class="bg-[#17110e] border border-gray-700 rounded-lg px-2 py-2 text-xs text-white outline-none">${optsHtml}</select>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('blindLineupModal').classList.remove('hidden');
+    };
+
+    window.closeBlindModal = () => {
+      document.getElementById('blindLineupModal').classList.add('hidden');
+      blindCtx = null;
+    };
+
+    window.confirmBlindLineup = async () => {
+      if (!blindCtx) return;
+      const { tieId, side } = blindCtx;
+      const tie = state.ties[tieId];
+      const errEl = document.getElementById('blindError');
+      const pairs = [];
+
+      for (let i = 0; i < 4; i++) {
+        const p1 = document.getElementById(`bl_${i}_1`).value;
+        const p2 = document.getElementById(`bl_${i}_2`).value;
+        if (!p1 || !p2) {
+          errEl.textContent = `⚠️ Vui lòng chọn đủ 2 VĐV cho Trận ${i + 1}!`;
+          errEl.classList.remove('hidden');
+          return;
+        }
+        if (p1 === p2) {
+          errEl.textContent = `⚠️ Trận ${i + 1} không thể chọn trùng 1 VĐV!`;
+          errEl.classList.remove('hidden');
+          return;
+        }
+        pairs.push([p1, p2]);
+      }
+
+      const teamKey = side === 'A' ? 'teamA' : 'teamB';
+      const updates = { [`ties/${tieId}/lineup${side}`]: true };
+      (tie.matchIds || []).slice(0, 4).forEach((mId, idx) => {
+        updates[`matches/${mId}/${teamKey}/players`] = pairs[idx];
+      });
+
+      await update(ref(db, '/'), updates);
+      const tName = side === 'A' ? tie.teamAName : tie.teamBName;
+      closeBlindModal();
+      showToast(`🔒 Đã khóa đội hình ${tName}!`);
     };
 
     window.openDreambreaker = async (tieId) => {
@@ -556,11 +617,10 @@
       const ok = await uiConfirm({
         title: 'Xử thắng bỏ cuộc',
         message: `Xác nhận xử ${winnerSide === 'A' ? tie.teamAName : tie.teamBName} thắng 4-0 (15-0)?`,
-        icon: '🚩',
-        confirmText: 'XÁC NHẬN 4-0'
+        icon: '🚩', confirmText: 'XÁC NHẬN 4-0'
       });
       if (!ok) return;
-      const updates = { [`ties/${tieId}/walkoverWinner`]: winnerSide };
+      const updates = { [`ties/${tieId}/walkoverWinner`]: winnerSide, [`ties/${tieId}/lineupA`]: true, [`ties/${tieId}/lineupB`]: true };
       (tie.matchIds || []).slice(0, 4).forEach(mId => {
         updates[`matches/${mId}/status`] = 'finished'; updates[`matches/${mId}/winner`] = winnerSide;
         updates[`matches/${mId}/teamA/score`] = winnerSide === 'A' ? 15 : 0; updates[`matches/${mId}/teamB/score`] = winnerSide === 'B' ? 15 : 0;
@@ -578,39 +638,24 @@
       return Object.entries(counts).filter(([_, c]) => c > 2).map(([p, c]) => `${p} (${c} trận)`);
     }
 
-    window.openLineupModal = (mId) => {
-      const m = state.matches[mId], tie = state.ties[m.tieId]; if (!m || !tie) return;
-      editingMatchId = mId;
-      const rA = (state.teams[tie.teamAId]?.rosterDetails) || (state.teams[tie.teamAId]?.roster || []).map(n => ({ name: n, gender: '', rating: '' }));
-      const rB = (state.teams[tie.teamBId]?.rosterDetails) || (state.teams[tie.teamBId]?.roster || []).map(n => ({ name: n, gender: '', rating: '' }));
-      document.getElementById('modalTitle').textContent = m.category;
-      document.getElementById('lblTeamA').textContent = tie.teamAName;
-      document.getElementById('lblTeamB').textContent = tie.teamBName;
-      const fill = (elId, list, val) => {
-        document.getElementById(elId).innerHTML = list.map(p => {
-          const extra = p.gender ? ` (${p.gender} - ${p.rating})` : '';
-          return `<option value="${p.name}" ${p.name === val ? 'selected' : ''}>${p.name}${extra}</option>`;
-        }).join('');
-      };
-      fill('mA1', rA, m.teamA.players[0]); fill('mA2', rA, m.teamA.players[1]);
-      fill('mB1', rB, m.teamB.players[0]); fill('mB2', rB, m.teamB.players[1]);
-      document.getElementById('lineupModal').classList.remove('hidden');
-    };
-    window.closeLineupModal = () => document.getElementById('lineupModal').classList.add('hidden');
-    window.saveLineup = async () => {
-      if (!editingMatchId) return;
-      await update(ref(db, `matches/${editingMatchId}`), {
-        'teamA/players': [document.getElementById('mA1').value, document.getElementById('mA2').value],
-        'teamB/players': [document.getElementById('mB1').value, document.getElementById('mB2').value]
-      });
-      closeLineupModal(); showToast('Đã lưu đội hình!');
-    };
-
     window.addCourt = async () => { const n = Object.keys(state.courts).length + 1; await set(ref(db, `courts/court_${n}`), { name: `Sân ${n}`, activeMatchId: '' }); };
+
     window.assignMatchToCourt = async (cId, mId) => {
+      if (mId) {
+        const m = state.matches[mId];
+        if (m && m.tieId && state.ties[m.tieId]) {
+          const tie = state.ties[m.tieId];
+          if (!tie.lineupA || !tie.lineupB) {
+            showToast('🔒 Cần cả 2 CLB chốt đội hình kín trước khi đẩy ra sân!');
+            renderAll();
+            return;
+          }
+        }
+      }
       await update(ref(db, `courts/${cId}`), { activeMatchId: mId });
       if (mId) { await update(ref(db, `matches/${mId}`), { courtId: cId, status: 'live' }); showToast(`Đã đẩy trận ra ${state.courts[cId].name}!`); }
     };
+
     window.copyLink = (p) => { navigator.clipboard.writeText(new URL(p, window.location.href).href); showToast('Đã copy link!'); };
     window.saveSettings = async () => { await update(ref(db, 'settings'), { name: document.getElementById('setTourName').value.trim() || 'Giải Pickleball Bính Dần 1986' }); showToast('Đã lưu!'); };
 
@@ -618,9 +663,7 @@
       const ok = await uiConfirm({
         title: 'Làm mới giải đấu',
         message: 'Xóa toàn bộ Đội, Lượt đấu và Trận đấu? Thao tác này không thể hoàn tác.',
-        icon: '🗑️',
-        confirmText: 'XÓA TOÀN BỘ',
-        danger: true
+        icon: '🗑️', confirmText: 'XÓA TOÀN BỘ', danger: true
       });
       if (!ok) return;
       await remove(ref(db, 'teams')); await remove(ref(db, 'doublesTeams')); await remove(ref(db, 'ties')); await remove(ref(db, 'matches'));
@@ -667,9 +710,7 @@
               <span class="font-bold text-sm text-white truncate">${d.name}</span>
               <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/20 text-amber-300 font-bold">${d.pairType}</span>
             </div>
-            <div class="text-[11px] text-gray-400 mt-0.5">
-              ${(d.playerDetails || []).map(p => `${p.name} (${p.gender} ${Number(p.rating).toFixed(1)})`).join(' • ')}
-            </div>
+            <div class="text-[11px] text-gray-400 mt-0.5">${(d.playerDetails || []).map(p => `${p.name} (${p.gender} ${Number(p.rating).toFixed(1)})`).join(' • ')}</div>
           </div>
           <div class="flex items-center gap-2 shrink-0">
             <span class="px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 font-black text-xs">${Number(d.totalRating).toFixed(1)}</span>
@@ -689,13 +730,17 @@
         </div>
       `).join('') || '<p class="text-xs text-gray-500 text-center py-3">Chưa có trận đôi nào.</p>';
 
+      // RENDER LƯỢT ĐẤU ĐỒNG ĐỘI (CÓ KHÓA ĐỘI HÌNH KÍN)
       const tiesArr = Object.values(state.ties).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
       document.getElementById('tiesList').innerHTML = tiesArr.map(tie => {
         const subMatches = (tie.matchIds || []).map(id => state.matches[id]).filter(Boolean);
         let winsA = 0, winsB = 0;
         subMatches.forEach(m => { if (m.winner === 'A') winsA++; if (m.winner === 'B') winsB++; });
-        const overplayed = getOverplayedPlayers(tie);
-        const needDB = tie.stage === 'knockout' && winsA === 2 && winsB === 2 && subMatches.length === 4;
+
+        const bothReady = Boolean(tie.lineupA && tie.lineupB);
+        const overplayed = bothReady ? getOverplayedPlayers(tie) : [];
+        const needDB = bothReady && tie.stage === 'knockout' && winsA === 2 && winsB === 2 && subMatches.length === 4;
+
         return `
           <div class="fire-card rounded-2xl p-4 space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-orange-500/20 pb-2.5">
@@ -708,18 +753,35 @@
                 <button onclick="setWalkover('${tie.id}','B')" class="text-[10px] px-2 py-1 rounded bg-white/5 text-gray-400">Bỏ cuộc A</button>
               </div>
             </div>
-            ${overplayed.length ? `<div class="text-xs bg-red-500/20 border border-red-500/50 text-red-300 px-3 py-2 rounded-xl font-bold">⚠️ Quá 2 trận/VĐV: ${overplayed.join(', ')}</div>` : ''}
-            <div class="space-y-2">
-              ${subMatches.map(m => `
-                <div class="bg-[#0c0908] border border-gray-800 rounded-xl p-2.5 flex items-center justify-between gap-2 text-xs">
-                  <div class="min-w-0 flex-1">
-                    <div class="font-bold text-amber-300 truncate">${m.category.split('(')[0]}</div>
-                    <div class="text-[11px] text-gray-400 truncate">${(m.teamA.players || []).join('/')} <b class="text-white mx-1">${m.teamA.score}-${m.teamB.score}</b> ${(m.teamB.players || []).join('/')}</div>
-                  </div>
-                  ${!m.isDreambreaker ? `<button onclick="openLineupModal('${m.id}')" class="shrink-0 px-2.5 py-1.5 rounded-lg bg-white/10 text-gray-200 font-bold">Đội hình</button>` : ''}
+
+            ${!bothReady ? `
+              <div class="bg-[#0c0908] border border-amber-500/30 rounded-xl p-3 space-y-2">
+                <div class="text-[11px] text-amber-300 font-bold text-center">🔒 Xếp đội hình kín — Chỉ công bố khi cả 2 CLB cùng xác nhận</div>
+                <div class="grid grid-cols-2 gap-2">
+                  ${tie.lineupA
+                    ? `<div class="py-2.5 px-2 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-black text-xs text-center">✓ ${tie.teamAName} đã chốt</div>`
+                    : `<button onclick="openBlindLineup('${tie.id}','A')" class="fire-btn py-2.5 px-2 rounded-xl text-white font-black text-xs">📝 Xếp ${tie.teamAName}</button>`
+                  }
+                  ${tie.lineupB
+                    ? `<div class="py-2.5 px-2 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-black text-xs text-center">✓ ${tie.teamBName} đã chốt</div>`
+                    : `<button onclick="openBlindLineup('${tie.id}','B')" class="fire-btn py-2.5 px-2 rounded-xl text-white font-black text-xs">📝 Xếp ${tie.teamBName}</button>`
+                  }
                 </div>
-              `).join('')}
-            </div>
+              </div>
+            ` : `
+              ${overplayed.length ? `<div class="text-xs bg-red-500/20 border border-red-500/50 text-red-300 px-3 py-2 rounded-xl font-bold">⚠️ Quá 2 trận/VĐV: ${overplayed.join(', ')}</div>` : ''}
+              <div class="space-y-2">
+                ${subMatches.map(m => `
+                  <div class="bg-[#0c0908] border border-gray-800 rounded-xl p-2.5 flex items-center justify-between gap-2 text-xs">
+                    <div class="min-w-0 flex-1">
+                      <div class="font-bold text-amber-300 truncate">${m.category.split('(')[0]}</div>
+                      <div class="text-[11px] text-gray-300 truncate">${(m.teamA.players || []).join('/')} <b class="text-white mx-1">${m.teamA.score}-${m.teamB.score}</b> ${(m.teamB.players || []).join('/')}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `}
+
             ${needDB ? `<button onclick="openDreambreaker('${tie.id}')" class="w-full py-2.5 rounded-xl bg-emerald-600 text-white font-black text-xs animate-pulse">⚡ HÒA 2-2! MỞ TRẬN 5 ĐƠN 21Đ</button>` : ''}
           </div>`;
       }).join('') || '<p class="text-xs text-gray-500 text-center py-6">Chưa có lượt đấu đồng đội nào.</p>';
@@ -732,7 +794,10 @@
           </div>
           <select onchange="assignMatchToCourt('${cId}', this.value)" class="w-full bg-[#0c0908] border border-gray-700 rounded-xl px-3 py-2.5 text-xs">
             <option value="">-- Chọn trận đẩy ra sân --</option>
-            ${matchesArr.map(m => `<option value="${m.id}" ${c.activeMatchId === m.id ? 'selected' : ''}>${m.category}: ${m.teamA.name} vs ${m.teamB.name} (${m.teamA.score}-${m.teamB.score})</option>`).join('')}
+            ${matchesArr.map(m => {
+              const locked = m.tieId && state.ties[m.tieId] && !(state.ties[m.tieId].lineupA && state.ties[m.tieId].lineupB);
+              return `<option value="${m.id}" ${c.activeMatchId === m.id ? 'selected' : ''}>${locked ? '🔒 ' : ''}${m.category} (${m.teamA.score}-${m.teamB.score})</option>`;
+            }).join('')}
           </select>
           <div class="grid grid-cols-2 gap-2">
             <a href="referee.html?court=${cId}" target="_blank" class="fire-btn py-2.5 rounded-xl text-center text-xs font-bold text-white">Mở Trọng tài</a>
