@@ -435,7 +435,12 @@
 
       <!-- HÀNG 3: ĐIỀU PHỐI SÂN (TỰ CO GIÃN 1 -> 2 -> 4 CỘT) -->
       <div class="sc-card rounded-2xl p-4 space-y-3">
-        <h3 class="font-extrabold text-xs text-slate-300 uppercase tracking-wider">Điều phối sân thi đấu</h3>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h3 class="font-extrabold text-xs text-slate-300 uppercase tracking-wider">Điều phối sân thi đấu</h3>
+          <button type="button" onclick="autoDispatchCourts()" class="fire-btn px-3 py-1.5 rounded-lg text-[11px] font-extrabold text-white shadow flex items-center gap-1.5">
+            <i data-lucide="wand-2" class="w-3.5 h-3.5"></i> Tự động điều phối sân
+          </button>
+        </div>
         <div id="adminCourtAssignGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
       </div>
     </section>
@@ -1161,24 +1166,238 @@
       showToast(`Đã đẩy trận ra ${dataStore.courts[cId]?.name || cId}`); window.switchPubTab('live');
     };
 
-    window.assignCourtInFrame = async (cId, selectedId) => {
-      const isTeam = getActiveFormat() === 'team', courts = dataStore.courts || {}, updates = {};
-      if (!selectedId) { updates[`courts/${cId}/activeMatchId`] = ''; updates[`courts/${cId}/activeTieId`] = ''; await update(ref(db, '/'), updates); showToast('Đã giải phóng sân'); return; }
+   // Kiểm tra 1 lượt đồng đội đã đấu xong hết chưa
+    function isTieFinished(tie) {
+      const subs = (tie.matchIds || []).map(id => dataStore.matches?.[id]).filter(Boolean);
+      if (tie.walkoverWinner) return true;
+      if (subs.length < 4) return false;
+      const fourDone = subs.slice(0, 4).every(m => m.status === 'finished');
+      if (!fourDone) return false;
+      if (tie.stage === 'knockout') {
+        let wA = 0, wB = 0;
+        subs.slice(0, 4).forEach(m => { if (m.winner === 'A') wA++; if (m.winner === 'B') wB++; });
+        if (wA === 2 && wB === 2) return subs[4]?.status === 'finished';
+      }
+      return true;
+    }
+
+    // TỰ ĐỘNG ĐIỀU PHỐI SÂN: KHÔNG TRÙNG CLB CÙNG LÚC & ƯU TIÊN ĐỘI ĐÃ NGHỈ
+    window.autoDispatchCourts = async () => {
+      const isTeam = getActiveFormat() === 'team';
+      const courts = dataStore.courts || {};
+      const matches = dataStore.matches || {};
+      const ties = dataStore.ties || {};
+      const updates = {};
+
+      const busyTeams = new Set();
+      const freeCourts = [];
+      const recentlyFinished = new Set();
+      const playedCount = {};
+
+      // 1. Giải phóng sân đã xong & ghi nhận các đội đang thi đấu trên sân
+      Object.entries(courts).forEach(([cId, c]) => {
+        if (isTeam) {
+          const tId = c.activeTieId || matches[c.activeMatchId]?.tieId || '';
+          const tie = tId ? ties[tId] : null;
+          if (!tie || isTieFinished(tie)) {
+            if (tie) {
+              recentlyFinished.add(tie.teamAName);
+              recentlyFinished.add(tie.teamBName);
+            }
+            updates[`courts/${cId}/activeTieId`] = '';
+            updates[`courts/${cId}/activeMatchId`] = '';
+            freeCourts.push(cId);
+          } else {
+            busyTeams.add(tie.teamAName);
+            busyTeams.add(tie.teamBName);
+          }
+        } else {
+          const m = c.activeMatchId ? matches[c.activeMatchId] : null;
+          if (!m || m.status === 'finished') {
+            if (m) {
+              recentlyFinished.add(m.teamA?.name);
+              recentlyFinished.add(m.teamB?.name);
+            }
+            updates[`courts/${cId}/activeMatchId`] = '';
+            updates[`courts/${cId}/activeTieId`] = '';
+            freeCourts.push(cId);
+          } else {
+            busyTeams.add(m.teamA?.name);
+            busyTeams.add(m.teamB?.name);
+          }
+        }
+      });
+
+      if (!freeCourts.length) {
+        return showToast('Tất cả các sân hiện đang có trận thi đấu');
+      }
+
+      // 2. Đếm số trận đã đấu của từng đội để ưu tiên đội ít trận / được nghỉ
       if (isTeam) {
-        const tie = dataStore.ties?.[selectedId]; if (!tie) return;
-        const matchIds = tie.matchIds || [];
-        const activeMId = matchIds.find(id => dataStore.matches?.[id]?.status === 'live') || matchIds.find(id => dataStore.matches?.[id]?.status !== 'finished') || matchIds[0] || '';
-        Object.entries(courts).forEach(([otherId, otherCourt]) => {
-          if (otherId !== cId && (otherCourt.activeTieId === selectedId || matchIds.includes(otherCourt.activeMatchId))) { updates[`courts/${otherId}/activeTieId`] = ''; updates[`courts/${otherId}/activeMatchId`] = ''; }
+        Object.values(ties).forEach(t => {
+          if (isTieFinished(t)) {
+            playedCount[t.teamAName] = (playedCount[t.teamAName] || 0) + 1;
+            playedCount[t.teamBName] = (playedCount[t.teamBName] || 0) + 1;
+          }
         });
-        updates[`courts/${cId}/activeTieId`] = selectedId; updates[`courts/${cId}/activeMatchId`] = activeMId;
-        if (activeMId) { updates[`matches/${activeMId}/courtId`] = cId; if (dataStore.matches?.[activeMId]?.status === 'waiting') updates[`matches/${activeMId}/status`] = 'live'; }
-        await update(ref(db, '/'), updates); showToast(`Đã gán ${tie.teamAName} vs ${tie.teamBName} vào ${courts[cId]?.name || cId}`);
       } else {
-        Object.entries(courts).forEach(([otherId, otherCourt]) => { if (otherId !== cId && otherCourt.activeMatchId === selectedId) { updates[`courts/${otherId}/activeMatchId`] = ''; updates[`courts/${otherId}/activeTieId`] = ''; } });
-        updates[`courts/${cId}/activeTieId`] = ''; updates[`courts/${cId}/activeMatchId`] = selectedId; updates[`matches/${selectedId}/courtId`] = cId;
-        if (dataStore.matches?.[selectedId]?.status === 'waiting') updates[`matches/${selectedId}/status`] = 'live';
-        await update(ref(db, '/'), updates); showToast(`Đã gán trận vào ${courts[cId]?.name || cId}`);
+        Object.values(matches).filter(m => !m.tieId && m.status === 'finished').forEach(m => {
+          playedCount[m.teamA?.name] = (playedCount[m.teamA?.name] || 0) + 1;
+          playedCount[m.teamB?.name] = (playedCount[m.teamB?.name] || 0) + 1;
+        });
+      }
+
+      // 3. Lọc các lượt/trận đang chờ và sắp xếp ưu tiên đội chưa đánh liền kề
+      let assignedCount = 0;
+      if (isTeam) {
+        const activeTieIds = new Set(Object.values(courts).map(c => c.activeTieId || matches[c.activeMatchId]?.tieId).filter(Boolean));
+        const waitingTies = Object.values(ties)
+          .filter(t => !isTieFinished(t) && !activeTieIds.has(t.id))
+          .sort((a, b) => {
+            const restA = (recentlyFinished.has(a.teamAName) ? 1 : 0) + (recentlyFinished.has(a.teamBName) ? 1 : 0);
+            const restB = (recentlyFinished.has(b.teamAName) ? 1 : 0) + (recentlyFinished.has(b.teamBName) ? 1 : 0);
+            if (restA !== restB) return restA - restB; // Ưu tiên đội vừa được nghỉ
+            const pA = (playedCount[a.teamAName] || 0) + (playedCount[a.teamBName] || 0);
+            const pB = (playedCount[b.teamAName] || 0) + (playedCount[b.teamBName] || 0);
+            return pA - pB || (a.createdAt || 0) - (b.createdAt || 0);
+          });
+
+        for (const cId of freeCourts) {
+          const idx = waitingTies.findIndex(t => !busyTeams.has(t.teamAName) && !busyTeams.has(t.teamBName));
+          if (idx === -1) break;
+          const chosen = waitingTies.splice(idx, 1)[0];
+          const mIds = chosen.matchIds || [];
+          const activeMId = mIds.find(id => matches[id]?.status !== 'finished') || mIds[0] || '';
+
+          updates[`courts/${cId}/activeTieId`] = chosen.id;
+          updates[`courts/${cId}/activeMatchId`] = activeMId;
+          if (activeMId) {
+            updates[`matches/${activeMId}/courtId`] = cId;
+            if (matches[activeMId]?.status === 'waiting') updates[`matches/${activeMId}/status`] = 'live';
+          }
+          busyTeams.add(chosen.teamAName);
+          busyTeams.add(chosen.teamBName);
+          assignedCount++;
+        }
+      } else {
+        const activeMIds = new Set(Object.values(courts).map(c => c.activeMatchId).filter(Boolean));
+        const waitingMatches = Object.values(matches)
+          .filter(m => !m.tieId && m.status !== 'finished' && !activeMIds.has(m.id))
+          .sort((a, b) => {
+            const restA = (recentlyFinished.has(a.teamA?.name) ? 1 : 0) + (recentlyFinished.has(a.teamB?.name) ? 1 : 0);
+            const restB = (recentlyFinished.has(b.teamA?.name) ? 1 : 0) + (recentlyFinished.has(b.teamB?.name) ? 1 : 0);
+            if (restA !== restB) return restA - restB;
+            const pA = (playedCount[a.teamA?.name] || 0) + (playedCount[a.teamB?.name] || 0);
+            const pB = (playedCount[b.teamA?.name] || 0) + (playedCount[b.teamB?.name] || 0);
+            return pA - pB;
+          });
+
+        for (const cId of freeCourts) {
+          const idx = waitingMatches.findIndex(m => !busyTeams.has(m.teamA?.name) && !busyTeams.has(m.teamB?.name));
+          if (idx === -1) break;
+          const chosen = waitingMatches.splice(idx, 1)[0];
+
+          updates[`courts/${cId}/activeTieId`] = '';
+          updates[`courts/${cId}/activeMatchId`] = chosen.id;
+          updates[`matches/${chosen.id}/courtId`] = cId;
+          if (chosen.status === 'waiting') updates[`matches/${chosen.id}/status`] = 'live';
+          busyTeams.add(chosen.teamA?.name);
+          busyTeams.add(chosen.teamB?.name);
+          assignedCount++;
+        }
+      }
+
+      await update(ref(db, '/'), updates);
+      showToast(assignedCount > 0
+        ? `Đã tự động điều phối ${assignedCount} sân (không trùng CLB)`
+        : 'Đã giải phóng sân xong • Các CLB khác đang bận thi đấu');
+    };
+
+    // GÁN SÂN THỦ CÔNG (CHẶN CHỌN CLB ĐANG BẬN ĐÁNH Ở SÂN KHÁC)
+    window.assignCourtInFrame = async (cId, selectedId) => {
+      const isTeam = getActiveFormat() === 'team';
+      const courts = dataStore.courts || {};
+      const matches = dataStore.matches || {};
+      const ties = dataStore.ties || {};
+      const updates = {};
+
+      if (!selectedId) {
+        updates[`courts/${cId}/activeMatchId`] = '';
+        updates[`courts/${cId}/activeTieId`] = '';
+        await update(ref(db, '/'), updates);
+        showToast('Đã giải phóng sân');
+        return;
+      }
+
+      // Kiểm tra xem có đội nào đang bận đánh ở sân khác không
+      const busyByOtherCourt = new Map();
+      Object.entries(courts).forEach(([otherId, otherCourt]) => {
+        if (otherId === cId) return;
+        if (isTeam) {
+          const tId = otherCourt.activeTieId || matches[otherCourt.activeMatchId]?.tieId || '';
+          const t = tId ? ties[tId] : null;
+          if (t && t.id !== selectedId && !isTieFinished(t)) {
+            busyByOtherCourt.set(t.teamAName, otherCourt.name);
+            busyByOtherCourt.set(t.teamBName, otherCourt.name);
+          }
+        } else {
+          const m = otherCourt.activeMatchId ? matches[otherCourt.activeMatchId] : null;
+          if (m && m.id !== selectedId && m.status !== 'finished') {
+            busyByOtherCourt.set(m.teamA?.name, otherCourt.name);
+            busyByOtherCourt.set(m.teamB?.name, otherCourt.name);
+          }
+        }
+      });
+
+      if (isTeam) {
+        const tie = ties[selectedId];
+        if (!tie) return;
+        const clashA = busyByOtherCourt.get(tie.teamAName);
+        const clashB = busyByOtherCourt.get(tie.teamBName);
+        if (clashA || clashB) {
+          showToast(`Trùng lịch: ${clashA ? `${tie.teamAName} đang ở ${clashA}` : `${tie.teamBName} đang ở ${clashB}`}`);
+          renderLiveAndAdminCourts();
+          return;
+        }
+
+        const matchIds = tie.matchIds || [];
+        const activeMId = matchIds.find(id => matches[id]?.status === 'live') || matchIds.find(id => matches[id]?.status !== 'finished') || matchIds[0] || '';
+        Object.entries(courts).forEach(([otherId, otherCourt]) => {
+          if (otherId !== cId && (otherCourt.activeTieId === selectedId || matchIds.includes(otherCourt.activeMatchId))) {
+            updates[`courts/${otherId}/activeTieId`] = '';
+            updates[`courts/${otherId}/activeMatchId`] = '';
+          }
+        });
+        updates[`courts/${cId}/activeTieId`] = selectedId;
+        updates[`courts/${cId}/activeMatchId`] = activeMId;
+        if (activeMId) {
+          updates[`matches/${activeMId}/courtId`] = cId;
+          if (matches[activeMId]?.status === 'waiting') updates[`matches/${activeMId}/status`] = 'live';
+        }
+        await update(ref(db, '/'), updates);
+        showToast(`Đã gán ${tie.teamAName} vs ${tie.teamBName} vào ${courts[cId]?.name || cId}`);
+      } else {
+        const m = matches[selectedId];
+        if (!m) return;
+        const clashA = busyByOtherCourt.get(m.teamA?.name);
+        const clashB = busyByOtherCourt.get(m.teamB?.name);
+        if (clashA || clashB) {
+          showToast(`Trùng lịch: ${clashA ? `${m.teamA.name} đang ở ${clashA}` : `${m.teamB.name} đang ở ${clashB}`}`);
+          renderLiveAndAdminCourts();
+          return;
+        }
+        Object.entries(courts).forEach(([otherId, otherCourt]) => {
+          if (otherId !== cId && otherCourt.activeMatchId === selectedId) {
+            updates[`courts/${otherId}/activeMatchId`] = '';
+            updates[`courts/${otherId}/activeTieId`] = '';
+          }
+        });
+        updates[`courts/${cId}/activeTieId`] = '';
+        updates[`courts/${cId}/activeMatchId`] = selectedId;
+        updates[`matches/${selectedId}/courtId`] = cId;
+        if (m.status === 'waiting') updates[`matches/${selectedId}/status`] = 'live';
+        await update(ref(db, '/'), updates);
+        showToast(`Đã gán trận vào ${courts[cId]?.name || cId}`);
       }
     };
 
