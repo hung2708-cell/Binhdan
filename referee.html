@@ -3,22 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Trọng Tài - Bính Dần Pickleball</title>
+  <title>Trọng Tài 2D - Bính Dần Pickleball</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { background: #090b0f; color: #f3f4f6; font-family: system-ui, -apple-system, sans-serif; touch-action: manipulation; }
     .bd-card { background: #131720; border: 1px solid rgba(249, 115, 22, 0.25); }
     .btn-tap:active { transform: scale(0.96); }
+    .court-surface { background: #1e3a5f; border: 2px solid #f8fafc; }
+    .kitchen-zone { background: rgba(249, 115, 22, 0.28); border-top: 2px solid #f8fafc; border-bottom: 2px solid #f8fafc; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col p-3 max-w-md mx-auto select-none">
 
   <!-- TOP BAR -->
-  <header class="flex items-center justify-between gap-2 mb-3">
-    <select id="courtSelector" onchange="changeCourt(this.value)" class="bg-[#131720] border border-orange-500/40 text-orange-400 font-black text-xs rounded-xl px-3 py-2 outline-none">
+  <header class="flex items-center justify-between gap-2 mb-2.5">
+    <select id="courtSelector" onchange="changeCourt(this.value)" class="bg-[#131720] border border-orange-500/40 text-orange-400 font-black text-xs rounded-xl px-2.5 py-2 outline-none">
       <option value="court_1">Sân 1</option>
     </select>
     <span id="matchCategory" class="text-[11px] text-gray-400 truncate flex-1 text-center font-semibold">Đang tải...</span>
+    <button id="btnSound" onclick="toggleSound()" class="text-xs px-2.5 py-2 rounded-xl bg-orange-500/20 text-orange-400 font-bold">🔊</button>
     <a href="admin.html" class="text-xs px-2.5 py-2 rounded-xl bg-white/10 text-gray-300 font-bold">Admin</a>
   </header>
 
@@ -30,71 +33,96 @@
   </div>
 
   <!-- BÀN CHẤM ĐIỂM CHÍNH -->
-  <main id="refereeBoard" class="hidden flex-1 flex flex-col gap-3">
+  <main id="refereeBoard" class="hidden flex-1 flex flex-col gap-2.5">
 
-    <!-- CẢNH BÁO ĐỔI SÂN / GAME POINT / KẾT THÚC -->
-    <div id="alertBanner" class="hidden rounded-xl px-3 py-2 text-center font-black text-xs uppercase tracking-wide animate-pulse"></div>
+    <!-- CẢNH BÁO -->
+    <div id="alertBanner" class="hidden rounded-xl px-3 py-2 text-center font-black text-xs uppercase tracking-wide"></div>
 
-    <!-- ĐỌC ĐIỂM CHUẨN TRỌNG TÀI (VD: 0 - 0 - 2) -->
-    <div class="bd-card rounded-2xl p-3 text-center">
-      <div class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Đọc điểm chuẩn</div>
-      <div id="callScore" class="text-4xl font-black text-orange-500 tracking-wider my-0.5">0 - 0 - 2</div>
-      <div id="modeBadge" class="text-[11px] text-gray-400 font-semibold">Side-out • Chạm 11</div>
-    </div>
-
-    <!-- BẢNG ĐIỂM 2 ĐỘI -->
-    <div class="grid grid-cols-2 gap-3">
-      <!-- ĐỘI A -->
-      <div id="cardA" class="bd-card rounded-2xl p-3 flex flex-col justify-between transition-all">
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] font-black text-gray-400 uppercase">ĐỘI A</span>
-          <span id="serveBadgeA" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-orange-500 text-black font-black">● GIAO #1</span>
-        </div>
-        <div id="nameA" class="font-bold text-sm text-white truncate mt-1">Đội A</div>
-        <div id="scoreA" class="text-6xl font-black text-center my-2 text-white">0</div>
-        <div class="text-[11px] text-gray-400 space-y-0.5 border-t border-gray-800 pt-2">
-          <div>Phải (Chẵn): <b id="pA0" class="text-gray-200">-</b></div>
-          <div>Trái (Lẻ): <b id="pA1" class="text-gray-200">-</b></div>
-        </div>
+    <!-- THANH ĐIỂM SỐ & ĐỌC ĐIỂM -->
+    <div class="bd-card rounded-2xl p-2.5 flex items-center justify-between gap-2">
+      <div class="flex-1 text-center">
+        <div id="nameA" class="text-[11px] font-bold text-gray-300 truncate">Đội A</div>
+        <div id="scoreA" class="text-4xl font-black text-white leading-none mt-1">0</div>
       </div>
 
-      <!-- ĐỘI B -->
-      <div id="cardB" class="bd-card rounded-2xl p-3 flex flex-col justify-between transition-all">
-        <div class="flex items-center justify-between">
-          <span class="text-[10px] font-black text-gray-400 uppercase">ĐỘI B</span>
-          <span id="serveBadgeB" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-orange-500 text-black font-black">● GIAO #1</span>
-        </div>
-        <div id="nameB" class="font-bold text-sm text-white truncate mt-1">Đội B</div>
-        <div id="scoreB" class="text-6xl font-black text-center my-2 text-white">0</div>
-        <div class="text-[11px] text-gray-400 space-y-0.5 border-t border-gray-800 pt-2">
-          <div>Phải (Chẵn): <b id="pB0" class="text-gray-200">-</b></div>
-          <div>Trái (Lẻ): <b id="pB1" class="text-gray-200">-</b></div>
-        </div>
+      <div class="px-3 py-1.5 rounded-xl bg-[#090b0f] border border-orange-500/30 text-center shrink-0">
+        <div class="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Đọc điểm</div>
+        <div id="callScore" class="text-xl font-black text-orange-500 leading-tight">0 - 0 - 2</div>
+        <div id="modeBadge" class="text-[9px] text-gray-400 font-semibold">Side-out • 11đ</div>
+      </div>
+
+      <div class="flex-1 text-center">
+        <div id="nameB" class="text-[11px] font-bold text-gray-300 truncate">Đội B</div>
+        <div id="scoreB" class="text-4xl font-black text-white leading-none mt-1">0</div>
       </div>
     </div>
 
-    <!-- NÚT BẤM CHÍNH (CỠ LỚN CHO NGÓN CÁI) -->
-    <div id="sideoutControls" class="grid grid-cols-1 gap-2.5 mt-auto">
-      <button onclick="handlePointServing()" class="btn-tap w-full py-5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-black text-lg shadow-lg shadow-orange-500/20">
+    <!-- SƠ ĐỒ SÂN PICKLEBALL 2D -->
+    <div class="bd-card rounded-2xl p-2.5">
+      <div class="flex justify-between items-center text-[10px] text-gray-400 mb-1.5 px-1">
+        <span class="font-bold text-orange-400">SƠ ĐỒ VỊ TRÍ 2D</span>
+        <span id="serveHint" class="font-semibold text-amber-300">Đội A giao bóng #2</span>
+      </div>
+
+      <div class="court-surface rounded-lg overflow-hidden text-xs font-bold">
+        <!-- NỬA SÂN TRÊN (ĐỘI B) -->
+        <div class="grid grid-cols-2 divide-x divide-white/80 h-16">
+          <!-- Ô Trái của Đội B (nhìn từ dưới lên là bên Trái = Ô Chẵn của B) -->
+          <div id="boxB0" class="flex flex-col items-center justify-center p-1 text-center relative transition-colors">
+            <span class="text-[9px] text-white/60 uppercase">Phải (Chẵn)</span>
+            <span id="pB0" class="truncate max-w-full text-white text-xs">-</span>
+          </div>
+          <!-- Ô Phải của Đội B (nhìn từ dưới lên là bên Phải = Ô Lẻ của B) -->
+          <div id="boxB1" class="flex flex-col items-center justify-center p-1 text-center relative transition-colors">
+            <span class="text-[9px] text-white/60 uppercase">Trái (Lẻ)</span>
+            <span id="pB1" class="truncate max-w-full text-white text-xs">-</span>
+          </div>
+        </div>
+
+        <!-- KHU VỰC BẾP (KITCHEN / NVZ) + LƯỚI -->
+        <div class="kitchen-zone h-8 flex items-center justify-center relative">
+          <div class="w-full border-t-2 border-dashed border-white/90 absolute"></div>
+          <span class="relative z-10 bg-[#090b0f]/80 text-[9px] px-2 py-0.5 rounded text-orange-300 font-black tracking-widest">LƯỚI / KITCHEN</span>
+        </div>
+
+        <!-- NỬA SÂN DƯỚI (ĐỘI A) -->
+        <div class="grid grid-cols-2 divide-x divide-white/80 h-16">
+          <!-- Ô Trái (Lẻ) của Đội A -->
+          <div id="boxA1" class="flex flex-col items-center justify-center p-1 text-center relative transition-colors">
+            <span id="pA1" class="truncate max-w-full text-white text-xs">-</span>
+            <span class="text-[9px] text-white/60 uppercase">Trái (Lẻ)</span>
+          </div>
+          <!-- Ô Phải (Chẵn) của Đội A -->
+          <div id="boxA0" class="flex flex-col items-center justify-center p-1 text-center relative transition-colors">
+            <span id="pA0" class="truncate max-w-full text-white text-xs">-</span>
+            <span class="text-[9px] text-white/60 uppercase">Phải (Chẵn)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NÚT BẤM CHÍNH (SIDE-OUT) -->
+    <div id="sideoutControls" class="grid grid-cols-1 gap-2 mt-auto">
+      <button onclick="handlePointServing()" class="btn-tap w-full py-4 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-black text-base shadow-lg shadow-orange-500/20">
         +1 ĐIỂM (<span id="btnServingName">ĐỘI GIAO</span>)
       </button>
-      <button onclick="handleSideOut()" class="btn-tap w-full py-4 rounded-2xl bg-[#1c2333] border border-orange-500/40 text-orange-400 font-black text-base">
+      <button onclick="handleSideOut()" class="btn-tap w-full py-3.5 rounded-2xl bg-[#1c2333] border border-orange-500/40 text-orange-400 font-black text-sm">
         LỖI GIAO / ĐỔI NGƯỜI (SIDE-OUT)
       </button>
     </div>
 
     <!-- NÚT BẤM CHẾ ĐỘ RALLY -->
-    <div id="rallyControls" class="hidden grid-cols-2 gap-2.5 mt-auto">
-      <button onclick="handleRallyPoint('A')" class="btn-tap py-5 rounded-2xl bg-orange-600 text-white font-black text-base">+1 ĐỘI A</button>
-      <button onclick="handleRallyPoint('B')" class="btn-tap py-5 rounded-2xl bg-blue-600 text-white font-black text-base">+1 ĐỘI B</button>
+    <div id="rallyControls" class="hidden grid-cols-2 gap-2 mt-auto">
+      <button onclick="handleRallyPoint('A')" class="btn-tap py-4 rounded-2xl bg-orange-600 text-white font-black text-base">+1 ĐỘI A</button>
+      <button onclick="handleRallyPoint('B')" class="btn-tap py-4 rounded-2xl bg-blue-600 text-white font-black text-base">+1 ĐỘI B</button>
     </div>
 
-    <!-- NÚT PHỤ: HOÀN TÁC & ĐỔI SÂN -->
-    <div class="grid grid-cols-2 gap-2.5">
-      <button onclick="handleUndo()" class="btn-tap py-3 rounded-xl bg-white/10 text-gray-200 font-bold text-xs">
+    <!-- NÚT PHỤ -->
+    <div class="grid grid-cols-2 gap-2">
+      <button onclick="handleUndo()" class="btn-tap py-2.5 rounded-xl bg-white/10 text-gray-200 font-bold text-xs">
         ↩ Hoàn tác (Undo)
       </button>
-      <button onclick="handleSwitchSides()" class="btn-tap py-3 rounded-xl bg-white/10 text-gray-200 font-bold text-xs">
+      <button onclick="handleSwitchSides()" class="btn-tap py-2.5 rounded-xl bg-white/10 text-gray-200 font-bold text-xs">
         ⇄ Xác nhận Đổi sân
       </button>
     </div>
@@ -109,8 +137,30 @@
     let currentMatchId = null;
     let currentMatch = null;
     let unsubMatch = null;
+    let soundEnabled = true;
 
-    // Tải danh sách sân
+    // Tạo âm thanh bằng Web Audio API (không cần file MP3)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(freq = 800, duration = 0.12, type = 'sine') {
+      if (!soundEnabled) return;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    window.toggleSound = () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('btnSound').textContent = soundEnabled ? '🔊' : '🔇';
+    };
+
     onValue(ref(db, 'courts'), (snap) => {
       const courts = snap.val() || {};
       const sel = document.getElementById('courtSelector');
@@ -120,9 +170,7 @@
 
       const activeCourt = courts[currentCourtId];
       const nextMatchId = activeCourt ? activeCourt.activeMatchId : null;
-      if (nextMatchId !== currentMatchId) {
-        listenToMatch(nextMatchId);
-      }
+      if (nextMatchId !== currentMatchId) listenToMatch(nextMatchId);
     });
 
     function listenToMatch(matchId) {
@@ -148,32 +196,35 @@
       await set(ref(db, `matches/${currentMatchId}`), newState);
     }
 
-    window.changeCourt = (cId) => {
-      window.location.search = `?court=${cId}`;
-    };
+    window.changeCourt = (cId) => { window.location.search = `?court=${cId}`; };
 
     window.handlePointServing = () => {
       if (!currentMatch) return;
+      playBeep(880, 0.12);
       saveMatch(awardPoint(currentMatch, currentMatch.servingTeam));
     };
 
     window.handleSideOut = () => {
       if (!currentMatch) return;
+      playBeep(440, 0.18, 'triangle');
       saveMatch(faultOrSideOut(currentMatch));
     };
 
     window.handleRallyPoint = (team) => {
       if (!currentMatch) return;
+      playBeep(880, 0.12);
       saveMatch(awardPoint(currentMatch, team));
     };
 
     window.handleUndo = () => {
       if (!currentMatch) return;
+      playBeep(300, 0.1);
       saveMatch(undoLastAction(currentMatch));
     };
 
     window.handleSwitchSides = () => {
       if (!currentMatch) return;
+      playBeep(660, 0.25);
       update(ref(db, `matches/${currentMatchId}`), { sidesSwitched: !currentMatch.sidesSwitched });
     };
 
@@ -182,41 +233,43 @@
       document.getElementById('matchCategory').textContent = m.category || '';
       document.getElementById('callScore').textContent = getCallScore(m);
       document.getElementById('modeBadge').textContent =
-        `${m.scoringMode === 'rally' ? 'Rally' : 'Side-out'} • Chạm ${m.targetScore}`;
+        `${m.scoringMode === 'rally' ? 'Rally' : 'Side-out'} • ${m.targetScore}đ`;
 
-      // Đội A
       document.getElementById('nameA').textContent = m.teamA.name;
       document.getElementById('scoreA').textContent = m.teamA.score;
-      document.getElementById('pA0').textContent = (m.teamA.players && m.teamA.players[0]) || '-';
-      document.getElementById('pA1').textContent = (m.teamA.players && m.teamA.players[1]) || '-';
-
-      // Đội B
       document.getElementById('nameB').textContent = m.teamB.name;
       document.getElementById('scoreB').textContent = m.teamB.score;
-      document.getElementById('pB0').textContent = (m.teamB.players && m.teamB.players[0]) || '-';
-      document.getElementById('pB1').textContent = (m.teamB.players && m.teamB.players[1]) || '-';
 
-      // Highlight đội đang giao
+      const pA0 = (m.teamA.players && m.teamA.players[0]) || 'A1';
+      const pA1 = (m.teamA.players && m.teamA.players[1]) || 'A2';
+      const pB0 = (m.teamB.players && m.teamB.players[0]) || 'B1';
+      const pB1 = (m.teamB.players && m.teamB.players[1]) || 'B2';
+
+      // Xác định ô đang cầm bóng giao (Điểm chẵn -> Ô Phải [0], Điểm lẻ -> Ô Trái [1])
       const isA = m.servingTeam === 'A';
-      document.getElementById('cardA').style.borderColor = isA ? '#f97316' : 'rgba(255,255,255,0.08)';
-      document.getElementById('cardB').style.borderColor = !isA ? '#f97316' : 'rgba(255,255,255,0.08)';
+      const activeScore = isA ? m.teamA.score : m.teamB.score;
+      const isEven = activeScore % 2 === 0;
+      const activeBoxId = isA ? (isEven ? 'boxA0' : 'boxA1') : (isEven ? 'boxB0' : 'boxB1');
 
-      const badgeA = document.getElementById('serveBadgeA');
-      const badgeB = document.getElementById('serveBadgeB');
-      badgeA.classList.toggle('hidden', !isA);
-      badgeB.classList.toggle('hidden', isA);
-      badgeA.textContent = `● GIAO #${m.serverNumber}`;
-      badgeB.textContent = `● GIAO #${m.serverNumber}`;
+      ['boxA0', 'boxA1', 'boxB0', 'boxB1'].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.background = (id === activeBoxId && m.status !== 'finished') ? 'rgba(249, 115, 22, 0.45)' : 'transparent';
+      });
 
+      document.getElementById('pA0').textContent = (activeBoxId === 'boxA0' ? '🟡 ' : '') + pA0;
+      document.getElementById('pA1').textContent = (activeBoxId === 'boxA1' ? '🟡 ' : '') + pA1;
+      document.getElementById('pB0').textContent = (activeBoxId === 'boxB0' ? '🟡 ' : '') + pB0;
+      document.getElementById('pB1').textContent = (activeBoxId === 'boxB1' ? '🟡 ' : '') + pB1;
+
+      document.getElementById('serveHint').textContent =
+        `${isA ? m.teamA.name : m.teamB.name} giao #${m.serverNumber} (${isEven ? 'Ô Phải' : 'Ô Trái'})`;
       document.getElementById('btnServingName').textContent = isA ? m.teamA.name : m.teamB.name;
 
-      // Chuyển nút theo luật
       const isRally = m.scoringMode === 'rally';
       document.getElementById('sideoutControls').classList.toggle('hidden', isRally);
       document.getElementById('rallyControls').classList.toggle('hidden', !isRally);
       if (isRally) document.getElementById('rallyControls').classList.add('grid');
 
-      // Cảnh báo
       const alerts = getMatchAlerts(m);
       const banner = document.getElementById('alertBanner');
       if (alerts.winner) {
@@ -226,7 +279,7 @@
         banner.textContent = `🔥 GAME POINT CHO ${alerts.gamePointTeam === 'A' ? m.teamA.name : m.teamB.name}`;
         banner.className = 'rounded-xl px-3 py-2 text-center font-black text-xs uppercase bg-red-600 text-white animate-pulse';
       } else if (alerts.isSwitchSides) {
-        banner.textContent = `⇄ ĐẾN ĐIỂM ĐỔI SÂN! Bấm "Xác nhận Đổi sân" sau khi đổi`;
+        banner.textContent = `⇄ ĐẾN ĐIỂM ĐỔI SÂN! Bấm "Xác nhận Đổi sân"`;
         banner.className = 'rounded-xl px-3 py-2 text-center font-black text-xs uppercase bg-amber-400 text-black';
       } else {
         banner.className = 'hidden';
@@ -235,4 +288,3 @@
   </script>
 </body>
 </html>
-
