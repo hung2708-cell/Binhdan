@@ -1246,7 +1246,6 @@
       if (changed) await set(ref(db, 'seriesBracket'), nextSb);
     }
 
-    window.playBracketMatchNow = async (seriesKey, roundIdx, matchIdx) => {
       // TỰ ĐỘNG ĐẨY CÁC TRẬN ĐÃ ĐỦ 2 ĐỘI Ở NHÁNH SERIE A / SERIE B RA SÂN TRỐNG
     async function autoPushReadyBracketToCourts() {
       const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
@@ -1337,6 +1336,7 @@
         showToast('Trận này đang chờ xác định đủ 2 đội');
       }
     };
+  window.playBracketMatchNow = async (seriesKey, roundIdx, matchIdx) => {
       const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
       const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
       if (!slot || !slot.ready) return showToast('Chưa đủ 2 đội');
