@@ -1156,6 +1156,7 @@
         await set(ref(db, 'seriesBracket'), { ...(dataStore.seriesBracket || {}), [scope]: { serieA: buildMultiRoundTree(serieAEntries, `${scope}_a`), serieB: buildMultiRoundTree(serieBEntries, `${scope}_b`) }, updatedAt: Date.now() });
       }
       noticeEl.classList.add('hidden'); wrapEl.classList.remove('hidden');
+      await autoPushReadyBracketToCourts();
     }
 
     async function syncBracketWinnersIfNeeded() {
@@ -1183,6 +1184,96 @@
     }
 
     window.playBracketMatchNow = async (seriesKey, roundIdx, matchIdx) => {
+      // TỰ ĐỘNG ĐẨY CÁC TRẬN ĐÃ ĐỦ 2 ĐỘI Ở NHÁNH SERIE A / SERIE B RA SÂN TRỐNG
+    async function autoPushReadyBracketToCourts() {
+      const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
+      const sbScope = dataStore.seriesBracket?.[scope];
+      if (!sbScope) return 0;
+
+      const courts = dataStore.courts || {};
+      const matches = dataStore.matches || {};
+      const freeCourts = Object.entries(courts)
+        .filter(([_, c]) => !c.activeMatchId && !c.activeTieId)
+        .map(([cId]) => cId);
+
+      if (!freeCourts.length) return 0;
+
+      const updatedTree = JSON.parse(JSON.stringify(sbScope));
+      const updates = {};
+      const isTeam = scope === 'team';
+      let pushed = 0;
+
+      for (const seriesKey of ['serieA', 'serieB']) {
+        const rounds = updatedTree[seriesKey];
+        if (!Array.isArray(rounds)) continue;
+
+        for (let rIdx = 0; rIdx < rounds.length; rIdx++) {
+          for (let mIdx = 0; mIdx < rounds[rIdx].length; mIdx++) {
+            if (!freeCourts.length) break;
+            const slot = rounds[rIdx][mIdx];
+            if (!slot || !slot.ready || slot.matchId) continue;
+
+            const cId = freeCourts.shift();
+            const mId = `br_${scope}_${seriesKey}_${rIdx}_${mIdx}_${Date.now().toString().slice(-4)}`;
+            const m = createInitialMatchState({
+              id: mId,
+              stage: 'knockout',
+              isDreambreaker: isTeam,
+              category: `${isTeam ? 'Đồng đội • Đơn 21đ' : 'Đôi'} • ${seriesKey === 'serieA' ? 'Serie A' : 'Serie B'} • ${slot.round}`,
+              targetScore: isTeam ? 21 : 15,
+              switchPoint: isTeam ? 11 : 8,
+              winByTwo: true,
+              teamAName: slot.team1,
+              teamAPlayers: isTeam ? ['VĐV A1', 'VĐV A2'] : [slot.team1, ''],
+              teamBName: slot.team2,
+              teamBPlayers: isTeam ? ['VĐV B1', 'VĐV B2'] : [slot.team2, '']
+            });
+            m.status = 'live';
+            m.courtId = cId;
+
+            slot.matchId = mId;
+            updates[`matches/${mId}`] = m;
+            updates[`courts/${cId}/activeMatchId`] = mId;
+            updates[`courts/${cId}/activeTieId`] = '';
+            pushed++;
+          }
+        }
+      }
+
+      if (pushed > 0) {
+        updates[`seriesBracket/${scope}`] = updatedTree;
+        await update(ref(db, '/'), updates);
+      }
+      return pushed;
+    }
+
+    // MỞ POPUP XEM HOẶC ĐẨY TRẬN NHÁNH RA SÂN KHI BẤM VÀO Ô TRONG SƠ ĐỒ
+    window.openBracketMatchDetailsModal = (seriesKey, roundIdx, matchIdx) => {
+      const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
+      const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
+      if (!slot) return;
+      const liveM = slot.matchId ? dataStore.matches?.[slot.matchId] : null;
+      const title = `${seriesKey === 'serieA' ? 'Serie A' : 'Serie B'} • ${slot.round}`;
+      const desc = `${slot.team1} vs ${slot.team2}`;
+
+      if (liveM) {
+        const bodyHtml = `
+          <div class="sc-subcard rounded-xl p-3 text-center space-y-1">
+            <div class="text-xs font-extrabold text-white">${liveM.teamA?.name} vs ${liveM.teamB?.name}</div>
+            <div class="text-lg font-black text-orange-400 tabular-nums">${liveM.teamA?.score ?? 0} - ${liveM.teamB?.score ?? 0}</div>
+            <div class="text-[10px] text-slate-400">${liveM.status === 'finished' ? 'Trận đấu đã kết thúc' : 'Đang thi đấu trên sân'}</div>
+          </div>`;
+        openScModal({ title, bodyHtml });
+      } else if (slot.ready) {
+        openScModal({
+          title,
+          desc,
+          items: [{ label: 'Đẩy trận này ra sân ngay', active: true, onClick: () => window.playBracketMatchNow(seriesKey, roundIdx, matchIdx) }]
+        });
+      } else {
+        showToast('Trận này đang chờ xác định đủ 2 đội');
+      }
+    };
       const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
       const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
       if (!slot || !slot.ready) return showToast('Chưa đủ 2 đội');
@@ -1326,10 +1417,12 @@
         }
       }
 
-      await update(ref(db, '/'), updates);
-      showToast(assignedCount > 0
-        ? `Đã tự động điều phối ${assignedCount} sân (không trùng CLB)`
-        : 'Đã giải phóng sân xong • Các CLB khác đang bận thi đấu');
+     await update(ref(db, '/'), updates);
+   const bracketPushed = assignedCount === 0 ? await autoPushReadyBracketToCourts() : 0;
+   const totalPushed = assignedCount + bracketPushed;
+   showToast(totalPushed > 0
+     ? `Đã tự động điều phối ${totalPushed} sân`
+     : 'Đã giải phóng sân xong • Không còn trận chờ');
     };
 
     window.assignCourtInFrame = async (cId, selectedId) => {
