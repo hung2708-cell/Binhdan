@@ -1100,7 +1100,8 @@
     window.handleRallyPoint = (team) => { if (!currentMatch || isMatchFinished(currentMatch)) return; playBeep(880, 0.12); saveMatch(awardPoint(currentMatch, team)); };
     window.handleSubtractPoint = async (side) => {
       if (!currentMatch || !currentMatchId) return;
-      const key = side === 'A' ? 'teamA' : 'teamB', curScore = currentMatch[key].score || 0;
+      const actualSide = currentMatch.sidesSwitched ? (side === 'A' ? 'B' : 'A') : side;
+      const key = actualSide === 'A' ? 'teamA' : 'teamB', curScore = currentMatch[key].score || 0;
       if (curScore <= 0) return;
       playBeep(320, 0.1);
       await update(ref(db, `matches/${currentMatchId}`), { [`${key}/score`]: curScore - 1, status: 'live', winner: null });
