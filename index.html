@@ -199,9 +199,9 @@
       <!-- NÚT TRỌNG TÀI & QUẢN TRỊ -->
       <div class="flex items-center gap-1.5 shrink-0">
         <a href="referee.html" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-slate-200 flex items-center gap-1.5 transition">
-      <i data-lucide="gavel" class="w-3.5 h-3.5 text-orange-400"></i>
-      <span class="hidden sm:inline">Trọng tài</span>
-    </a>
+          <i data-lucide="gavel" class="w-3.5 h-3.5 text-orange-400"></i>
+          <span class="hidden sm:inline">Trọng tài</span>
+        </a>
         <button type="button" onclick="openAdminWithPin()" data-tab="admin" class="desk-admin-btn px-3 py-1.5 rounded-lg text-[11px] font-extrabold bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/35 text-orange-300 flex items-center gap-1.5 transition">
           <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
           <span>Quản trị</span>
@@ -308,16 +308,16 @@
       </div>
     </section>
 
-    <!-- 5. KẾT QUẢ CÁC TRẬN ĐÃ XONG -->
+    <!-- 5. KẾT QUẢ CÁC TRẬN ĐÃ XONG (GOM THEO TỪNG ĐỘI / CẶP ĐẤU) -->
     <section id="panelCompleted" class="pub-panel hidden space-y-3.5">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-extrabold text-sm text-white uppercase tracking-wide">Kết quả các trận đã hoàn thành</h2>
         <span id="completedCountBadge" class="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400">0 trận</span>
       </div>
-      <div id="completedMatchesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3.5"></div>
+      <div id="completedMatchesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </section>
 
-   <!-- 6. QUẢN TRỊ (TỰ CO GIÃN 2 CỘT MÁY TÍNH / 1 CỘT ĐIỆN THOẠI) -->
+    <!-- 6. QUẢN TRỊ (TỰ CO GIÃN 2 CỘT MÁY TÍNH / 1 CỘT ĐIỆN THOẠI) -->
     <section id="panelAdmin" class="pub-panel hidden space-y-4">
 
       <!-- HÀNG 1: CẤU HÌNH GIẢI (7/12) + CHIA BẢNG & XẾP LỊCH (5/12) -->
@@ -491,7 +491,7 @@
     </div>
   </div>
 
-    <!-- POPUP CHI TIẾT / XÁC NHẬN (TỰ CO GIÃN CHO ĐIỆN THOẠI & MÁY TÍNH) -->
+  <!-- POPUP CHI TIẾT / XÁC NHẬN (CĂN GIỮA & TỰ CO GIÃN CHO ĐIỆN THOẠI & MÁY TÍNH) -->
   <div id="scModal" onclick="if(event.target === this) closeScModal()" class="hidden fixed inset-0 z-[9999] bg-[#0a0d14]/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
     <div class="w-full max-w-[95vw] sm:max-w-md bg-[#121722] border border-white/15 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-3 max-h-[85dvh] flex flex-col">
       <div class="text-center space-y-1 shrink-0 px-1">
@@ -521,38 +521,7 @@
       completed: 'panelCompleted',
       admin: 'panelAdmin'
     };
-// XÓA CẢ CLB
-    window.deleteClub = async (clubId, clubName = '') => {
-      if (!clubId) return;
-      if (!confirm(`Xác nhận xóa CLB "${clubName || clubId}" và toàn bộ VĐV của CLB này?`)) return;
-      await set(ref(db, `teams/${clubId}`), null);
-      if (typeof showToast === 'function') showToast(`Đã xóa CLB ${clubName || ''}`);
-    };
 
-    // XÓA TỪNG VĐV TRONG CLB
-    window.deletePlayerFromClub = async (clubId, playerName) => {
-      if (!clubId || !playerName) return;
-      if (!confirm(`Xóa VĐV "${playerName}" khỏi CLB?`)) return;
-
-      const team = dataStore.teams?.[clubId];
-      if (!team) return;
-
-      const curDetails = Array.isArray(team.rosterDetails)
-        ? team.rosterDetails
-        : Object.values(team.rosterDetails || {});
-      const nextDetails = curDetails.filter(p => p && p.name !== playerName);
-
-      const curRoster = Array.isArray(team.roster)
-        ? team.roster
-        : Object.values(team.roster || {});
-      const nextRoster = curRoster.filter(n => n !== playerName);
-
-      await update(ref(db, `teams/${clubId}`), {
-        rosterDetails: nextDetails,
-        roster: nextRoster
-      });
-      if (typeof showToast === 'function') showToast(`Đã xóa VĐV ${playerName}`);
-    };
     const AVATAR_PALETTE = [
       'from-orange-500 to-red-600',
       'from-emerald-500 to-teal-600',
@@ -694,7 +663,7 @@
     window.openRefereeWithPin = async () => {
       const ok = await verifyRoleAccess('referee'); if (!ok) return;
       const firstCourt = Object.keys(dataStore.courts || {})[0] || 'court_1';
-      window.location.href = `referee.html?court=${firstCourt}`;
+      window.open(`referee.html?court=${firstCourt}`, '_blank', 'noopener,noreferrer');
     };
 
     function openScModal({ title = 'Chi tiết', desc = '', bodyHtml = '', items = [] }) {
@@ -735,7 +704,7 @@
         DiemA: m.teamA?.score ?? 0, DiemB: m.teamB?.score ?? 0, DoiB: m.teamB?.name || '', VDV_B: formatPlayersSide(m.teamB), TrangThai: m.status || 'waiting'
       }));
       const clubsExport = Object.values(dataStore.teams || {}).flatMap(c => {
-        const list = c.rosterDetails || (c.roster || []).map(n => ({ name: n, gender: '', rating: '' }));
+        const list = getClubMembersList(c);
         return list.map(p => ({ CLB: c.name, TenVDV: p.name, GioiTinh: p.gender || '', Trinh: p.rating ?? '' }));
       });
       try {
@@ -766,7 +735,7 @@
       showToast('Đã xóa sạch lịch & trận đấu cũ');
     };
 
-        window.openCourtDetailModal = (cId) => {
+    window.openCourtDetailModal = (cId) => {
       const court = dataStore.courts?.[cId];
       const match = court?.activeMatchId ? dataStore.matches?.[court.activeMatchId] : null;
       const tieId = court?.activeTieId || match?.tieId || '';
@@ -817,6 +786,54 @@
       openScModal({ title: `Chi tiết • ${court.name}`, bodyHtml: html });
     };
 
+    // POPUP CHI TIẾT CÁC TRẬN ĐÃ HOÀN THÀNH THEO TỪNG ĐỘI / CẶP
+    window.openCompletedGroupModal = (groupKey) => {
+      const done = Object.values(dataStore.matches || {}).filter(m => m.status === 'finished');
+      const ties = dataStore.ties || {};
+      const groups = {};
+
+      done.forEach(m => {
+        const key = m.tieId && ties[m.tieId]
+          ? `tie:${m.tieId}`
+          : `pair:${[m.teamA?.name || '', m.teamB?.name || ''].sort().join('__')}`;
+        if (!groups[key]) {
+          const t = m.tieId ? ties[m.tieId] : null;
+          groups[key] = {
+            title: t ? `${t.teamAName} vs ${t.teamBName}` : `${m.teamA?.name || 'Đội A'} vs ${m.teamB?.name || 'Đội B'}`,
+            items: []
+          };
+        }
+        groups[key].items.push(m);
+      });
+
+      const grp = groups[groupKey];
+      if (!grp || !grp.items.length) return showToast('Không có chi tiết trận đấu');
+
+      const bodyHtml = grp.items.map(m => {
+        const winA = m.winner === 'A' || Number(m.teamA?.score) > Number(m.teamB?.score);
+        const winB = m.winner === 'B' || Number(m.teamB?.score) > Number(m.teamA?.score);
+        return `
+          <div class="sc-subcard rounded-xl p-2.5 space-y-1.5">
+            <div class="flex items-center justify-between text-[10px]">
+              <span class="font-extrabold text-amber-300 truncate">${(m.category || 'Trận đấu').split('(')[0].trim()}</span>
+              <span class="text-emerald-400 font-bold shrink-0">Đã xong</span>
+            </div>
+            <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-[11px]">
+              <div class="text-left min-w-0">
+                <div class="font-bold ${winA ? 'text-emerald-400' : 'text-slate-200'} truncate">${m.teamA?.name || 'Đội A'}</div>
+                <div class="text-[10px] text-slate-400 leading-snug break-words">${formatPlayersSide(m.teamA)}</div>
+              </div>
+              <div class="px-2 py-0.5 rounded-md bg-white/[0.06] font-black text-orange-400 tabular-nums whitespace-nowrap">${m.teamA?.score ?? 0} - ${m.teamB?.score ?? 0}</div>
+              <div class="text-right min-w-0">
+                <div class="font-bold ${winB ? 'text-emerald-400' : 'text-slate-200'} truncate">${m.teamB?.name || 'Đội B'}</div>
+                <div class="text-[10px] text-slate-400 leading-snug break-words">${formatPlayersSide(m.teamB)}</div>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+
+      openScModal({ title: `Chi tiết • ${grp.title}`, bodyHtml });
+    };
 
     window.highlightTeamJourney = (teamLabel) => {
       highlightedTeamName = teamLabel || '';
@@ -911,6 +928,15 @@
       applyTabVisibilityOnly();
     }
 
+    // Chuẩn hóa danh sách thành viên CLB (an toàn cho cả Array lẫn Object từ Firebase)
+    function getClubMembersList(club) {
+      if (!club) return [];
+      if (Array.isArray(club.rosterDetails) && club.rosterDetails.length) return club.rosterDetails.filter(Boolean);
+      if (club.rosterDetails && typeof club.rosterDetails === 'object') return Object.values(club.rosterDetails).filter(Boolean);
+      const rosterArr = Array.isArray(club.roster) ? club.roster : Object.values(club.roster || {});
+      return rosterArr.filter(Boolean).map(n => ({ name: n, gender: 'Nam', rating: 2.5 }));
+    }
+
     window.chooseTournamentFormat = async (fmt) => { formatUnlockedManually = false; await update(ref(db, 'settings'), { format: fmt }); showToast(fmt === 'team' ? 'Đã chọn Giải Đồng đội' : 'Đã chọn Nội dung Đôi'); };
     window.unlockFormatChoice = () => { formatUnlockedManually = true; applyFormatVisibility(); };
     window.saveTourNameOnly = async () => { const tName = document.getElementById('quickTourName').value.trim(); if (!tName) return showToast('Nhập tên giải đấu'); await update(ref(db, 'settings'), { name: tName }); showToast('Đã lưu tên giải'); };
@@ -935,14 +961,24 @@
       await update(ref(db, '/'), { 'settings/format': 'team', [`teams/${id}`]: { id, name, roster: draftClubPlayers.map(p => p.name), rosterDetails: draftClubPlayers } });
       document.getElementById('admClubName').value = ''; draftClubPlayers = []; renderDraftClubPlayers(); showToast('Đã lưu CLB');
     };
-    window.deleteClubItem = async (clubId, clubName) => { if (!await scConfirm('Xóa CLB', `Xóa CLB "${clubName}"?`, 'XÓA CLB', true)) return; await remove(ref(db, `teams/${clubId}`)); showToast('Đã xóa CLB'); };
+
+    // XÓA CLB & XÓA VĐV (ĐÃ SỬA DÙNG ĐÚNG KEY FIREBASE & XỬ LÝ AN TOÀN)
+    window.deleteClubItem = async (clubId, clubName) => {
+      if (!clubId) return;
+      if (!await scConfirm('Xóa CLB', `Xóa CLB "${clubName}" và toàn bộ VĐV của CLB này?`, 'XÓA CLB', true)) return;
+      await set(ref(db, `teams/${clubId}`), null);
+      showToast(`Đã xóa CLB ${clubName}`);
+    };
     window.deleteClubMemberItem = async (clubId, memberIdx, plName) => {
-      if (!await scConfirm('Xóa VĐV', `Xóa VĐV "${plName}"?`, 'XÓA VĐV', true)) return;
-      const details = [...(dataStore.teams?.[clubId]?.rosterDetails || [])]; details.splice(memberIdx, 1);
-      await update(ref(db, `teams/${clubId}`), { rosterDetails: details, roster: details.map(x => x.name) }); showToast('Đã xóa VĐV');
+      if (!clubId) return;
+      if (!await scConfirm('Xóa VĐV', `Xóa VĐV "${plName}" khỏi CLB?`, 'XÓA VĐV', true)) return;
+      const details = [...getClubMembersList(dataStore.teams?.[clubId])];
+      details.splice(memberIdx, 1);
+      await update(ref(db, `teams/${clubId}`), { rosterDetails: details, roster: details.map(x => x.name) });
+      showToast(`Đã xóa VĐV ${plName}`);
     };
     window.editClubMemberModal = (clubId, memberIdx) => {
-      const club = dataStore.teams?.[clubId], details = club?.rosterDetails || [], cur = details[memberIdx];
+      const club = dataStore.teams?.[clubId], details = getClubMembersList(club), cur = details[memberIdx];
       if (!club || !cur) return;
       const wrap = document.createElement('div');
       wrap.className = 'fixed inset-0 z-[10000] bg-[#0a0d14]/92 backdrop-blur-md flex items-center justify-center p-4';
@@ -977,37 +1013,43 @@
       await update(ref(db, '/'), { 'settings/format': 'doubles', [`doublesTeams/${id}`]: { id, name: `${n1} / ${n2}`, pairType, totalRating: Math.round((r1 + r2) * 10) / 10, players: [n1, n2], playerDetails: [{ name: n1, gender: g1, rating: r1 }, { name: n2, gender: g2, rating: r2 }] } });
       document.getElementById('dbl1Name').value = ''; document.getElementById('dbl2Name').value = ''; showToast('Đã lưu cặp đôi');
     };
-    window.deleteDoublesItem = async (dblId, dblName) => { if (!await scConfirm('Xóa cặp đôi', `Xóa "${dblName}"?`, 'XÓA CẶP', true)) return; await remove(ref(db, `doublesTeams/${dblId}`)); showToast('Đã xóa cặp đôi'); };
+    window.deleteDoublesItem = async (dblId, dblName) => {
+      if (!dblId) return;
+      if (!await scConfirm('Xóa cặp đôi', `Xóa "${dblName}"?`, 'XÓA CẶP', true)) return;
+      await set(ref(db, `doublesTeams/${dblId}`), null);
+      showToast('Đã xóa cặp đôi');
+    };
 
     function renderAdminRosters() {
-      document.getElementById('adminClubsList').innerHTML = Object.values(dataStore.teams || {}).map(c => {
-        const list = c.rosterDetails || (c.roster || []).map(n => ({ name: n, gender: 'Nam', rating: 2.5 }));
+      document.getElementById('adminClubsList').innerHTML = Object.entries(dataStore.teams || {}).map(([clubId, c]) => {
+        const list = getClubMembersList(c);
+        const safeClubName = (c.name || '').replace(/'/g, "\\'");
         return `
           <div class="sc-card rounded-2xl p-3.5 space-y-2.5">
             <div class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-2 min-w-0">${getTeamBadge(c.name)}<span class="font-extrabold text-xs text-white uppercase truncate">${c.name}</span></div>
-              <button type="button" onclick="deleteClubItem('${c.id}', '${c.name.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg bg-red-500/15 text-red-400 text-[10px] font-bold shrink-0">Xóa CLB</button>
+              <button type="button" onclick="deleteClubItem('${clubId}', '${safeClubName}')" class="px-2.5 py-1 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-400 text-[10px] font-bold shrink-0">Xóa CLB</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
               ${list.map((p, idx) => `
                 <div class="sc-subcard rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs">
-                  <button type="button" onclick="editClubMemberModal('${c.id}', ${idx})" class="flex-1 min-w-0 flex items-center justify-between text-left pr-1">
+                  <button type="button" onclick="editClubMemberModal('${clubId}', ${idx})" class="flex-1 min-w-0 flex items-center justify-between text-left pr-1">
                     <span class="font-bold text-white truncate">${p.name}</span>
                     <span class="text-[10px] shrink-0 ml-2"><span class="${p.gender === 'Nữ' ? 'text-pink-300' : 'text-sky-300'} font-bold">${p.gender || 'Nam'}</span> • <b class="text-amber-300">${Number(p.rating || 2.5).toFixed(1)}</b></span>
                   </button>
-                  <button type="button" onclick="deleteClubMemberItem('${c.id}', ${idx}, '${p.name.replace(/'/g, "\\'")}')" class="text-red-400 font-black text-xs px-1">✕</button>
+                  <button type="button" onclick="deleteClubMemberItem('${clubId}', ${idx}, '${(p.name || '').replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 font-black text-xs px-1">✕</button>
                 </div>`).join('')}
             </div>
           </div>`;
       }).join('');
 
-      document.getElementById('adminDoublesList').innerHTML = Object.values(dataStore.doublesTeams || {}).map(d => `
+      document.getElementById('adminDoublesList').innerHTML = Object.entries(dataStore.doublesTeams || {}).map(([dblId, d]) => `
         <div class="sc-card rounded-2xl p-3.5 space-y-1.5">
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2 min-w-0">${getTeamBadge(d.name)}<span class="font-extrabold text-xs text-white truncate">${d.name}</span></div>
             <div class="flex items-center gap-1.5 shrink-0">
               <span class="text-[10px] px-2 py-0.5 rounded bg-orange-500/15 text-orange-300 font-bold">${d.pairType || 'Đôi'} • ${Number(d.totalRating || 0).toFixed(1)}</span>
-              <button type="button" onclick="deleteDoublesItem('${d.id}', '${d.name.replace(/'/g, "\\'")}')" class="text-red-400 font-black text-xs px-1">✕</button>
+              <button type="button" onclick="deleteDoublesItem('${dblId}', '${(d.name || '').replace(/'/g, "\\'")}')" class="text-red-400 hover:text-red-300 font-black text-xs px-1">✕</button>
             </div>
           </div>
           <div class="text-[11px] text-slate-400">${(d.playerDetails || []).map(p => `${p.name} (${p.gender} • ${Number(p.rating).toFixed(1)})`).join(' — ')}</div>
@@ -1154,7 +1196,7 @@
       showToast(`Đã đẩy trận ra ${dataStore.courts[cId]?.name || cId}`); window.switchPubTab('live');
     };
 
-   // Kiểm tra 1 lượt đồng đội đã đấu xong hết chưa
+    // Kiểm tra 1 lượt đồng đội đã đấu xong hết chưa
     function isTieFinished(tie) {
       const subs = (tie.matchIds || []).map(id => dataStore.matches?.[id]).filter(Boolean);
       if (tie.walkoverWinner) return true;
@@ -1182,16 +1224,12 @@
       const recentlyFinished = new Set();
       const playedCount = {};
 
-      // 1. Giải phóng sân đã xong & ghi nhận các đội đang thi đấu trên sân
       Object.entries(courts).forEach(([cId, c]) => {
         if (isTeam) {
           const tId = c.activeTieId || matches[c.activeMatchId]?.tieId || '';
           const tie = tId ? ties[tId] : null;
           if (!tie || isTieFinished(tie)) {
-            if (tie) {
-              recentlyFinished.add(tie.teamAName);
-              recentlyFinished.add(tie.teamBName);
-            }
+            if (tie) { recentlyFinished.add(tie.teamAName); recentlyFinished.add(tie.teamBName); }
             updates[`courts/${cId}/activeTieId`] = '';
             updates[`courts/${cId}/activeMatchId`] = '';
             freeCourts.push(cId);
@@ -1202,10 +1240,7 @@
         } else {
           const m = c.activeMatchId ? matches[c.activeMatchId] : null;
           if (!m || m.status === 'finished') {
-            if (m) {
-              recentlyFinished.add(m.teamA?.name);
-              recentlyFinished.add(m.teamB?.name);
-            }
+            if (m) { recentlyFinished.add(m.teamA?.name); recentlyFinished.add(m.teamB?.name); }
             updates[`courts/${cId}/activeMatchId`] = '';
             updates[`courts/${cId}/activeTieId`] = '';
             freeCourts.push(cId);
@@ -1216,11 +1251,8 @@
         }
       });
 
-      if (!freeCourts.length) {
-        return showToast('Tất cả các sân hiện đang có trận thi đấu');
-      }
+      if (!freeCourts.length) return showToast('Tất cả các sân hiện đang có trận thi đấu');
 
-      // 2. Đếm số trận đã đấu của từng đội để ưu tiên đội ít trận / được nghỉ
       if (isTeam) {
         Object.values(ties).forEach(t => {
           if (isTieFinished(t)) {
@@ -1235,7 +1267,6 @@
         });
       }
 
-      // 3. Lọc các lượt/trận đang chờ và sắp xếp ưu tiên đội chưa đánh liền kề
       let assignedCount = 0;
       if (isTeam) {
         const activeTieIds = new Set(Object.values(courts).map(c => c.activeTieId || matches[c.activeMatchId]?.tieId).filter(Boolean));
@@ -1244,7 +1275,7 @@
           .sort((a, b) => {
             const restA = (recentlyFinished.has(a.teamAName) ? 1 : 0) + (recentlyFinished.has(a.teamBName) ? 1 : 0);
             const restB = (recentlyFinished.has(b.teamAName) ? 1 : 0) + (recentlyFinished.has(b.teamBName) ? 1 : 0);
-            if (restA !== restB) return restA - restB; // Ưu tiên đội vừa được nghỉ
+            if (restA !== restB) return restA - restB;
             const pA = (playedCount[a.teamAName] || 0) + (playedCount[a.teamBName] || 0);
             const pB = (playedCount[b.teamAName] || 0) + (playedCount[b.teamBName] || 0);
             return pA - pB || (a.createdAt || 0) - (b.createdAt || 0);
@@ -1301,7 +1332,6 @@
         : 'Đã giải phóng sân xong • Các CLB khác đang bận thi đấu');
     };
 
-    // GÁN SÂN THỦ CÔNG (CHẶN CHỌN CLB ĐANG BẬN ĐÁNH Ở SÂN KHÁC)
     window.assignCourtInFrame = async (cId, selectedId) => {
       const isTeam = getActiveFormat() === 'team';
       const courts = dataStore.courts || {};
@@ -1317,7 +1347,6 @@
         return;
       }
 
-      // Kiểm tra xem có đội nào đang bận đánh ở sân khác không
       const busyByOtherCourt = new Map();
       Object.entries(courts).forEach(([otherId, otherCourt]) => {
         if (otherId === cId) return;
@@ -1428,41 +1457,54 @@
       }).join('');
     }
 
+    // GOM KẾT QUẢ ĐÃ HOÀN THÀNH THEO TỪNG CẶP ĐỘI • BẤM VÀO MỚI HIỆN POPUP CHI TIẾT
     function renderCompletedMatches() {
       const done = Object.values(dataStore.matches || {}).filter(m => m.status === 'finished');
+      const ties = dataStore.ties || {};
       document.getElementById('completedCountBadge').textContent = `${done.length} trận`;
-      document.getElementById('completedMatchesGrid').innerHTML = done.map(m => {
-        const winA = m.winner === 'A' || (m.teamA?.score > m.teamB?.score), winB = m.winner === 'B' || (m.teamB?.score > m.teamA?.score);
-        return `
-          <div class="sc-card rounded-2xl overflow-hidden">
-            <div class="bg-white/[0.03] px-3.5 py-2 border-b border-white/[0.06] flex items-center justify-between gap-2">
-              <span class="text-[11px] font-extrabold text-orange-400 truncate">${m.category || 'Trận đấu'}</span>
-              <span class="text-[10px] font-bold text-emerald-400 shrink-0">FT</span>
+
+      const groups = {};
+      done.forEach(m => {
+        const key = m.tieId && ties[m.tieId]
+          ? `tie:${m.tieId}`
+          : `pair:${[m.teamA?.name || '', m.teamB?.name || ''].sort().join('__')}`;
+        if (!groups[key]) {
+          const t = m.tieId ? ties[m.tieId] : null;
+          groups[key] = {
+            key,
+            nameA: t ? t.teamAName : (m.teamA?.name || 'Đội A'),
+            nameB: t ? t.teamBName : (m.teamB?.name || 'Đội B'),
+            winA: 0,
+            winB: 0,
+            count: 0
+          };
+        }
+        const g = groups[key];
+        g.count++;
+        if (m.winner === 'A' || Number(m.teamA?.score) > Number(m.teamB?.score)) g.winA++;
+        else if (m.winner === 'B' || Number(m.teamB?.score) > Number(m.teamA?.score)) g.winB++;
+      });
+
+      const list = Object.values(groups);
+      document.getElementById('completedMatchesGrid').innerHTML = list.map(g => `
+        <div onclick="openCompletedGroupModal('${g.key.replace(/'/g, "\\'")}')" class="sc-card rounded-2xl px-3.5 py-3 cursor-pointer hover:border-orange-500/40 active:scale-[0.99] transition space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0 flex-1">
+              ${getTeamBadge(g.nameA)}
+              <span class="font-extrabold text-xs text-white truncate">${g.nameA}</span>
             </div>
-            <div class="p-3.5 space-y-2.5">
-              <div class="flex items-center justify-between gap-2.5">
-                <div class="flex items-center gap-2.5 min-w-0">
-                  ${getTeamBadge(m.teamA?.name)}
-                  <div class="min-w-0">
-                    <div class="text-xs font-extrabold truncate ${winA ? 'text-emerald-400' : 'text-white'}">${m.teamA?.name || 'Đội A'}</div>
-                    <div class="text-[10px] text-slate-400 truncate">${formatPlayersSide(m.teamA)}</div>
-                  </div>
-                </div>
-                <span class="sc-score-pill ${winA ? 'win-pill' : ''}">${m.teamA?.score ?? 0}</span>
-              </div>
-              <div class="flex items-center justify-between gap-2.5">
-                <div class="flex items-center gap-2.5 min-w-0">
-                  ${getTeamBadge(m.teamB?.name)}
-                  <div class="min-w-0">
-                    <div class="text-xs font-extrabold truncate ${winB ? 'text-emerald-400' : 'text-white'}">${m.teamB?.name || 'Đội B'}</div>
-                    <div class="text-[10px] text-slate-400 truncate">${formatPlayersSide(m.teamB)}</div>
-                  </div>
-                </div>
-                <span class="sc-score-pill ${winB ? 'win-pill' : ''}">${m.teamB?.score ?? 0}</span>
-              </div>
+            <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] text-orange-400 font-black text-xs tabular-nums shrink-0">${g.winA} - ${g.winB}</span>
+            <div class="flex items-center justify-end gap-2 min-w-0 flex-1">
+              <span class="font-extrabold text-xs text-white truncate text-right">${g.nameB}</span>
+              ${getTeamBadge(g.nameB)}
             </div>
-          </div>`;
-      }).join('') || '<p class="text-xs text-slate-500 col-span-full text-center py-8">Chưa có trận đấu nào hoàn thành.</p>';
+          </div>
+          <div class="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-white/[0.06]">
+            <span class="font-bold text-emerald-400">${g.count} trận đã xong</span>
+            <span class="text-slate-400 font-semibold">Bấm xem chi tiết →</span>
+          </div>
+        </div>
+      `).join('') || '<p class="text-xs text-slate-500 col-span-full text-center py-8">Chưa có trận đấu nào hoàn thành.</p>';
     }
 
     function renderLiveAndAdminCourts() {
@@ -1497,7 +1539,7 @@
             </div>`;
         }
 
-                if (tie) {
+        if (tie) {
           const subMatches = (tie.matchIds || []).map(id => matches[id]).filter(Boolean);
           let wA = 0, wB = 0;
           subMatches.forEach(sm => { if (sm.winner === 'A') wA++; if (sm.winner === 'B') wB++; });
@@ -1512,7 +1554,7 @@
                 <span class="font-extrabold text-xs text-white uppercase truncate">${c.name}</span>
                 <div class="flex items-center gap-1.5 shrink-0">
                   <span class="px-2 py-0.5 rounded-md bg-orange-500/15 text-orange-300 text-[10px] font-bold">Chi tiết</span>
-                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md ${allDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${allDone ? 'FT' : '● LIVE'}</span>
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md ${allDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${allDone ? 'Đã xong' : '● LIVE'}</span>
                 </div>
               </div>
 
@@ -1536,7 +1578,7 @@
               <span class="font-extrabold text-xs text-white uppercase truncate">${c.name}</span>
               <div class="flex items-center gap-1.5 shrink-0">
                 <button type="button" onclick="openCourtDetailModal('${cId}')" class="px-2 py-0.5 rounded-md bg-white/[0.07] hover:bg-white/[0.12] text-slate-200 text-[10px] font-bold">Chi tiết</button>
-                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md ${isDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${isDone ? 'FT' : '● LIVE'}</span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md ${isDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${isDone ? 'Đã xong' : '● LIVE'}</span>
               </div>
             </div>
             <div class="p-3.5 space-y-2.5">
