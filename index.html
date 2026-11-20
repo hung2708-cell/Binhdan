@@ -1222,39 +1222,102 @@
       return rounds;
     }
 
+    let isAutoPushingBracket = false;
+
     async function autoGenerateBracketWhenGroupStageDone() {
-      const draw = dataStore.groupDraw; if (!draw || !draw.groups) return;
+      const draw = dataStore.groupDraw;
+      if (!draw || !draw.groups) return;
       const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
       const groupMatches = Object.values(dataStore.matches || {}).filter(m => m.stage === 'group');
-      const totalGroup = groupMatches.length, doneGroup = groupMatches.filter(m => m.status === 'finished').length;
-      const noticeEl = document.getElementById('bracketPendingNotice'), wrapEl = document.getElementById('bracketTreesWrap'), txtEl = document.getElementById('bracketPendingText');
+      const totalGroup = groupMatches.length;
+      const doneGroup = groupMatches.filter(m => m.status === 'finished').length;
+      const noticeEl = document.getElementById('bracketPendingNotice');
+      const wrapEl = document.getElementById('bracketTreesWrap');
+      const txtEl = document.getElementById('bracketPendingText');
 
       if (!totalGroup || doneGroup < totalGroup) {
-        noticeEl.classList.remove('hidden'); wrapEl.classList.add('hidden');
+        noticeEl.classList.remove('hidden');
+        wrapEl.classList.add('hidden');
         txtEl.textContent = `Tiến độ vòng bảng: ${doneGroup}/${totalGroup} trận đã xong. Nhánh Serie A & B tự động mở khi xong vòng bảng.`;
         return;
       }
 
       if (!dataStore.seriesBracket?.[scope]) {
-        const serieAEntries = [], serieBEntries = [], letters = draw.letters || Object.keys(draw.groups);
+        const serieAEntries = [];
+        const serieBEntries = [];
+        const letters = draw.letters || Object.keys(draw.groups);
+        const groupTies = Object.values(dataStore.ties || {}).filter(t => t.stage === 'group');
+
         letters.forEach(letter => {
-          const board = {}; (draw.groups[letter] || []).forEach(t => { board[t.name] = { name: t.name, pts: 0, diff: 0 }; });
-          groupMatches.filter(m => (m.groupLetter === letter || (m.category || '').includes(`Bảng ${letter}`))).forEach(m => {
-            const a = board[m.teamA?.name], b = board[m.teamB?.name]; if (!a || !b) return;
-            a.diff += (m.teamA.score - m.teamB.score); b.diff += (m.teamB.score - m.teamA.score);
-            if (m.winner === 'A' || m.teamA.score > m.teamB.score) { a.pts += 3; b.pts += 1; }
-            else if (m.winner === 'B' || m.teamB.score > m.teamA.score) { b.pts += 3; a.pts += 1; }
-            else { a.pts += 2; b.pts += 2; }
+          const board = {};
+          (draw.groups[letter] || []).forEach(t => {
+            board[t.name] = { name: t.name, pts: 0, setDiff: 0, ptDiff: 0 };
           });
-          Object.values(board).sort((x, y) => y.pts - x.pts || y.diff - x.diff).forEach((item, idx) => {
-            const entry = { name: item.name, group: letter, rank: idx + 1 };
-            if (idx === 0 || idx === 1) serieAEntries.push(entry); else if (idx === 2 || idx === 3) serieBEntries.push(entry);
-          });
+
+          if (scope === 'team') {
+            groupTies.filter(t => t.groupLetter === letter).forEach(tie => {
+              const sA = board[tie.teamAName], sB = board[tie.teamBName];
+              if (!sA || !sB) return;
+              if (tie.walkoverWinner === 'A') { sA.pts += 3; return; }
+              if (tie.walkoverWinner === 'B') { sB.pts += 3; return; }
+              const sub = (tie.matchIds || []).slice(0, 4).map(id => dataStore.matches?.[id]).filter(Boolean);
+              let wA = 0, wB = 0;
+              sub.forEach(m => {
+                if (m.winner === 'A') wA++;
+                if (m.winner === 'B') wB++;
+                sA.ptDiff += (m.teamA.score - m.teamB.score);
+                sB.ptDiff += (m.teamB.score - m.teamA.score);
+              });
+              sA.setDiff += (wA - wB);
+              sB.setDiff += (wB - wA);
+              if (wA > wB) { sA.pts += 3; sB.pts += 1; }
+              else if (wB > wA) { sB.pts += 3; sA.pts += 1; }
+              else { sA.pts += 2; sB.pts += 2; }
+            });
+          } else {
+            groupMatches.filter(m => m.groupLetter === letter || (m.category || '').includes(`Bảng ${letter}`)).forEach(m => {
+              const a = board[m.teamA?.name], b = board[m.teamB?.name];
+              if (!a || !b) return;
+              a.ptDiff += (m.teamA.score - m.teamB.score);
+              b.ptDiff += (m.teamB.score - m.teamA.score);
+              if (m.winner === 'A' || m.teamA.score > m.teamB.score) { a.pts += 3; b.pts += 1; }
+              else if (m.winner === 'B' || m.teamB.score > m.teamA.score) { b.pts += 3; a.pts += 1; }
+              else { a.pts += 2; b.pts += 2; }
+            });
+          }
+
+          Object.values(board)
+            .sort((x, y) => y.pts - x.pts || y.setDiff - x.setDiff || y.ptDiff - x.ptDiff)
+            .forEach((item, idx) => {
+              const entry = { name: item.name, group: letter, rank: idx + 1 };
+              if (idx === 0 || idx === 1) serieAEntries.push(entry);
+              else if (idx === 2 || idx === 3) serieBEntries.push(entry);
+            });
         });
-        await set(ref(db, 'seriesBracket'), { ...(dataStore.seriesBracket || {}), [scope]: { serieA: buildMultiRoundTree(serieAEntries, `${scope}_a`), serieB: buildMultiRoundTree(serieBEntries, `${scope}_b`) }, updatedAt: Date.now() });
+
+        const nextBracket = {
+          ...(dataStore.seriesBracket || {}),
+          [scope]: {
+            serieA: buildMultiRoundTree(serieAEntries, `${scope}_a`),
+            serieB: buildMultiRoundTree(serieBEntries, `${scope}_b`)
+          },
+          updatedAt: Date.now()
+        };
+        dataStore.seriesBracket = nextBracket;
+        await set(ref(db, 'seriesBracket'), nextBracket);
       }
-      noticeEl.classList.add('hidden'); wrapEl.classList.remove('hidden');
-      await autoPushReadyBracketToCourts();
+
+      noticeEl.classList.add('hidden');
+      wrapEl.classList.remove('hidden');
+
+      if (!isAutoPushingBracket) {
+        isAutoPushingBracket = true;
+        try {
+          await autoPushReadyBracketToCourts();
+        } finally {
+          isAutoPushingBracket = false;
+        }
+      }
     }
 
     async function syncBracketWinnersIfNeeded() {
