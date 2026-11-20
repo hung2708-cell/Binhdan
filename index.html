@@ -1184,16 +1184,40 @@
     function buildMultiRoundTree(entries, keyPrefix) {
       if (!entries.length) return [];
       const rounds = [], round1 = [];
+      const r1Count = Math.ceil(entries.length / 2);
+      const r1Label = r1Count === 1 ? 'Chung kết' : (r1Count === 2 ? 'Bán kết' : 'Vòng 1');
+
       for (let i = 0; i < entries.length; i += 2) {
         const t1 = entries[i] || null, t2 = entries[i + 1] || null;
-        round1.push({ id: `${keyPrefix}_r0_m${i / 2}`, round: 'Vòng 1', team1: t1 ? `${t1.name} (${t1.group}#${t1.rank})` : 'Chờ đội', team2: t2 ? `${t2.name} (${t2.group}#${t2.rank})` : 'Chờ đội', ready: Boolean(t1 && t2), matchId: '' });
+        round1.push({
+          id: `${keyPrefix}_r0_m${i / 2}`,
+          round: r1Label,
+          team1: t1 ? `${t1.name} (${t1.group}#${t1.rank})` : 'Chờ đội',
+          team2: t2 ? `${t2.name} (${t2.group}#${t2.rank})` : 'Chờ đội',
+          ready: Boolean(t1 && t2),
+          matchId: ''
+        });
       }
       rounds.push(round1);
+
       let prevCount = round1.length, rIdx = 1;
       while (prevCount > 1) {
-        const nextCount = Math.ceil(prevCount / 2), label = nextCount === 1 ? 'Chung kết' : (nextCount === 2 ? 'Bán kết' : `Vòng ${rIdx + 1}`), curRound = [];
-        for (let m = 0; m < nextCount; m++) curRound.push({ id: `${keyPrefix}_r${rIdx}_m${m}`, round: label, team1: 'Chờ đội thắng', team2: m * 2 + 1 < prevCount ? 'Chờ đội thắng' : 'Miễn đấu', ready: false, matchId: '' });
-        rounds.push(curRound); prevCount = nextCount; rIdx++;
+        const nextCount = Math.ceil(prevCount / 2);
+        const label = nextCount === 1 ? 'Chung kết' : (nextCount === 2 ? 'Bán kết' : `Vòng ${rIdx + 1}`);
+        const curRound = [];
+        for (let m = 0; m < nextCount; m++) {
+          curRound.push({
+            id: `${keyPrefix}_r${rIdx}_m${m}`,
+            round: label,
+            team1: 'Chờ đội thắng',
+            team2: m * 2 + 1 < prevCount ? 'Chờ đội thắng' : 'Miễn đấu',
+            ready: false,
+            matchId: ''
+          });
+        }
+        rounds.push(curRound);
+        prevCount = nextCount;
+        rIdx++;
       }
       return rounds;
     }
@@ -1591,23 +1615,88 @@
       if (highlightedTeamName) window.highlightTeamJourney(highlightedTeamName);
     }
 
+    // Bấm nút Trọng tài trên nhánh: nếu chưa lên sân thì tự đẩy ra sân trống rồi mở thẳng bàn chấm điểm
+    window.openBracketRefereeNow = async (seriesKey, roundIdx, matchIdx) => {
+      const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
+      const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
+      if (!slot) return;
+
+      const liveM = slot.matchId ? dataStore.matches?.[slot.matchId] : null;
+      if (liveM && liveM.courtId) {
+        window.open(`referee.html?court=${liveM.courtId}`, '_blank', 'noopener,noreferrer');
+        return;
+      }
+      if (!slot.ready) return showToast('Chưa xác định đủ 2 đội');
+
+      // Tìm sân trống (nếu không có thì lấy sân đang chọn ở mục Sân nhánh)
+      const courts = dataStore.courts || {};
+      const freeCourt = Object.entries(courts).find(([_, c]) => !c.activeMatchId && !c.activeTieId)?.[0];
+      const cId = freeCourt || document.getElementById('bracketTargetCourt')?.value || Object.keys(courts)[0] || 'court_1';
+      const mId = `br_${scope}_${seriesKey}_${roundIdx}_${matchIdx}_${Date.now().toString().slice(-4)}`;
+      const isTeam = scope === 'team';
+
+      const m = createInitialMatchState({
+        id: mId,
+        stage: 'knockout',
+        isDreambreaker: isTeam,
+        category: `${isTeam ? 'Đồng đội • Đơn 21đ' : 'Đôi'} • ${seriesKey === 'serieA' ? 'Serie A' : 'Serie B'} • ${slot.round}`,
+        targetScore: isTeam ? 21 : 15,
+        switchPoint: isTeam ? 11 : 8,
+        winByTwo: true,
+        teamAName: slot.team1,
+        teamAPlayers: isTeam ? ['VĐV A1', 'VĐV A2'] : [slot.team1, ''],
+        teamBName: slot.team2,
+        teamBPlayers: isTeam ? ['VĐV B1', 'VĐV B2'] : [slot.team2, '']
+      });
+      m.status = 'live';
+      m.courtId = cId;
+
+      const updatedTree = JSON.parse(JSON.stringify(dataStore.seriesBracket?.[scope] || {}));
+      if (updatedTree[seriesKey]?.[roundIdx]?.[matchIdx]) updatedTree[seriesKey][roundIdx][matchIdx].matchId = mId;
+
+      await update(ref(db, '/'), {
+        [`matches/${mId}`]: m,
+        [`courts/${cId}/activeMatchId`]: mId,
+        [`courts/${cId}/activeTieId`]: '',
+        [`seriesBracket/${scope}`]: updatedTree
+      });
+      window.open(`referee.html?court=${cId}`, '_blank', 'noopener,noreferrer');
+    };
+
     function renderBracketTree(containerId, rounds, seriesKey) {
       const el = document.getElementById(containerId);
-      if (!rounds || !rounds.length) { el.innerHTML = '<p class="text-xs text-slate-400">Chưa có sơ đồ nhánh.</p>'; return; }
-      el.innerHTML = rounds.map((matchesInRound, rIdx) => {
-        const hasNextRound = rIdx < rounds.length - 1, groupedPairs = [];
+      if (!rounds || !rounds.length) {
+        el.innerHTML = '<p class="text-xs text-slate-400">Chưa có sơ đồ nhánh.</p>';
+        return;
+      }
+
+      const finalSlot = rounds[rounds.length - 1]?.[0];
+      const finalMatch = finalSlot?.matchId ? dataStore.matches?.[finalSlot.matchId] : null;
+      const championName = (finalMatch && finalMatch.status === 'finished' && finalMatch.winner)
+        ? (finalMatch.winner === 'A' ? finalMatch.teamA?.name : finalMatch.teamB?.name)
+        : 'Chờ nhà vô địch';
+
+      const roundsHtml = rounds.map((matchesInRound, rIdx) => {
+        const groupedPairs = [];
         for (let i = 0; i < matchesInRound.length; i += 2) groupedPairs.push(matchesInRound.slice(i, i + 2));
+
         return `
           <div class="sc-round-col">
             <div class="sc-round-header">${matchesInRound[0]?.round || `Vòng ${rIdx + 1}`}</div>
             <div class="sc-round-pairs">
               ${groupedPairs.map((pairList, gIdx) => `
-                <div class="sc-pair-group ${hasNextRound ? 'has-connector' : ''}">
+                <div class="sc-pair-group has-connector">
                   ${pairList.map((m, idxInPair) => {
-                    const mIdx = gIdx * 2 + idxInPair, liveM = m.matchId ? dataStore.matches?.[m.matchId] : null;
-                    const sA = liveM ? liveM.teamA.score : '-', sB = liveM ? liveM.teamB.score : '-';
-                    const winA = liveM?.winner === 'A', winB = liveM?.winner === 'B';
-                    const hasPlayed = Boolean(liveM && (liveM.status === 'finished' || liveM.status === 'live' || liveM.teamA.score > 0 || liveM.teamB.score > 0));
+                    const mIdx = gIdx * 2 + idxInPair;
+                    const liveM = m.matchId ? dataStore.matches?.[m.matchId] : null;
+                    const sA = liveM ? liveM.teamA.score : '-';
+                    const sB = liveM ? liveM.teamB.score : '-';
+                    const winA = liveM?.winner === 'A';
+                    const winB = liveM?.winner === 'B';
+                    const isDone = liveM?.status === 'finished';
+                    const hasPlayed = Boolean(liveM && (isDone || liveM.status === 'live' || liveM.teamA.score > 0 || liveM.teamB.score > 0));
+                    const courtName = liveM?.courtId ? (dataStore.courts?.[liveM.courtId]?.name || liveM.courtId) : '';
+
                     return `
                       <div class="sc-node-card ${hasPlayed ? 'played-card' : ''}" data-t1="${m.team1.replace(/"/g, '&quot;')}" data-t2="${m.team2.replace(/"/g, '&quot;')}" onclick="openBracketMatchDetailsModal('${seriesKey}', ${rIdx}, ${mIdx})">
                         <div class="sc-slot-row ${winA ? 'text-emerald-300' : 'text-white'}" onmouseenter="highlightTeamJourney('${m.team1.replace(/'/g, "\\'")}')" onmouseleave="highlightTeamJourney('')">
@@ -1616,12 +1705,34 @@
                         <div class="sc-slot-row ${winB ? 'text-emerald-300' : 'text-white'}" onmouseenter="highlightTeamJourney('${m.team2.replace(/'/g, "\\'")}')" onmouseleave="highlightTeamJourney('')">
                           <span class="truncate">${m.team2}</span><span class="sc-score-pill ${winB ? 'win-pill' : ''}">${sB}</span>
                         </div>
+                        <div class="px-2.5 py-1.5 bg-white/[0.03] border-t border-white/[0.06] flex items-center justify-between gap-1.5 text-[10px]">
+                          <span class="font-bold ${isDone ? 'text-emerald-400' : (courtName ? 'text-orange-400' : 'text-slate-500')} truncate">
+                            ${isDone ? 'Đã xong' : (courtName ? `● ${courtName}` : (m.ready ? 'Sẵn sàng' : 'Chờ đội'))}
+                          </span>
+                          ${!isDone && m.ready ? `
+                            <button type="button" onclick="event.stopPropagation(); openBracketRefereeNow('${seriesKey}', ${rIdx}, ${mIdx})" class="px-2 py-0.5 rounded-md fire-btn text-white font-extrabold shrink-0">
+                              Trọng tài →
+                            </button>` : ''}
+                        </div>
                       </div>`;
                   }).join('')}
                 </div>`).join('')}
             </div>
           </div>`;
       }).join('');
+
+      const championColHtml = `
+        <div class="sc-round-col">
+          <div class="sc-round-header text-amber-300 border-amber-400/30 bg-amber-500/10">🏆 Vô địch</div>
+          <div class="sc-round-pairs">
+            <div class="sc-node-card ${finalMatch?.status === 'finished' ? 'border-amber-400/70 bg-amber-500/10' : 'opacity-70'} p-3 text-center space-y-1">
+              <div class="text-lg">🏆</div>
+              <div class="text-xs font-black ${finalMatch?.status === 'finished' ? 'text-amber-300' : 'text-slate-400'} truncate">${championName}</div>
+            </div>
+          </div>
+        </div>`;
+
+      el.innerHTML = roundsHtml + championColHtml;
     }
 
     // GOM KẾT QUẢ ĐÃ HOÀN THÀNH THEO TỪNG CẶP ĐỘI • BẤM VÀO MỚI HIỆN POPUP CHI TIẾT
