@@ -409,10 +409,7 @@
         <p id="tossResultText" class="text-xs text-slate-300 mt-1.5">Tung đồng xu ngẫu nhiên giữa 2 đội.</p>
       </div>
       <button id="btnRunToss" onclick="runCoinToss()" class="btn-tap fire-btn w-full py-3 rounded-xl text-white font-black text-sm shadow-lg">TUNG ĐỒNG XU</button>
-      <div id="tossChoices" class="hidden grid-cols-2 gap-2">
-        <button onclick="applyTossChoice('serve')" class="btn-tap py-2.5 rounded-xl bg-emerald-600 text-white font-black text-xs">Chọn Giao bóng</button>
-        <button onclick="applyTossChoice('side')" class="btn-tap py-2.5 rounded-xl bg-amber-500 text-slate-950 font-black text-xs">Chọn Sân</button>
-      </div>
+      <div id="tossChoices" class="hidden grid grid-cols-2 gap-2"></div>
       <button onclick="closeTossModal()" class="block w-full text-xs text-slate-400 hover:text-white font-semibold">Đóng</button>
     </div>
   </div>
@@ -861,9 +858,22 @@
 
     async function setServingTeam(team) { playBeep(600, 0.08); await update(ref(db, `matches/${currentMatchId}`), { servingTeam: team, servingBox: 0 }); }
 
+    let tossDraft = { servingTeam: null, sidesSwitched: false };
+
+    function renderTossButtons(buttons) {
+      const box = document.getElementById('tossChoices');
+      box.innerHTML = buttons.map(b => `
+        <button onclick="${b.action}" class="btn-tap py-2.5 px-2 rounded-xl ${b.cls} font-black text-xs leading-tight">
+          ${b.label}
+        </button>
+      `).join('');
+      box.classList.remove('hidden');
+    }
+
     window.openCoinTossModal = () => {
       if (!currentMatch || isMatchStarted(currentMatch)) return;
       tossWinner = null;
+      tossDraft = { servingTeam: null, sidesSwitched: false };
       document.getElementById('tossResultText').textContent = `Tung đồng xu giữa ${currentMatch.teamA.name} và ${currentMatch.teamB.name}.`;
       document.getElementById('tossChoices').classList.add('hidden');
       document.getElementById('btnRunToss').classList.remove('hidden');
@@ -879,11 +889,80 @@
       setTimeout(() => {
         tossWinner = Math.random() < 0.5 ? 'A' : 'B';
         const winName = tossWinner === 'A' ? currentMatch.teamA.name : currentMatch.teamB.name;
-        document.getElementById('tossResultText').innerHTML = `<b class="text-emerald-400 text-sm">${winName}</b> thắng bốc thăm.<br/>Chọn quyền:`;
         document.getElementById('btnRunToss').classList.add('hidden');
-        document.getElementById('tossChoices').classList.remove('hidden');
+        document.getElementById('tossResultText').innerHTML = `<b class="text-emerald-400 text-sm">${winName}</b> thắng bốc thăm.<br/>Bước 1: Chọn quyền ưu tiên:`;
+        renderTossButtons([
+          { label: 'Chọn Bóng (Giao/Đỡ)', cls: 'bg-emerald-600 text-white', action: "handleTossStep1('ball')" },
+          { label: 'Chọn Sân (Trái/Phải)', cls: 'bg-amber-500 text-slate-950', action: "handleTossStep1('side')" }
+        ]);
       }, 450);
     };
+
+    window.handleTossStep1 = (priority) => {
+      const winName = tossWinner === 'A' ? currentMatch.teamA.name : currentMatch.teamB.name;
+      playBeep(620, 0.08);
+      if (priority === 'ball') {
+        document.getElementById('tossResultText').innerHTML = `<b class="text-emerald-400">${winName}</b> chọn Bóng:`;
+        renderTossButtons([
+          { label: 'Giao bóng trước', cls: 'bg-emerald-600 text-white', action: "handleTossBallPick('serve', true)" },
+          { label: 'Đỡ bóng trước', cls: 'bg-sky-600 text-white', action: "handleTossBallPick('receive', true)" }
+        ]);
+      } else {
+        document.getElementById('tossResultText').innerHTML = `<b class="text-amber-300">${winName}</b> chọn Sân:`;
+        renderTossButtons([
+          { label: 'Sân Trái', cls: 'bg-amber-500 text-slate-950', action: "handleTossSidePick('left', true)" },
+          { label: 'Sân Phải', cls: 'bg-orange-500 text-white', action: "handleTossSidePick('right', true)" }
+        ]);
+      }
+    };
+
+    window.handleTossBallPick = async (ballChoice, nextIsLoserSide) => {
+      const picker = nextIsLoserSide ? tossWinner : (tossWinner === 'A' ? 'B' : 'A');
+      const other = picker === 'A' ? 'B' : 'A';
+      tossDraft.servingTeam = (ballChoice === 'serve') ? picker : other;
+      playBeep(680, 0.08);
+
+      if (nextIsLoserSide) {
+        const loserName = other === 'A' ? currentMatch.teamA.name : currentMatch.teamB.name;
+        document.getElementById('tossResultText').innerHTML = `Bước 2: <b class="text-amber-300">${loserName}</b> chọn Sân:`;
+        renderTossButtons([
+          { label: 'Sân Trái', cls: 'bg-amber-500 text-slate-950', action: "handleTossSidePick('left', false)" },
+          { label: 'Sân Phải', cls: 'bg-orange-500 text-white', action: "handleTossSidePick('right', false)" }
+        ]);
+      } else {
+        await finalizeCoinToss();
+      }
+    };
+
+    window.handleTossSidePick = async (sideChoice, nextIsLoserBall) => {
+      const picker = nextIsLoserBall ? tossWinner : (tossWinner === 'A' ? 'B' : 'A');
+      const other = picker === 'A' ? 'B' : 'A';
+      // Mặc định A ở Trái, B ở Phải => đảo sân nếu A chọn Phải hoặc B chọn Trái
+      tossDraft.sidesSwitched = (picker === 'A') ? (sideChoice === 'right') : (sideChoice === 'left');
+      playBeep(680, 0.08);
+
+      if (nextIsLoserBall) {
+        const loserName = other === 'A' ? currentMatch.teamA.name : currentMatch.teamB.name;
+        document.getElementById('tossResultText').innerHTML = `Bước 2: <b class="text-emerald-400">${loserName}</b> chọn Bóng:`;
+        renderTossButtons([
+          { label: 'Giao bóng trước', cls: 'bg-emerald-600 text-white', action: "handleTossBallPick('serve', false)" },
+          { label: 'Đỡ bóng trước', cls: 'bg-sky-600 text-white', action: "handleTossBallPick('receive', false)" }
+        ]);
+      } else {
+        await finalizeCoinToss();
+      }
+    };
+
+    async function finalizeCoinToss() {
+      if (!currentMatchId) return;
+      await update(ref(db, `matches/${currentMatchId}`), {
+        servingTeam: tossDraft.servingTeam || 'A',
+        servingBox: 0,
+        sidesSwitched: tossDraft.sidesSwitched
+      });
+      playBeep(880, 0.15);
+      closeTossModal();
+    }
 
     window.applyTossChoice = async (choice) => {
       if (!currentMatch || !tossWinner) return;
