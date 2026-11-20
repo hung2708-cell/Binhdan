@@ -333,6 +333,9 @@
             <div class="flex items-center gap-1.5">
               <button type="button" onclick="exportTournamentExcel()" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 text-[11px] font-extrabold flex items-center gap-1">
                 <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Xuất Excel
+                <button type="button" onclick="openImportPlayersModal()" class="px-2.5 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/35 text-sky-300 text-[11px] font-extrabold flex items-center gap-1">
+  <i data-lucide="upload" class="w-3.5 h-3.5"></i> Import VĐV
+</button>
               </button>
               <button type="button" id="btnUnlockFormat" onclick="unlockFormatChoice()" class="hidden px-2.5 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/15 text-amber-300 text-[11px] font-bold">
                 Đổi thể thức
@@ -1034,6 +1037,128 @@
       const id = `club_${Date.now()}`;
       await update(ref(db, '/'), { 'settings/format': 'team', [`teams/${id}`]: { id, name, roster: draftClubPlayers.map(p => p.name), rosterDetails: draftClubPlayers } });
       document.getElementById('admClubName').value = ''; draftClubPlayers = []; renderDraftClubPlayers(); showToast('Đã lưu CLB');
+    };
+    window.openImportPlayersModal = () => {
+      const isTeam = getActiveFormat() === 'team';
+      const bodyHtml = `
+        <div class="space-y-2.5 text-left">
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Nội dung thi đấu đích</label>
+            <select id="impTargetCategory" class="w-full mt-1 bg-[#0a0d14] border border-white/15 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none">
+              ${isTeam
+                ? `<option value="team_club">Đồng đội (Tạo/gộp CLB mới)</option>`
+                : `
+                  <option value="auto">Tự động phân loại (Đôi Nam / Đôi Nữ / Đôi Nam Nữ)</option>
+                  <option value="Đôi Nam">Đôi Nam</option>
+                  <option value="Đôi Nữ">Đôi Nữ</option>
+                  <option value="Đôi Nam Nữ">Đôi Nam Nữ</option>
+                `
+              }
+            </select>
+          </div>
+          ${isTeam ? `
+            <div>
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Tên CLB nhận VĐV</label>
+              <input id="impClubName" type="text" placeholder="VD: CLB Bính Dần 3" class="w-full mt-1 bg-[#0a0d14] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+            </div>` : ''}
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Chọn file Excel (.xlsx, .csv)</label>
+            <input id="impExcelFile" type="file" accept=".xlsx,.xls,.csv" onchange="handleImportFileChange(event)" class="w-full mt-1 text-[11px] text-slate-300 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-orange-500/20 file:text-orange-300" />
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Hoặc dán danh sách (mỗi dòng 1 mục)</label>
+            <textarea id="impRawText" rows="5" placeholder="${isTeam
+              ? 'Hùng | Nam | 3.0\nLan | Nữ | 2.6'
+              : 'Hùng | Nam | 3.0 | Tuấn | Nam | 2.8\nMai | Nữ | 2.7 | Hoa | Nữ | 2.6'}" class="w-full mt-1 bg-[#0a0d14] border border-white/15 rounded-xl p-2.5 text-xs text-white outline-none"></textarea>
+          </div>
+        </div>`;
+
+      openScModal({
+        title: 'Import VĐV theo nội dung',
+        desc: isTeam ? 'Nhập mỗi dòng: Tên | Giới tính | Trình' : 'Nhập mỗi dòng: VĐV1 | Giới1 | Trình1 | VĐV2 | Giới2 | Trình2',
+        bodyHtml,
+        items: [{ label: 'Lưu danh sách Import', active: true, onClick: () => applyImportedPlayers() }]
+      });
+    };
+
+    window.handleImportFileChange = (evt) => {
+      const file = evt.target.files?.[0];
+      if (!file || !window.XLSX) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const wb = window.XLSX.read(e.target.result, { type: 'array' });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const rows = window.XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        const lines = rows
+          .filter(r => Array.isArray(r) && r.some(cell => String(cell || '').trim()))
+          .map(r => r.map(cell => String(cell ?? '').trim()).join(' | '));
+        const ta = document.getElementById('impRawText');
+        if (ta) ta.value = lines.join('\n');
+      };
+      reader.readAsArrayBuffer(file);
+    };
+
+    window.applyImportedPlayers = async () => {
+      const isTeam = getActiveFormat() === 'team';
+      const raw = (document.getElementById('impRawText')?.value || '').trim();
+      const targetCat = document.getElementById('impTargetCategory')?.value || 'auto';
+      if (!raw) return showToast('Chưa có dữ liệu để import');
+
+      const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const updates = {};
+
+      if (isTeam) {
+        const clubName = (document.getElementById('impClubName')?.value || '').trim() || `CLB Import ${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
+        const members = lines.map(line => {
+          const parts = line.split(/[|,\t;]+/).map(s => s.trim());
+          return {
+            name: parts[0] || 'VĐV',
+            gender: /nữ|nu|female|f/i.test(parts[1] || '') ? 'Nữ' : 'Nam',
+            rating: Number(parts[2]) || 2.5
+          };
+        }).filter(m => m.name);
+
+        if (members.length < 2) return showToast('Cần ít nhất 2 VĐV để tạo CLB');
+        const id = `club_${Date.now()}`;
+        updates['settings/format'] = 'team';
+        updates[`teams/${id}`] = { id, name: clubName, roster: members.map(p => p.name), rosterDetails: members };
+        await update(ref(db, '/'), updates);
+        showToast(`Đã import ${members.length} VĐV vào ${clubName}`);
+        return;
+      }
+
+      let added = 0;
+      lines.forEach((line, idx) => {
+        const parts = line.split(/[|,\t;]+/).map(s => s.trim());
+        const n1 = parts[0] || '';
+        const g1 = /nữ|nu|female|f/i.test(parts[1] || '') ? 'Nữ' : 'Nam';
+        const r1 = Number(parts[2]) || 2.5;
+        const n2 = parts[3] || '';
+        const g2 = /nữ|nu|female|f/i.test(parts[4] || '') ? 'Nữ' : 'Nam';
+        const r2 = Number(parts[5]) || 2.5;
+        if (!n1 || !n2) return;
+
+        const detectedType = (g1 === 'Nam' && g2 === 'Nam') ? 'Đôi Nam' : (g1 === 'Nữ' && g2 === 'Nữ') ? 'Đôi Nữ' : 'Đôi Nam Nữ';
+        const pairType = targetCat === 'auto' ? detectedType : targetCat;
+        const id = `dbl_${Date.now()}_${idx}`;
+        updates[`doublesTeams/${id}`] = {
+          id,
+          name: `${n1} / ${n2}`,
+          pairType,
+          totalRating: Math.round((r1 + r2) * 10) / 10,
+          players: [n1, n2],
+          playerDetails: [
+            { name: n1, gender: g1, rating: r1 },
+            { name: n2, gender: g2, rating: r2 }
+          ]
+        };
+        added++;
+      });
+
+      if (!added) return showToast('Không đọc được cặp đôi hợp lệ (cần đủ tên 2 VĐV/dòng)');
+      updates['settings/format'] = 'doubles';
+      await update(ref(db, '/'), updates);
+      showToast(`Đã import ${added} cặp đôi`);
     };
 
     // XÓA CLB & XÓA VĐV (ĐÃ SỬA DÙNG ĐÚNG KEY FIREBASE & XỬ LÝ AN TOÀN)
