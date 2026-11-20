@@ -1787,7 +1787,12 @@
         courts: d.courts || {}, matches: d.matches || {}, groupDraw: d.groupDraw || null,
         seriesBracket: d.seriesBracket || null, customPlayers: d.customPlayers || {}
       };
-
+// Tự động bỏ chữ "(Trung Tâm)" khỏi tên sân trên Firebase
+   Object.entries(dataStore.courts || {}).forEach(([cId, c]) => {
+     if (c?.name && /\(trung\s*tâm\)/i.test(c.name)) {
+       update(ref(db, `courts/${cId}`), { name: c.name.replace(/\s*\(trung\s*tâm\)/gi, '').trim() });
+     }
+   });
       const tourName = dataStore.settings.name || 'Giải Pickleball Bính Dần 1986';
       document.getElementById('pubTourName').textContent = tourName;
       document.getElementById('scHeroTitle').textContent = tourName;
