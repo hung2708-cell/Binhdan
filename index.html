@@ -172,7 +172,6 @@
     </symbol>
   </svg>
 
-  <!-- HEADER KHÓA CỨNG CHUẨN SPORTCONNECT -->
   <header class="locked-top-bar px-3.5">
     <div class="max-w-7xl mx-auto h-14 flex items-center justify-between gap-3">
       <div class="flex items-center gap-2.5 shrink-0">
@@ -185,7 +184,6 @@
         </div>
       </div>
 
-      <!-- TAB GẠCH CHÂN KIỂU SPORTCONNECT TRÊN MÁY TÍNH -->
       <nav class="hidden lg:flex items-center h-full gap-1">
         <button type="button" onclick="switchPubTab('live')" data-tab="live" class="desk-nav-item active flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Live
@@ -196,12 +194,11 @@
         <button type="button" onclick="switchPubTab('completed')" data-tab="completed" class="desk-nav-item">Kết quả</button>
       </nav>
 
-      <!-- NÚT TRỌNG TÀI & QUẢN TRỊ -->
       <div class="flex items-center gap-1.5 shrink-0">
-        <a href="referee.html" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-slate-200 flex items-center gap-1.5 transition">
+        <button type="button" onclick="openRefereeWithPin()" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-slate-200 flex items-center gap-1.5 transition">
           <i data-lucide="gavel" class="w-3.5 h-3.5 text-orange-400"></i>
           <span class="hidden sm:inline">Trọng tài</span>
-        </a>
+        </button>
         <button type="button" onclick="openAdminWithPin()" data-tab="admin" class="desk-admin-btn px-3 py-1.5 rounded-lg text-[11px] font-extrabold bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/35 text-orange-300 flex items-center gap-1.5 transition">
           <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
           <span>Quản trị</span>
@@ -212,7 +209,6 @@
 
   <main class="max-w-7xl mx-auto px-3.5 py-4 lg:px-6 lg:py-5 space-y-5">
 
-    <!-- EVENT BANNER GỌN SẮC NÉT -->
     <section class="sc-hero rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div class="flex items-center gap-3.5 min-w-0">
         <img src="logo.jpg" onerror="this.style.display='none'" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/15 bg-black shrink-0" alt="Logo" />
@@ -308,7 +304,7 @@
       </div>
     </section>
 
-    <!-- 5. KẾT QUẢ CÁC TRẬN ĐÃ XONG (GOM THEO TỪNG ĐỘI / CẶP ĐẤU) -->
+    <!-- 5. KẾT QUẢ CÁC TRẬN ĐÃ XONG -->
     <section id="panelCompleted" class="pub-panel hidden space-y-3.5">
       <div class="flex flex-wrap items-center justify-between gap-2">
         <h2 class="font-extrabold text-sm text-white uppercase tracking-wide">Kết quả các trận đã hoàn thành</h2>
@@ -317,25 +313,23 @@
       <div id="completedMatchesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
     </section>
 
-    <!-- 6. QUẢN TRỊ (TỰ CO GIÃN 2 CỘT MÁY TÍNH / 1 CỘT ĐIỆN THOẠI) -->
+    <!-- 6. QUẢN TRỊ -->
     <section id="panelAdmin" class="pub-panel hidden space-y-4">
 
-      <!-- HÀNG 1: CẤU HÌNH GIẢI (7/12) + CHIA BẢNG & XẾP LỊCH (5/12) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
 
-        <!-- CẤU HÌNH GIẢI ĐẤU -->
         <div class="sc-card rounded-2xl p-4 lg:col-span-7 flex flex-col justify-between gap-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 class="font-extrabold text-xs sm:text-sm text-white uppercase tracking-wide">Cấu hình giải đấu</h2>
               <p id="formatLockHint" class="text-[11px] text-slate-400 mt-0.5">Chọn Đồng đội hoặc Đôi.</p>
             </div>
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button type="button" onclick="openImportPlayersModal()" class="px-2.5 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/35 text-sky-300 text-[11px] font-extrabold flex items-center gap-1">
+                <i data-lucide="upload" class="w-3.5 h-3.5"></i> Import VĐV
+              </button>
               <button type="button" onclick="exportTournamentExcel()" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 text-[11px] font-extrabold flex items-center gap-1">
                 <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Xuất Excel
-                <button type="button" onclick="openImportPlayersModal()" class="px-2.5 py-1.5 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/35 text-sky-300 text-[11px] font-extrabold flex items-center gap-1">
-  <i data-lucide="upload" class="w-3.5 h-3.5"></i> Import VĐV
-</button>
               </button>
               <button type="button" id="btnUnlockFormat" onclick="unlockFormatChoice()" class="hidden px-2.5 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] border border-white/15 text-amber-300 text-[11px] font-bold">
                 Đổi thể thức
@@ -360,7 +354,6 @@
           </div>
         </div>
 
-        <!-- CHIA BẢNG & XẾP LỊCH -->
         <div class="sc-card rounded-2xl p-4 lg:col-span-5 flex flex-col justify-between gap-3">
           <div class="flex items-center justify-between gap-2">
             <h3 class="font-extrabold text-xs sm:text-sm text-orange-400 uppercase tracking-wide">Chia bảng & Lịch đấu</h3>
@@ -381,7 +374,6 @@
         </div>
       </div>
 
-      <!-- HÀNG 2: QUẢN LÝ CLB ĐỒNG ĐỘI (FORM TRÁI 5/12 • DANH SÁCH PHẢI 7/12) -->
       <div id="adminTeamSection" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         <div class="sc-card rounded-2xl p-4 lg:col-span-5 space-y-3">
           <h3 class="font-extrabold text-xs text-orange-400 uppercase tracking-wider">Thêm CLB & VĐV</h3>
@@ -406,7 +398,6 @@
         </div>
       </div>
 
-      <!-- HÀNG 2 (THAY THẾ): QUẢN LÝ NỘI DUNG ĐÔI (FORM TRÁI 5/12 • DANH SÁCH PHẢI 7/12) -->
       <div id="adminDoublesSection" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         <div class="sc-card rounded-2xl p-4 lg:col-span-5 space-y-3">
           <h3 class="font-extrabold text-xs text-orange-400 uppercase tracking-wider">Thêm Cặp đôi</h3>
@@ -436,7 +427,6 @@
         </div>
       </div>
 
-      <!-- HÀNG 3: ĐIỀU PHỐI SÂN (TỰ CO GIÃN 1 -> 2 -> 4 CỘT) -->
       <div class="sc-card rounded-2xl p-4 space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <h3 class="font-extrabold text-xs text-slate-300 uppercase tracking-wider">Điều phối sân thi đấu</h3>
@@ -450,7 +440,6 @@
 
   </main>
 
-  <!-- DOCK KHÓA CỨNG DƯỚI ĐÁY TRÊN ĐIỆN THOẠI -->
   <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-2.5 pb-2.5 pt-1 pointer-events-none flex justify-center">
     <nav id="mobileBottomDock" class="locked-bottom-dock pointer-events-auto relative w-full max-w-md rounded-full p-1 grid grid-cols-5 select-none">
       <div id="mobileBottomThumb" class="ios-bottom-thumb"></div>
@@ -477,7 +466,6 @@
     </nav>
   </div>
 
-  <!-- POPUP PIN DỰ PHÒNG -->
   <div id="pinModal" class="hidden fixed inset-0 z-[10001] bg-[#0a0d14]/92 backdrop-blur-md flex items-center justify-center p-4">
     <div class="w-full max-w-xs bg-[#121722] border border-orange-500/35 rounded-2xl p-6 text-center shadow-2xl space-y-4">
       <div class="w-12 h-12 mx-auto rounded-xl bg-orange-500/15 text-orange-400 flex items-center justify-center">
@@ -494,7 +482,6 @@
     </div>
   </div>
 
-  <!-- POPUP CHI TIẾT / XÁC NHẬN (CĂN GIỮA & TỰ CO GIÃN CHO ĐIỆN THOẠI & MÁY TÍNH) -->
   <div id="scModal" onclick="if(event.target === this) closeScModal()" class="hidden fixed inset-0 z-[9999] bg-[#0a0d14]/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
     <div class="w-full max-w-[95vw] sm:max-w-md bg-[#121722] border border-white/15 rounded-2xl p-4 sm:p-5 shadow-2xl space-y-3 max-h-[85dvh] flex flex-col">
       <div class="text-center space-y-1 shrink-0 px-1">
@@ -509,7 +496,7 @@
   <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden bg-orange-600 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-xl"></div>
 
   <script type="module">
-    import { db, ref, set, update, onValue, remove } from './js/firebase-config.js';
+    import { db, ref, set, update, onValue } from './js/firebase-config.js';
     import { createInitialMatchState } from './js/pickleball-engine.js';
     import * as AuthMod from './js/auth.js';
 
@@ -574,6 +561,7 @@
     let modalResolver = null;
     let currentTabKey = getSavedTab();
     let draggingDock = false;
+    let isAutoPushingBracket = false;
 
     const dock = document.getElementById('mobileBottomDock');
     const thumb = document.getElementById('mobileBottomThumb');
@@ -737,9 +725,192 @@
       await update(ref(db, '/'), updates);
       showToast('Đã xóa sạch lịch & trận đấu cũ');
     };
-// POPUP XEM CHI TIẾT LƯỢT ĐẤU ĐỒNG ĐỘI
-    // Tìm sân đang đấu của 1 lượt đồng đội
-    // Tìm sân đang đấu của 1 lượt đồng đội (ưu tiên sân đang active, sau đó lấy courtId đã lưu trong trận)
+
+    const IMPORT_TEMPLATES = {
+      doubles_all: [
+        'Đôi Nam | Nguyễn Văn Hùng | Nam | 3.0 | Trần Minh Tuấn | Nam | 2.8',
+        'Đôi Nam | Lê Hoàng Nam | Nam | 2.9 | Phạm Đức Anh | Nam | 2.7',
+        'Đôi Nữ | Trần Thị Mai | Nữ | 2.7 | Nguyễn Thu Hoa | Nữ | 2.6',
+        'Đôi Nữ | Hoàng Lan Phương | Nữ | 2.8 | Vũ Ngọc Ánh | Nữ | 2.5',
+        'Đôi Nam Nữ | Phạm Minh | Nam | 2.9 | Đỗ Thùy Linh | Nữ | 2.7',
+        'Đôi Nam Nữ | Hoàng Đức | Nam | 2.8 | Bùi Thảo Vy | Nữ | 2.6'
+      ].join('\n'),
+      men_doubles: [
+        'Đôi Nam | VĐV Nam 1 | Nam | 3.0 | VĐV Nam 2 | Nam | 2.8',
+        'Đôi Nam | VĐV Nam 3 | Nam | 2.9 | VĐV Nam 4 | Nam | 2.7'
+      ].join('\n'),
+      women_doubles: [
+        'Đôi Nữ | VĐV Nữ 1 | Nữ | 2.7 | VĐV Nữ 2 | Nữ | 2.6',
+        'Đôi Nữ | VĐV Nữ 3 | Nữ | 2.8 | VĐV Nữ 4 | Nữ | 2.5'
+      ].join('\n'),
+      mixed_doubles: [
+        'Đôi Nam Nữ | VĐV Nam 1 | Nam | 2.9 | VĐV Nữ 1 | Nữ | 2.7',
+        'Đôi Nam Nữ | VĐV Nam 2 | Nam | 2.8 | VĐV Nữ 2 | Nữ | 2.6'
+      ].join('\n'),
+      team_events: [
+        'Đôi Nữ | VĐV Nữ 1 | VĐV Nữ 2',
+        'Đôi Nam | VĐV Nam 1 | VĐV Nam 2',
+        'Nam Nữ 1 | VĐV Nam 1 | VĐV Nữ 1',
+        'Nam Nữ 2 | VĐV Nam 2 | VĐV Nữ 2',
+        'Đơn 21đ | VĐV Đơn 1 | VĐV Đơn 2'
+      ].join('\n')
+    };
+
+    window.fillImportTemplate = (key) => {
+      const ta = document.getElementById('impRawText');
+      if (ta && IMPORT_TEMPLATES[key]) {
+        ta.value = IMPORT_TEMPLATES[key];
+        showToast('Đã chèn mẫu nội dung');
+      }
+    };
+
+    window.openImportPlayersModal = () => {
+      const isTeam = getActiveFormat() === 'team';
+      const templateBtns = isTeam
+        ? `<button type="button" onclick="fillImportTemplate('team_events')" class="px-2 py-1 rounded-md bg-white/[0.06] hover:bg-white/[0.1] text-[10px] font-bold text-amber-300">Mẫu các trận Đồng đội</button>`
+        : `
+          <button type="button" onclick="fillImportTemplate('doubles_all')" class="px-2 py-1 rounded-md bg-orange-500/15 hover:bg-orange-500/25 text-[10px] font-bold text-orange-300">Mẫu đủ 3 nội dung</button>
+          <button type="button" onclick="fillImportTemplate('men_doubles')" class="px-2 py-1 rounded-md bg-white/[0.06] hover:bg-white/[0.1] text-[10px] font-bold text-sky-300">Mẫu Đôi Nam</button>
+          <button type="button" onclick="fillImportTemplate('women_doubles')" class="px-2 py-1 rounded-md bg-white/[0.06] hover:bg-white/[0.1] text-[10px] font-bold text-pink-300">Mẫu Đôi Nữ</button>
+          <button type="button" onclick="fillImportTemplate('mixed_doubles')" class="px-2 py-1 rounded-md bg-white/[0.06] hover:bg-white/[0.1] text-[10px] font-bold text-emerald-300">Mẫu Đôi Nam Nữ</button>
+        `;
+
+      const bodyHtml = `
+        <div class="space-y-2.5 text-left">
+          ${isTeam ? `
+            <div>
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Tên CLB nhận danh sách</label>
+              <input id="impClubName" type="text" placeholder="VD: CLB Bính Dần 3" class="w-full mt-1 bg-[#0a0d14] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none" />
+            </div>` : ''}
+          <div class="flex flex-wrap items-center gap-1.5">${templateBtns}</div>
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Chọn file Excel (.xlsx, .csv)</label>
+            <input id="impExcelFile" type="file" accept=".xlsx,.xls,.csv" onchange="handleImportFileChange(event)" class="w-full mt-1 text-[11px] text-slate-300 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-orange-500/20 file:text-orange-300" />
+          </div>
+          <div>
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Danh sách nhập theo nội dung</label>
+            <textarea id="impRawText" rows="6" placeholder="${isTeam
+              ? 'Đôi Nữ | Mai | Hoa\nĐôi Nam | Hùng | Tuấn'
+              : 'Đôi Nam | Hùng | Nam | 3.0 | Tuấn | Nam | 2.8'}" class="w-full mt-1 bg-[#0a0d14] border border-white/15 rounded-xl p-2.5 text-xs text-white outline-none"></textarea>
+          </div>
+        </div>`;
+
+      openScModal({
+        title: 'Import VĐV theo nội dung thi đấu',
+        desc: isTeam
+          ? 'Mỗi dòng: Nội dung (Đôi Nữ, Đôi Nam, Nam Nữ 1, Nam Nữ 2, Đơn 21đ) | VĐV 1 | VĐV 2'
+          : 'Mỗi dòng: Nội dung (Đôi Nam / Đôi Nữ / Đôi Nam Nữ) | VĐV 1 | Giới | Trình | VĐV 2 | Giới | Trình',
+        bodyHtml,
+        items: [{ label: 'Lưu danh sách Import', active: true, onClick: () => applyImportedPlayers() }]
+      });
+    };
+
+    window.handleImportFileChange = (evt) => {
+      const file = evt.target.files?.[0];
+      if (!file || !window.XLSX) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const wb = window.XLSX.read(e.target.result, { type: 'array' });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const rows = window.XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        const lines = rows
+          .filter(r => Array.isArray(r) && r.some(cell => String(cell || '').trim()))
+          .map(r => r.map(cell => String(cell ?? '').trim()).join(' | '));
+        const ta = document.getElementById('impRawText');
+        if (ta) ta.value = lines.join('\n');
+      };
+      reader.readAsArrayBuffer(file);
+    };
+
+    function parseCategoryLabel(rawCat = '') {
+      const s = rawCat.trim().toLowerCase();
+      if (s.includes('nữ') && s.includes('nam')) return 'Đôi Nam Nữ';
+      if (s.includes('nữ') || s.includes('nu')) return 'Đôi Nữ';
+      if (s.includes('nam')) return 'Đôi Nam';
+      return rawCat.trim() || 'Đôi';
+    }
+
+    window.applyImportedPlayers = async () => {
+      const isTeam = getActiveFormat() === 'team';
+      const raw = (document.getElementById('impRawText')?.value || '').trim();
+      if (!raw) return showToast('Chưa có dữ liệu để import');
+
+      const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const updates = {};
+
+      if (isTeam) {
+        const clubName = (document.getElementById('impClubName')?.value || '').trim() || `CLB Import ${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
+        const eventLineups = {};
+        const membersMap = new Map();
+
+        lines.forEach(line => {
+          const parts = line.split(/[|,\t;]+/).map(s => s.trim()).filter(Boolean);
+          if (parts.length < 2) return;
+          const evName = parts[0];
+          const pList = parts.slice(1);
+          eventLineups[evName] = pList;
+          pList.forEach(pName => {
+            if (!membersMap.has(pName)) {
+              const gender = /nữ/i.test(evName) ? 'Nữ' : 'Nam';
+              membersMap.set(pName, { name: pName, gender, rating: 2.6 });
+            }
+          });
+        });
+
+        const members = Array.from(membersMap.values());
+        if (members.length < 2) return showToast('Cần ít nhất 2 VĐV để lưu CLB');
+        const id = `club_${Date.now()}`;
+        updates['settings/format'] = 'team';
+        updates[`teams/${id}`] = {
+          id,
+          name: clubName,
+          roster: members.map(p => p.name),
+          rosterDetails: members,
+          eventLineups
+        };
+        await update(ref(db, '/'), updates);
+        showToast(`Đã lưu ${clubName} (${members.length} VĐV)`);
+        return;
+      }
+
+      let added = 0;
+      lines.forEach((line, idx) => {
+        const parts = line.split(/[|,\t;]+/).map(s => s.trim());
+        const hasCatPrefix = /đôi|nam|nữ|nu|hỗn hợp/i.test(parts[0] || '') && parts.length >= 3;
+        const catRaw = hasCatPrefix ? parts[0] : '';
+        const offset = hasCatPrefix ? 1 : 0;
+
+        const n1 = parts[offset] || '';
+        const g1 = /nữ|nu|female|f/i.test(parts[offset + 1] || '') ? 'Nữ' : 'Nam';
+        const r1 = Number(parts[offset + 2]) || 2.5;
+        const n2 = parts[offset + 3] || '';
+        const g2 = /nữ|nu|female|f/i.test(parts[offset + 4] || '') ? 'Nữ' : 'Nam';
+        const r2 = Number(parts[offset + 5]) || 2.5;
+        if (!n1 || !n2) return;
+
+        const detectedType = (g1 === 'Nam' && g2 === 'Nam') ? 'Đôi Nam' : (g1 === 'Nữ' && g2 === 'Nữ') ? 'Đôi Nữ' : 'Đôi Nam Nữ';
+        const pairType = catRaw ? parseCategoryLabel(catRaw) : detectedType;
+        const id = `dbl_${Date.now()}_${idx}`;
+        updates[`doublesTeams/${id}`] = {
+          id,
+          name: `${n1} / ${n2}`,
+          pairType,
+          totalRating: Math.round((r1 + r2) * 10) / 10,
+          players: [n1, n2],
+          playerDetails: [
+            { name: n1, gender: g1, rating: r1 },
+            { name: n2, gender: g2, rating: r2 }
+          ]
+        };
+        added++;
+      });
+
+      if (!added) return showToast('Không đọc được cặp đôi hợp lệ');
+      updates['settings/format'] = 'doubles';
+      await update(ref(db, '/'), updates);
+      showToast(`Đã import ${added} cặp đôi theo nội dung`);
+    };
+
     function findActiveCourtForTie(tie) {
       if (!tie) return null;
       const mIds = tie.matchIds || [];
@@ -750,7 +921,6 @@
       );
       if (active) return { id: active[0], name: active[1].name || active[0], isAssigned: true };
 
-      // Dự phòng: lấy courtId từ trận con đang live/chưa xong, hoặc lấy Sân 1 nếu chưa gán
       const subMatch = mIds.map(id => dataStore.matches?.[id]).find(m => m && m.courtId && courts[m.courtId]);
       if (subMatch) return { id: subMatch.courtId, name: courts[subMatch.courtId].name || subMatch.courtId, isAssigned: false };
 
@@ -758,7 +928,6 @@
       return firstCourtId ? { id: firstCourtId, name: courts[firstCourtId].name || firstCourtId, isAssigned: false } : null;
     }
 
-    // Chuyển đúng lượt/trận lên sân và mở thẳng trang Trọng tài
     window.openRefereeDirect = (courtId, matchId = '', tieId = '') => {
       if (!courtId) return showToast('Không tìm thấy sân');
       const updates = {};
@@ -772,7 +941,6 @@
       window.open(`referee.html?court=${courtId}`, '_blank', 'noopener,noreferrer');
     };
 
-    // POPUP XEM CHI TIẾT LƯỢT ĐẤU ĐỒNG ĐỘI (CÓ TÊN SÂN & NÚT TRỌNG TÀI)
     window.openTieDetailModal = (tieId) => {
       const tie = dataStore.ties?.[tieId];
       if (!tie) return showToast('Không tìm thấy thông tin lượt đấu');
@@ -794,7 +962,7 @@
               <span class="font-extrabold text-amber-300">${subNames[idx] || `Trận ${idx + 1}`}</span>
               <div class="flex items-center gap-1.5 shrink-0">
                 <span class="${stColor} font-bold">${stText}</span>
-                ${canRef ? `<button type="button" onclick="openRefereeDirect('${activeCourt.id}', '${id}')" class="px-2 py-0.5 rounded-md fire-btn text-white font-extrabold text-[10px]">Trọng tài →</button>` : ''}
+                ${canRef ? `<button type="button" onclick="openRefereeDirect('${activeCourt.id}', '${id}', '${tie.id}')" class="px-2 py-0.5 rounded-md fire-btn text-white font-extrabold text-[10px]">Trọng tài →</button>` : ''}
               </div>
             </div>
             <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-[11px]">
@@ -863,7 +1031,6 @@
       openScModal({ title: `Chi tiết • ${court.name}`, bodyHtml: html });
     };
 
-    // POPUP CHI TIẾT CÁC TRẬN ĐÃ HOÀN THÀNH THEO TỪNG ĐỘI / CẶP
     window.openCompletedGroupModal = (groupKey) => {
       const done = Object.values(dataStore.matches || {}).filter(m => m.status === 'finished');
       const ties = dataStore.ties || {};
@@ -1005,7 +1172,6 @@
       applyTabVisibilityOnly();
     }
 
-    // Chuẩn hóa danh sách thành viên CLB (an toàn cho cả Array lẫn Object từ Firebase)
     function getClubMembersList(club) {
       if (!club) return [];
       if (Array.isArray(club.rosterDetails) && club.rosterDetails.length) return club.rosterDetails.filter(Boolean);
@@ -1038,130 +1204,7 @@
       await update(ref(db, '/'), { 'settings/format': 'team', [`teams/${id}`]: { id, name, roster: draftClubPlayers.map(p => p.name), rosterDetails: draftClubPlayers } });
       document.getElementById('admClubName').value = ''; draftClubPlayers = []; renderDraftClubPlayers(); showToast('Đã lưu CLB');
     };
-    window.openImportPlayersModal = () => {
-      const isTeam = getActiveFormat() === 'team';
-      const bodyHtml = `
-        <div class="space-y-2.5 text-left">
-          <div>
-            <label class="text-[10px] font-bold text-slate-400 uppercase">Nội dung thi đấu đích</label>
-            <select id="impTargetCategory" class="w-full mt-1 bg-[#0a0d14] border border-white/15 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none">
-              ${isTeam
-                ? `<option value="team_club">Đồng đội (Tạo/gộp CLB mới)</option>`
-                : `
-                  <option value="auto">Tự động phân loại (Đôi Nam / Đôi Nữ / Đôi Nam Nữ)</option>
-                  <option value="Đôi Nam">Đôi Nam</option>
-                  <option value="Đôi Nữ">Đôi Nữ</option>
-                  <option value="Đôi Nam Nữ">Đôi Nam Nữ</option>
-                `
-              }
-            </select>
-          </div>
-          ${isTeam ? `
-            <div>
-              <label class="text-[10px] font-bold text-slate-400 uppercase">Tên CLB nhận VĐV</label>
-              <input id="impClubName" type="text" placeholder="VD: CLB Bính Dần 3" class="w-full mt-1 bg-[#0a0d14] border border-white/15 rounded-xl px-3 py-2 text-xs text-white outline-none" />
-            </div>` : ''}
-          <div>
-            <label class="text-[10px] font-bold text-slate-400 uppercase">Chọn file Excel (.xlsx, .csv)</label>
-            <input id="impExcelFile" type="file" accept=".xlsx,.xls,.csv" onchange="handleImportFileChange(event)" class="w-full mt-1 text-[11px] text-slate-300 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-[11px] file:font-bold file:bg-orange-500/20 file:text-orange-300" />
-          </div>
-          <div>
-            <label class="text-[10px] font-bold text-slate-400 uppercase">Hoặc dán danh sách (mỗi dòng 1 mục)</label>
-            <textarea id="impRawText" rows="5" placeholder="${isTeam
-              ? 'Hùng | Nam | 3.0\nLan | Nữ | 2.6'
-              : 'Hùng | Nam | 3.0 | Tuấn | Nam | 2.8\nMai | Nữ | 2.7 | Hoa | Nữ | 2.6'}" class="w-full mt-1 bg-[#0a0d14] border border-white/15 rounded-xl p-2.5 text-xs text-white outline-none"></textarea>
-          </div>
-        </div>`;
 
-      openScModal({
-        title: 'Import VĐV theo nội dung',
-        desc: isTeam ? 'Nhập mỗi dòng: Tên | Giới tính | Trình' : 'Nhập mỗi dòng: VĐV1 | Giới1 | Trình1 | VĐV2 | Giới2 | Trình2',
-        bodyHtml,
-        items: [{ label: 'Lưu danh sách Import', active: true, onClick: () => applyImportedPlayers() }]
-      });
-    };
-
-    window.handleImportFileChange = (evt) => {
-      const file = evt.target.files?.[0];
-      if (!file || !window.XLSX) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const wb = window.XLSX.read(e.target.result, { type: 'array' });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        const rows = window.XLSX.utils.sheet_to_json(sheet, { header: 1 });
-        const lines = rows
-          .filter(r => Array.isArray(r) && r.some(cell => String(cell || '').trim()))
-          .map(r => r.map(cell => String(cell ?? '').trim()).join(' | '));
-        const ta = document.getElementById('impRawText');
-        if (ta) ta.value = lines.join('\n');
-      };
-      reader.readAsArrayBuffer(file);
-    };
-
-    window.applyImportedPlayers = async () => {
-      const isTeam = getActiveFormat() === 'team';
-      const raw = (document.getElementById('impRawText')?.value || '').trim();
-      const targetCat = document.getElementById('impTargetCategory')?.value || 'auto';
-      if (!raw) return showToast('Chưa có dữ liệu để import');
-
-      const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-      const updates = {};
-
-      if (isTeam) {
-        const clubName = (document.getElementById('impClubName')?.value || '').trim() || `CLB Import ${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
-        const members = lines.map(line => {
-          const parts = line.split(/[|,\t;]+/).map(s => s.trim());
-          return {
-            name: parts[0] || 'VĐV',
-            gender: /nữ|nu|female|f/i.test(parts[1] || '') ? 'Nữ' : 'Nam',
-            rating: Number(parts[2]) || 2.5
-          };
-        }).filter(m => m.name);
-
-        if (members.length < 2) return showToast('Cần ít nhất 2 VĐV để tạo CLB');
-        const id = `club_${Date.now()}`;
-        updates['settings/format'] = 'team';
-        updates[`teams/${id}`] = { id, name: clubName, roster: members.map(p => p.name), rosterDetails: members };
-        await update(ref(db, '/'), updates);
-        showToast(`Đã import ${members.length} VĐV vào ${clubName}`);
-        return;
-      }
-
-      let added = 0;
-      lines.forEach((line, idx) => {
-        const parts = line.split(/[|,\t;]+/).map(s => s.trim());
-        const n1 = parts[0] || '';
-        const g1 = /nữ|nu|female|f/i.test(parts[1] || '') ? 'Nữ' : 'Nam';
-        const r1 = Number(parts[2]) || 2.5;
-        const n2 = parts[3] || '';
-        const g2 = /nữ|nu|female|f/i.test(parts[4] || '') ? 'Nữ' : 'Nam';
-        const r2 = Number(parts[5]) || 2.5;
-        if (!n1 || !n2) return;
-
-        const detectedType = (g1 === 'Nam' && g2 === 'Nam') ? 'Đôi Nam' : (g1 === 'Nữ' && g2 === 'Nữ') ? 'Đôi Nữ' : 'Đôi Nam Nữ';
-        const pairType = targetCat === 'auto' ? detectedType : targetCat;
-        const id = `dbl_${Date.now()}_${idx}`;
-        updates[`doublesTeams/${id}`] = {
-          id,
-          name: `${n1} / ${n2}`,
-          pairType,
-          totalRating: Math.round((r1 + r2) * 10) / 10,
-          players: [n1, n2],
-          playerDetails: [
-            { name: n1, gender: g1, rating: r1 },
-            { name: n2, gender: g2, rating: r2 }
-          ]
-        };
-        added++;
-      });
-
-      if (!added) return showToast('Không đọc được cặp đôi hợp lệ (cần đủ tên 2 VĐV/dòng)');
-      updates['settings/format'] = 'doubles';
-      await update(ref(db, '/'), updates);
-      showToast(`Đã import ${added} cặp đôi`);
-    };
-
-    // XÓA CLB & XÓA VĐV (ĐÃ SỬA DÙNG ĐÚNG KEY FIREBASE & XỬ LÝ AN TOÀN)
     window.deleteClubItem = async (clubId, clubName) => {
       if (!clubId) return;
       if (!await scConfirm('Xóa CLB', `Xóa CLB "${clubName}" và toàn bộ VĐV của CLB này?`, 'XÓA CLB', true)) return;
@@ -1347,8 +1390,6 @@
       return rounds;
     }
 
-    let isAutoPushingBracket = false;
-
     async function autoGenerateBracketWhenGroupStageDone() {
       const draw = dataStore.groupDraw;
       if (!draw || !draw.groups) return;
@@ -1469,14 +1510,12 @@
       if (changed) await set(ref(db, 'seriesBracket'), nextSb);
     }
 
-      // TỰ ĐỘNG ĐẨY CÁC TRẬN ĐÃ ĐỦ 2 ĐỘI Ở NHÁNH SERIE A / SERIE B RA SÂN TRỐNG
     async function autoPushReadyBracketToCourts() {
       const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
       const sbScope = dataStore.seriesBracket?.[scope];
       if (!sbScope) return 0;
 
       const courts = dataStore.courts || {};
-      const matches = dataStore.matches || {};
       const freeCourts = Object.entries(courts)
         .filter(([_, c]) => !c.activeMatchId && !c.activeTieId)
         .map(([cId]) => cId);
@@ -1532,7 +1571,20 @@
       return pushed;
     }
 
-    // MỞ POPUP XEM HOẶC ĐẨY TRẬN NHÁNH RA SÂN KHI BẤM VÀO Ô TRONG SƠ ĐỒ
+    window.playBracketMatchNow = async (seriesKey, roundIdx, matchIdx) => {
+      const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
+      const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
+      if (!slot || !slot.ready) return showToast('Chưa đủ 2 đội');
+      const cId = document.getElementById('bracketTargetCourt')?.value || Object.keys(dataStore.courts || {})[0] || 'court_1';
+      const mId = `br_${scope}_${seriesKey}_${roundIdx}_${matchIdx}_${Date.now().toString().slice(-4)}`, isTeam = scope === 'team';
+      const m = createInitialMatchState({ id: mId, stage: 'knockout', isDreambreaker: isTeam, category: `${isTeam ? 'Đồng đội • Đơn 21đ' : 'Đôi'} • ${seriesKey === 'serieA' ? 'Serie A' : 'Serie B'} • ${slot.round}`, targetScore: isTeam ? 21 : 15, switchPoint: isTeam ? 11 : 8, winByTwo: true, teamAName: slot.team1, teamAPlayers: isTeam ? ['4 VĐV A (Cặp 1)', '4 VĐV A (Cặp 2)'] : [slot.team1, ''], teamBName: slot.team2, teamBPlayers: isTeam ? ['4 VĐV B (Cặp 1)', '4 VĐV B (Cặp 2)'] : [slot.team2, ''] });
+      m.status = 'live'; m.courtId = cId;
+      const updatedTree = JSON.parse(JSON.stringify(dataStore.seriesBracket?.[scope] || {}));
+      if (updatedTree[seriesKey]?.[roundIdx]?.[matchIdx]) updatedTree[seriesKey][roundIdx][matchIdx].matchId = mId;
+      await update(ref(db, '/'), { [`matches/${mId}`]: m, [`courts/${cId}/activeMatchId`]: mId, [`courts/${cId}/activeTieId`]: '', [`seriesBracket/${scope}`]: updatedTree });
+      showToast(`Đã đẩy trận ra ${dataStore.courts[cId]?.name || cId}`); window.switchPubTab('live');
+    };
+
     window.openBracketMatchDetailsModal = (seriesKey, roundIdx, matchIdx) => {
       const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
       const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
@@ -1559,21 +1611,7 @@
         showToast('Trận này đang chờ xác định đủ 2 đội');
       }
     };
-  window.playBracketMatchNow = async (seriesKey, roundIdx, matchIdx) => {
-      const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
-      const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
-      if (!slot || !slot.ready) return showToast('Chưa đủ 2 đội');
-      const cId = document.getElementById('bracketTargetCourt')?.value || Object.keys(dataStore.courts || {})[0] || 'court_1';
-      const mId = `br_${scope}_${seriesKey}_${roundIdx}_${matchIdx}_${Date.now().toString().slice(-4)}`, isTeam = scope === 'team';
-      const m = createInitialMatchState({ id: mId, stage: 'knockout', isDreambreaker: isTeam, category: `${isTeam ? 'Đồng đội • Đơn 21đ' : 'Đôi'} • ${seriesKey === 'serieA' ? 'Serie A' : 'Serie B'} • ${slot.round}`, targetScore: isTeam ? 21 : 15, switchPoint: isTeam ? 11 : 8, winByTwo: true, teamAName: slot.team1, teamAPlayers: isTeam ? ['4 VĐV A (Cặp 1)', '4 VĐV A (Cặp 2)'] : [slot.team1, ''], teamBName: slot.team2, teamBPlayers: isTeam ? ['4 VĐV B (Cặp 1)', '4 VĐV B (Cặp 2)'] : [slot.team2, ''] });
-      m.status = 'live'; m.courtId = cId;
-      const updatedTree = JSON.parse(JSON.stringify(dataStore.seriesBracket?.[scope] || {}));
-      if (updatedTree[seriesKey]?.[roundIdx]?.[matchIdx]) updatedTree[seriesKey][roundIdx][matchIdx].matchId = mId;
-      await update(ref(db, '/'), { [`matches/${mId}`]: m, [`courts/${cId}/activeMatchId`]: mId, [`courts/${cId}/activeTieId`]: '', [`seriesBracket/${scope}`]: updatedTree });
-      showToast(`Đã đẩy trận ra ${dataStore.courts[cId]?.name || cId}`); window.switchPubTab('live');
-    };
 
-    // Kiểm tra 1 lượt đồng đội đã đấu xong hết chưa
     function isTieFinished(tie) {
       const subs = (tie.matchIds || []).map(id => dataStore.matches?.[id]).filter(Boolean);
       if (tie.walkoverWinner) return true;
@@ -1588,7 +1626,6 @@
       return true;
     }
 
-    // TỰ ĐỘNG ĐIỀU PHỐI SÂN: KHÔNG TRÙNG CLB CÙNG LÚC & ƯU TIÊN ĐỘI ĐÃ NGHỈ
     window.autoDispatchCourts = async () => {
       const isTeam = getActiveFormat() === 'team';
       const courts = dataStore.courts || {};
@@ -1703,12 +1740,12 @@
         }
       }
 
-     await update(ref(db, '/'), updates);
-   const bracketPushed = assignedCount === 0 ? await autoPushReadyBracketToCourts() : 0;
-   const totalPushed = assignedCount + bracketPushed;
-   showToast(totalPushed > 0
-     ? `Đã tự động điều phối ${totalPushed} sân`
-     : 'Đã giải phóng sân xong • Không còn trận chờ');
+      await update(ref(db, '/'), updates);
+      const bracketPushed = assignedCount === 0 ? await autoPushReadyBracketToCourts() : 0;
+      const totalPushed = assignedCount + bracketPushed;
+      showToast(totalPushed > 0
+        ? `Đã tự động điều phối ${totalPushed} sân`
+        : 'Đã giải phóng sân xong • Không còn trận chờ');
     };
 
     window.assignCourtInFrame = async (cId, selectedId) => {
@@ -1799,11 +1836,11 @@
 
     function renderBracketTrees() {
       const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team', block = dataStore.seriesBracket?.[scope] || {};
-      renderBracketTree('treeSerieA', block.serieA, 'serieA'); renderBracketTree('treeSerieB', block.serieB, 'serieB');
+      renderBracketTree('treeSerieA', block.serieA, 'serieA');
+      renderBracketTree('treeSerieB', block.serieB, 'serieB');
       if (highlightedTeamName) window.highlightTeamJourney(highlightedTeamName);
     }
 
-    // Bấm nút Trọng tài trên nhánh: nếu chưa lên sân thì tự đẩy ra sân trống rồi mở thẳng bàn chấm điểm
     window.openBracketRefereeNow = async (seriesKey, roundIdx, matchIdx) => {
       const scope = getActiveFormat() === 'doubles' ? 'doubles' : 'team';
       const slot = dataStore.seriesBracket?.[scope]?.[seriesKey]?.[roundIdx]?.[matchIdx];
@@ -1816,7 +1853,6 @@
       }
       if (!slot.ready) return showToast('Chưa xác định đủ 2 đội');
 
-      // Tìm sân trống (nếu không có thì lấy sân đang chọn ở mục Sân nhánh)
       const courts = dataStore.courts || {};
       const freeCourt = Object.entries(courts).find(([_, c]) => !c.activeMatchId && !c.activeTieId)?.[0];
       const cId = freeCourt || document.getElementById('bracketTargetCourt')?.value || Object.keys(courts)[0] || 'court_1';
@@ -1923,7 +1959,6 @@
       el.innerHTML = roundsHtml + championColHtml;
     }
 
-    // GOM KẾT QUẢ ĐÃ HOÀN THÀNH THEO TỪNG CẶP ĐỘI • BẤM VÀO MỚI HIỆN POPUP CHI TIẾT
     function renderCompletedMatches() {
       const done = Object.values(dataStore.matches || {}).filter(m => m.status === 'finished');
       const ties = dataStore.ties || {};
@@ -2019,8 +2054,8 @@
               <div class="bg-white/[0.03] px-3.5 py-2 border-b border-white/[0.06] flex items-center justify-between gap-2">
                 <span class="font-extrabold text-xs text-white uppercase truncate">${c.name}</span>
                 <div class="flex items-center gap-1.5 shrink-0">
-                  <span class="px-2 py-0.5 rounded-md bg-orange-500/15 text-orange-300 text-[10px] font-bold">Chi tiết</span>
                   ${!allDone ? `<a href="referee.html?court=${cId}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="px-2 py-0.5 rounded-md fire-btn text-white text-[10px] font-extrabold">Trọng tài</a>` : ''}
+                  <span class="px-2 py-0.5 rounded-md bg-orange-500/15 text-orange-300 text-[10px] font-bold">Chi tiết</span>
                   <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md ${allDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${allDone ? 'Đã xong' : '● LIVE'}</span>
                 </div>
               </div>
@@ -2044,7 +2079,7 @@
             <div class="bg-white/[0.03] px-3.5 py-2 border-b border-white/[0.06] flex items-center justify-between gap-2">
               <span class="font-extrabold text-xs text-white uppercase truncate">${c.name}</span>
               <div class="flex items-center gap-1.5 shrink-0">
-              ${!isDone ? `<a href="referee.html?court=${cId}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md fire-btn text-white text-[10px] font-extrabold">Trọng tài</a>` : ''}
+                ${!isDone ? `<a href="referee.html?court=${cId}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md fire-btn text-white text-[10px] font-extrabold">Trọng tài</a>` : ''}
                 <button type="button" onclick="openCourtDetailModal('${cId}')" class="px-2 py-0.5 rounded-md bg-white/[0.07] hover:bg-white/[0.12] text-slate-200 text-[10px] font-bold">Chi tiết</button>
                 <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md ${isDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${isDone ? 'Đã xong' : '● LIVE'}</span>
               </div>
@@ -2132,12 +2167,13 @@
         courts: d.courts || {}, matches: d.matches || {}, groupDraw: d.groupDraw || null,
         seriesBracket: d.seriesBracket || null, customPlayers: d.customPlayers || {}
       };
-// Tự động bỏ chữ "(Trung Tâm)" khỏi tên sân trên Firebase
-   Object.entries(dataStore.courts || {}).forEach(([cId, c]) => {
-     if (c?.name && /\(trung\s*tâm\)/i.test(c.name)) {
-       update(ref(db, `courts/${cId}`), { name: c.name.replace(/\s*\(trung\s*tâm\)/gi, '').trim() });
-     }
-   });
+
+      Object.entries(dataStore.courts || {}).forEach(([cId, c]) => {
+        if (c?.name && /\(trung\s*tâm\)/i.test(c.name)) {
+          update(ref(db, `courts/${cId}`), { name: c.name.replace(/\s*\(trung\s*tâm\)/gi, '').trim() });
+        }
+      });
+
       const tourName = dataStore.settings.name || 'Giải Pickleball Bính Dần 1986';
       document.getElementById('pubTourName').textContent = tourName;
       document.getElementById('scHeroTitle').textContent = tourName;
@@ -2173,6 +2209,8 @@
           ? 'text-emerald-400'
           : (isLive ? 'text-orange-400' : 'text-slate-400');
 
+        const nextSubId = (tie.matchIds || []).find(id => dataStore.matches?.[id]?.status !== 'finished') || (tie.matchIds || [])[0] || '';
+
         return `
           <div onclick="openTieDetailModal('${tie.id}')" class="sc-card rounded-2xl px-3.5 py-3 cursor-pointer hover:border-orange-500/40 active:scale-[0.99] transition space-y-2">
             <div class="flex items-center justify-between gap-2">
@@ -2189,12 +2227,13 @@
             <div class="flex items-center justify-between gap-2 text-[10px] pt-1 border-t border-white/[0.06]">
               <span class="font-bold ${statusColor} truncate">${statusText}</span>
               <div class="flex items-center gap-2 shrink-0">
-                ${activeCourt && !allDone ? `<a href="referee.html?court=${activeCourt.id}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="px-2 py-0.5 rounded-md fire-btn text-white font-extrabold">Trọng tài</a>` : ''}
+                ${activeCourt && !allDone ? `<button type="button" onclick="event.stopPropagation(); openRefereeDirect('${activeCourt.id}', '${nextSubId}', '${tie.id}')" class="px-2 py-0.5 rounded-md fire-btn text-white font-extrabold">Trọng tài</button>` : ''}
                 <span class="text-slate-400 font-semibold">Chi tiết →</span>
               </div>
             </div>
           </div>`;
       }).join('') || '<p class="text-xs text-slate-500 col-span-full text-center py-8">Chưa có lượt đấu đồng đội nào.</p>';
+
       const stats = {};
       Object.values(dataStore.teams || {}).forEach(t => { stats[t.name] = { name: t.name, played: 0, w: 0, d: 0, l: 0, setDiff: 0, ptDiff: 0, pts: 0 }; });
       tiesArr.filter(t => t.stage === 'group').forEach(tie => {
