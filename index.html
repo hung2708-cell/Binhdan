@@ -679,7 +679,7 @@
           ? 'w-full py-2.5 px-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-xs text-center'
           : (it.active ? 'w-full py-2.5 px-3 rounded-xl fire-btn text-white font-black text-xs text-center' : 'w-full py-2.5 px-3 rounded-xl bg-[#0a0d14] border border-white/10 text-slate-100 font-semibold text-xs text-center');
         btn.textContent = it.label;
-        btn.onclick = () => { closeScModal(); it.onClick(); };
+        btn.onclick = () => { it.onClick(); closeScModal(); };
         body.appendChild(btn);
       });
       document.getElementById('scModal').classList.remove('hidden');
