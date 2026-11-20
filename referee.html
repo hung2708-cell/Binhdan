@@ -1169,7 +1169,12 @@
       nextState.servingBox = (nextState.servingTeam !== currentMatch.servingTeam) ? 0 : (curBox === 0 ? 1 : 0);
       saveMatch(nextState);
     };
-    window.handleRallyPoint = (team) => { if (!currentMatch || isMatchFinished(currentMatch)) return; playBeep(880, 0.12); saveMatch(awardPoint(currentMatch, team)); };
+    window.handleRallyPoint = (side) => {
+  if (!currentMatch || isMatchFinished(currentMatch)) return;
+  const actualTeam = currentMatch.sidesSwitched ? (side === 'A' ? 'B' : 'A') : side;
+  playBeep(880, 0.12);
+  saveMatch(awardPoint(currentMatch, actualTeam));
+};
     window.handleSubtractPoint = async (side) => {
       if (!currentMatch || !currentMatchId) return;
       const actualSide = currentMatch.sidesSwitched ? (side === 'A' ? 'B' : 'A') : side;
@@ -1230,6 +1235,8 @@
       document.getElementById('scoreA').textContent = leftTeam.score;
       document.getElementById('nameB').textContent = rightTeam.name;
       document.getElementById('scoreB').textContent = rightTeam.score;
+      document.getElementById('btnRallyA').textContent = `+1 ${leftTeam.name}`;
+document.getElementById('btnRallyB').textContent = `+1 ${rightTeam.name}`;
       document.getElementById('toA').textContent = m.teamA.timeouts ?? 2;
       document.getElementById('toB').textContent = m.teamB.timeouts ?? 2;
       const started = isMatchStarted(m);
