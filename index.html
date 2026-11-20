@@ -736,25 +736,36 @@
     };
 // POPUP XEM CHI TIẾT LƯỢT ĐẤU ĐỒNG ĐỘI
     // Tìm sân đang đấu của 1 lượt đồng đội
+    // Tìm sân đang đấu của 1 lượt đồng đội (ưu tiên sân đang active, sau đó lấy courtId đã lưu trong trận)
     function findActiveCourtForTie(tie) {
       if (!tie) return null;
       const mIds = tie.matchIds || [];
-      const found = Object.entries(dataStore.courts || {}).find(([_, c]) =>
+      const courts = dataStore.courts || {};
+
+      const active = Object.entries(courts).find(([_, c]) =>
         c.activeTieId === tie.id || (c.activeMatchId && mIds.includes(c.activeMatchId))
       );
-      return found ? { id: found[0], name: found[1].name || found[0] } : null;
+      if (active) return { id: active[0], name: active[1].name || active[0], isAssigned: true };
+
+      // Dự phòng: lấy courtId từ trận con đang live/chưa xong, hoặc lấy Sân 1 nếu chưa gán
+      const subMatch = mIds.map(id => dataStore.matches?.[id]).find(m => m && m.courtId && courts[m.courtId]);
+      if (subMatch) return { id: subMatch.courtId, name: courts[subMatch.courtId].name || subMatch.courtId, isAssigned: false };
+
+      const firstCourtId = Object.keys(courts)[0];
+      return firstCourtId ? { id: firstCourtId, name: courts[firstCourtId].name || firstCourtId, isAssigned: false } : null;
     }
 
-    // Chuyển đúng trận con lên sân và mở thẳng trang Trọng tài
-    window.openRefereeDirect = (courtId, matchId = '') => {
-      if (!courtId) return showToast('Lượt này chưa được gán vào sân');
+    // Chuyển đúng lượt/trận lên sân và mở thẳng trang Trọng tài
+    window.openRefereeDirect = (courtId, matchId = '', tieId = '') => {
+      if (!courtId) return showToast('Không tìm thấy sân');
+      const updates = {};
+      if (tieId) updates[`courts/${courtId}/activeTieId`] = tieId;
       if (matchId) {
-        update(ref(db, '/'), {
-          [`courts/${courtId}/activeMatchId`]: matchId,
-          [`matches/${matchId}/courtId`]: courtId,
-          ...(dataStore.matches?.[matchId]?.status === 'waiting' ? { [`matches/${matchId}/status`]: 'live' } : {})
-        });
+        updates[`courts/${courtId}/activeMatchId`] = matchId;
+        updates[`matches/${matchId}/courtId`] = courtId;
+        if (dataStore.matches?.[matchId]?.status === 'waiting') updates[`matches/${matchId}/status`] = 'live';
       }
+      if (Object.keys(updates).length) update(ref(db, '/'), updates);
       window.open(`referee.html?court=${courtId}`, '_blank', 'noopener,noreferrer');
     };
 
@@ -1710,6 +1721,8 @@
                 <span class="font-extrabold text-xs text-white uppercase truncate">${c.name}</span>
                 <div class="flex items-center gap-1.5 shrink-0">
                   <span class="px-2 py-0.5 rounded-md bg-orange-500/15 text-orange-300 text-[10px] font-bold">Chi tiết</span>
+                  ${!allDone ? `<a href="referee.html?court=${cId}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="px-2 py-0.5 rounded-md fire-btn text-white text-[10px] font-extrabold">Trọng tài</a>` : ''}
+<span class="px-2 py-0.5 rounded-md bg-orange-500/15 text-orange-300 text-[10px] font-bold">Chi tiết</span>
                   <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md ${allDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${allDone ? 'Đã xong' : '● LIVE'}</span>
                 </div>
               </div>
