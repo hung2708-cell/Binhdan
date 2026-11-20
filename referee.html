@@ -1145,10 +1145,13 @@
       const tie = getActiveTie(m);
       document.getElementById('matchPickerChevron').classList.toggle('hidden', !tie);
 
-      document.getElementById('nameA').textContent = m.teamA.name;
-      document.getElementById('scoreA').textContent = m.teamA.score;
-      document.getElementById('nameB').textContent = m.teamB.name;
-      document.getElementById('scoreB').textContent = m.teamB.score;
+      const isSwitchedBoard = Boolean(m.sidesSwitched);
+      const leftTeam = isSwitchedBoard ? m.teamB : m.teamA;
+      const rightTeam = isSwitchedBoard ? m.teamA : m.teamB;
+      document.getElementById('nameA').textContent = leftTeam.name;
+      document.getElementById('scoreA').textContent = leftTeam.score;
+      document.getElementById('nameB').textContent = rightTeam.name;
+      document.getElementById('scoreB').textContent = rightTeam.score;
       document.getElementById('toA').textContent = m.teamA.timeouts ?? 2;
       document.getElementById('toB').textContent = m.teamB.timeouts ?? 2;
       const started = isMatchStarted(m);
