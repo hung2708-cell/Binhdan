@@ -1156,7 +1156,26 @@
       document.querySelectorAll('#preMatchSetup button').forEach(btn => { btn.disabled = started; });
 
       const isA = m.servingTeam === 'A';
-      document.getElementById('courtModeLabel').textContent = isSingles ? `Sân 2D • ĐƠN (Cặp #${alerts.currentPairSlot || 1})` : 'Sân 2D • 4 Ô VĐV';
+      const switched = Boolean(m.sidesSwitched);
+      const isLeftServing = switched ? !isA : isA;
+      const leftColor = switched ? 'bg-rose-300' : 'bg-sky-300';
+      const rightColor = switched ? 'bg-sky-300' : 'bg-rose-300';
+
+      // Cập nhật nhãn góc sân theo bên mới sau khi đổi sân
+      const lblLeft = switched ? 'B' : 'A';
+      const lblRight = switched ? 'A' : 'B';
+      const setCornerLbl = (boxId, text) => {
+        const sp = document.querySelector(`#${boxId} > span`);
+        if (sp) sp.textContent = text;
+      };
+      setCornerLbl('boxA1', `Ô Lẻ ${lblLeft}`);
+      setCornerLbl('boxA0', `Ô Chẵn ${lblLeft}`);
+      setCornerLbl('boxB0', `Ô Chẵn ${lblRight}`);
+      setCornerLbl('boxB1', `Ô Lẻ ${lblRight}`);
+
+      document.getElementById('courtModeLabel').textContent = isSingles
+        ? `Sân 2D • ĐƠN (Cặp #${alerts.currentPairSlot || 1})`
+        : `Sân 2D • 4 Ô VĐV${switched ? ' (ĐÃ ĐỔI SÂN)' : ''}`;
 
       if (isSingles) {
         const pairIdx = Math.max(0, (alerts.currentPairSlot || 1) - 1);
@@ -1165,12 +1184,15 @@
         const pA = listA[pairIdx % Math.max(1, listA.length)] || m.teamA.name;
         const pB = listB[pairIdx % Math.max(1, listB.length)] || m.teamB.name;
 
+        const pLeft = switched ? pB : pA;
+        const pRight = switched ? pA : pB;
+
         const srvScore = isA ? m.teamA.score : m.teamB.score;
         const isEven = (srvScore % 2 === 0);
         const activeBoxA = isEven ? 'boxA0' : 'boxA1';
         const activeBoxB = isEven ? 'boxB0' : 'boxB1';
-        const serverBox = isA ? activeBoxA : activeBoxB;
-        const receiverBox = isA ? activeBoxB : activeBoxA;
+        const serverBox = isLeftServing ? activeBoxA : activeBoxB;
+        const receiverBox = isLeftServing ? activeBoxB : activeBoxA;
 
         updateServeArrow(serverBox, receiverBox, finished);
 
@@ -1192,10 +1214,10 @@
           nameEl.textContent = playerName;
         };
 
-        renderSingleQuad('A0', activeBoxA, pA, 'bg-sky-300');
-        renderSingleQuad('A1', activeBoxA, pA, 'bg-sky-300');
-        renderSingleQuad('B0', activeBoxB, pB, 'bg-rose-300');
-        renderSingleQuad('B1', activeBoxB, pB, 'bg-rose-300');
+        renderSingleQuad('A0', activeBoxA, pLeft, leftColor);
+        renderSingleQuad('A1', activeBoxA, pLeft, leftColor);
+        renderSingleQuad('B0', activeBoxB, pRight, rightColor);
+        renderSingleQuad('B1', activeBoxB, pRight, rightColor);
 
         document.getElementById('lblPickTeam').textContent = isA ? m.teamA.name : m.teamB.name;
         document.getElementById('lblPickServer').textContent = isA ? pA : pB;
@@ -1205,13 +1227,16 @@
         const [pA0, pA1] = getPlayers(m.teamA, 'A');
         const [pB0, pB1] = getPlayers(m.teamB, 'B');
 
+        const [left0, left1] = switched ? [pB0, pB1] : [pA0, pA1];
+        const [right0, right1] = switched ? [pA0, pA1] : [pB0, pB1];
+
         document.getElementById('lblPickTeam').textContent = isA ? m.teamA.name : m.teamB.name;
         document.getElementById('lblPickServer').textContent = isA ? pA0 : pB0;
         document.getElementById('lblPickReceiver').textContent = isA ? pB0 : pA0;
 
         const sBox = (m.servingBox !== undefined) ? m.servingBox : 0;
-        const serverBox = isA ? (sBox === 0 ? 'boxA0' : 'boxA1') : (sBox === 0 ? 'boxB0' : 'boxB1');
-        const receiverBox = isA ? (sBox === 0 ? 'boxB0' : 'boxB1') : (sBox === 0 ? 'boxA0' : 'boxA1');
+        const serverBox = isLeftServing ? (sBox === 0 ? 'boxA0' : 'boxA1') : (sBox === 0 ? 'boxB0' : 'boxB1');
+        const receiverBox = isLeftServing ? (sBox === 0 ? 'boxB0' : 'boxB1') : (sBox === 0 ? 'boxA0' : 'boxA1');
 
         updateServeArrow(serverBox, receiverBox, finished);
 
@@ -1229,14 +1254,14 @@
           coreEl.className = `dot-core ${isSrv ? 'bg-amber-400' : (isRcv ? 'bg-emerald-400' : defaultCoreColor)}`;
         };
 
-        styleQuad('A0', 'bg-sky-300'); styleQuad('A1', 'bg-sky-300');
-        styleQuad('B0', 'bg-rose-300'); styleQuad('B1', 'bg-rose-300');
+        styleQuad('A0', leftColor); styleQuad('A1', leftColor);
+        styleQuad('B0', rightColor); styleQuad('B1', rightColor);
 
-        document.getElementById('pA0').textContent = pA0; document.getElementById('pA1').textContent = pA1;
-        document.getElementById('pB0').textContent = pB0; document.getElementById('pB1').textContent = pB1;
+        document.getElementById('pA0').textContent = left0; document.getElementById('pA1').textContent = left1;
+        document.getElementById('pB0').textContent = right0; document.getElementById('pB1').textContent = right1;
 
-        const srvName = serverBox === 'boxA0' ? pA0 : serverBox === 'boxA1' ? pA1 : serverBox === 'boxB0' ? pB0 : pB1;
-        const rcvName = receiverBox === 'boxA0' ? pA0 : receiverBox === 'boxA1' ? pA1 : receiverBox === 'boxB0' ? pB0 : pB1;
+        const srvName = serverBox === 'boxA0' ? left0 : serverBox === 'boxA1' ? left1 : serverBox === 'boxB0' ? right0 : right1;
+        const rcvName = receiverBox === 'boxA0' ? left0 : receiverBox === 'boxA1' ? left1 : receiverBox === 'boxB0' ? right0 : right1;
         document.getElementById('serveHint').textContent = finished ? 'Trận đấu đã kết thúc' : `🟡 Phát: ${srvName} (#${m.serverNumber}) → 🟢 Đỡ: ${rcvName}`;
       }
 
