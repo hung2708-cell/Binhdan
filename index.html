@@ -1746,6 +1746,7 @@
             <div class="bg-white/[0.03] px-3.5 py-2 border-b border-white/[0.06] flex items-center justify-between gap-2">
               <span class="font-extrabold text-xs text-white uppercase truncate">${c.name}</span>
               <div class="flex items-center gap-1.5 shrink-0">
+              ${!isDone ? `<a href="referee.html?court=${cId}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md fire-btn text-white text-[10px] font-extrabold">Trọng tài</a>` : ''}
                 <button type="button" onclick="openCourtDetailModal('${cId}')" class="px-2 py-0.5 rounded-md bg-white/[0.07] hover:bg-white/[0.12] text-slate-200 text-[10px] font-bold">Chi tiết</button>
                 <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md ${isDone ? 'bg-white/10 text-slate-300' : 'bg-emerald-500/20 text-emerald-400'}">${isDone ? 'Đã xong' : '● LIVE'}</span>
               </div>
