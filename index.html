@@ -735,22 +735,53 @@
       showToast('Đã xóa sạch lịch & trận đấu cũ');
     };
 // POPUP XEM CHI TIẾT LƯỢT ĐẤU ĐỒNG ĐỘI
+    // Tìm sân đang đấu của 1 lượt đồng đội
+    function findActiveCourtForTie(tie) {
+      if (!tie) return null;
+      const mIds = tie.matchIds || [];
+      const found = Object.entries(dataStore.courts || {}).find(([_, c]) =>
+        c.activeTieId === tie.id || (c.activeMatchId && mIds.includes(c.activeMatchId))
+      );
+      return found ? { id: found[0], name: found[1].name || found[0] } : null;
+    }
+
+    // Chuyển đúng trận con lên sân và mở thẳng trang Trọng tài
+    window.openRefereeDirect = (courtId, matchId = '') => {
+      if (!courtId) return showToast('Lượt này chưa được gán vào sân');
+      if (matchId) {
+        update(ref(db, '/'), {
+          [`courts/${courtId}/activeMatchId`]: matchId,
+          [`matches/${matchId}/courtId`]: courtId,
+          ...(dataStore.matches?.[matchId]?.status === 'waiting' ? { [`matches/${matchId}/status`]: 'live' } : {})
+        });
+      }
+      window.open(`referee.html?court=${courtId}`, '_blank', 'noopener,noreferrer');
+    };
+
+    // POPUP XEM CHI TIẾT LƯỢT ĐẤU ĐỒNG ĐỘI (CÓ TÊN SÂN & NÚT TRỌNG TÀI)
     window.openTieDetailModal = (tieId) => {
       const tie = dataStore.ties?.[tieId];
       if (!tie) return showToast('Không tìm thấy thông tin lượt đấu');
 
+      const activeCourt = findActiveCourtForTie(tie);
       const subNames = ['Trận 1: Đôi Nữ', 'Trận 2: Đôi Nam', 'Trận 3: Nam Nữ 1', 'Trận 4: Nam Nữ 2', 'Trận 5: Đơn 21đ'];
+
       const rows = (tie.matchIds || []).map((id, idx) => {
         const sm = dataStore.matches?.[id];
         if (!sm) return '';
         if (idx === 4 && tie.stage !== 'knockout') return '';
         const stText = sm.status === 'finished' ? 'Đã xong' : (sm.status === 'live' ? '● LIVE' : 'Chưa đấu');
         const stColor = sm.status === 'finished' ? 'text-emerald-400' : (sm.status === 'live' ? 'text-orange-400' : 'text-slate-500');
+        const canRef = Boolean(activeCourt && sm.status !== 'finished');
+
         return `
           <div class="sc-subcard rounded-xl p-2.5 space-y-1.5">
-            <div class="flex items-center justify-between text-[10px]">
+            <div class="flex items-center justify-between gap-2 text-[10px]">
               <span class="font-extrabold text-amber-300">${subNames[idx] || `Trận ${idx + 1}`}</span>
-              <span class="${stColor} font-bold">${stText}</span>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <span class="${stColor} font-bold">${stText}</span>
+                ${canRef ? `<button type="button" onclick="openRefereeDirect('${activeCourt.id}', '${id}')" class="px-2 py-0.5 rounded-md fire-btn text-white font-extrabold text-[10px]">Trọng tài →</button>` : ''}
+              </div>
             </div>
             <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-[11px]">
               <div class="text-left text-slate-200 leading-tight break-words min-w-0">${formatPlayersSide(sm.teamA)}</div>
@@ -759,6 +790,13 @@
             </div>
           </div>`;
       }).join('');
+
+      openScModal({
+        title: `${tie.teamAName} vs ${tie.teamBName}`,
+        desc: activeCourt ? `Đang thi đấu tại ${activeCourt.name}` : '',
+        bodyHtml: rows || '<p class="text-center text-slate-400 py-4">Chưa có trận đấu con.</p>'
+      });
+    };
 
       openScModal({
         title: `${tie.teamAName} vs ${tie.teamBName}`,
@@ -1815,13 +1853,15 @@
         let wA = 0, wB = 0;
         sub.forEach(m => { if (m.winner === 'A') wA++; if (m.winner === 'B') wB++; });
 
+        const activeCourt = findActiveCourtForTie(tie);
         const doneCount = sub.filter(m => m.status === 'finished').length;
-        const isLive = sub.some(m => m.status === 'live');
+        const isLive = Boolean(activeCourt) || sub.some(m => m.status === 'live');
         const allDone = sub.length >= 4 && doneCount >= 4 && (tie.stage !== 'knockout' || wA !== wB || doneCount === sub.length);
 
+        const courtTag = activeCourt ? ` • ${activeCourt.name}` : '';
         const statusText = allDone
           ? `Đã xong (${doneCount} trận)`
-          : (isLive ? `● Đang đấu (${doneCount}/${sub.length} trận)` : 'Chưa thi đấu');
+          : (isLive ? `● Đang đấu${courtTag} (${doneCount}/${sub.length} trận)` : 'Chưa thi đấu');
         const statusColor = allDone
           ? 'text-emerald-400'
           : (isLive ? 'text-orange-400' : 'text-slate-400');
@@ -1839,13 +1879,15 @@
                 ${getTeamBadge(tie.teamBName)}
               </div>
             </div>
-            <div class="flex items-center justify-between text-[10px] pt-1 border-t border-white/[0.06]">
-              <span class="font-bold ${statusColor}">${statusText}</span>
-              <span class="text-slate-400 font-semibold">Bấm xem chi tiết →</span>
+            <div class="flex items-center justify-between gap-2 text-[10px] pt-1 border-t border-white/[0.06]">
+              <span class="font-bold ${statusColor} truncate">${statusText}</span>
+              <div class="flex items-center gap-2 shrink-0">
+                ${activeCourt && !allDone ? `<a href="referee.html?court=${activeCourt.id}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="px-2 py-0.5 rounded-md fire-btn text-white font-extrabold">Trọng tài</a>` : ''}
+                <span class="text-slate-400 font-semibold">Chi tiết →</span>
+              </div>
             </div>
           </div>`;
       }).join('') || '<p class="text-xs text-slate-500 col-span-full text-center py-8">Chưa có lượt đấu đồng đội nào.</p>';
-
       const stats = {};
       Object.values(dataStore.teams || {}).forEach(t => { stats[t.name] = { name: t.name, played: 0, w: 0, d: 0, l: 0, setDiff: 0, ptDiff: 0, pts: 0 }; });
       tiesArr.filter(t => t.stage === 'group').forEach(tie => {
