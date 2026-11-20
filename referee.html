@@ -964,13 +964,6 @@
       closeTossModal();
     }
 
-    window.applyTossChoice = async (choice) => {
-      if (!currentMatch || !tossWinner) return;
-      if (choice === 'serve') await setServingTeam(tossWinner);
-      else await update(ref(db, `matches/${currentMatchId}`), { servingTeam: tossWinner === 'A' ? 'B' : 'A', servingBox: 0, sidesSwitched: !currentMatch.sidesSwitched });
-      playBeep(880, 0.15); closeTossModal();
-    };
-
     window.switchTieSubMatch = async (subMatchId) => {
       if (!subMatchId || subMatchId === currentMatchId) return;
       playBeep(620, 0.08); switchPopupShownForMatch = null;
@@ -1204,7 +1197,12 @@
     window.closeTimeoutModal = () => { if (timeoutInterval) clearInterval(timeoutInterval); document.getElementById('timeoutModal').classList.add('hidden'); };
     window.handleUndo = () => { if (!currentMatch) return; playBeep(300, 0.1); saveMatch(undoLastAction(currentMatch)); };
     window.handleSwitchSides = () => { if (!currentMatch || !currentMatchId) return; playBeep(660, 0.2); update(ref(db, `matches/${currentMatchId}`), { sidesSwitched: !currentMatch.sidesSwitched }); };
-    window.confirmSwitchSides = async () => { document.getElementById('switchModal').classList.add('hidden'); if (!currentMatchId) return; playBeep(660, 0.25); await update(ref(db, `matches/${currentMatchId}`), { sidesSwitched: true }); };
+    window.confirmSwitchSides = async () => {
+  document.getElementById('switchModal').classList.add('hidden');
+  if (!currentMatchId || !currentMatch) return;
+  playBeep(660, 0.25);
+  await update(ref(db, `matches/${currentMatchId}`), { sidesSwitched: !currentMatch.sidesSwitched, midSwitched: true });
+};
 
     function renderBoard() {
       const m = currentMatch;
@@ -1355,7 +1353,7 @@
       if (isRally) document.getElementById('rallyControls').classList.add('grid');
 
       const maxS = Math.max(m.teamA.score, m.teamB.score);
-      const shouldSwitch = !m.sidesSwitched && maxS === swPoint && !finished;
+      const shouldSwitch = !m.midSwitched && maxS === swPoint && !finished;
       if (shouldSwitch && switchPopupShownForMatch !== currentMatchId) {
         switchPopupShownForMatch = currentMatchId;
         playBeep(700, 0.3, 'triangle');
