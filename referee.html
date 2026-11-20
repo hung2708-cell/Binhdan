@@ -7,6 +7,7 @@
   <link rel="icon" type="image/jpeg" href="logo.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
     html, body {
       position: fixed;
@@ -154,8 +155,6 @@
       100% { transform: rotateY(1080deg) scale(1); }
     }
     .coin-spinning { animation: coinFlip 0.65s ease-out; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="flex flex-col p-2 landscape:p-1.5 max-w-md landscape:max-w-full lg:max-w-5xl mx-auto">
@@ -241,7 +240,7 @@
           </svg>
 
           <div class="court-surface w-full h-full">
-            <!-- BÊN TRÁI (ĐỘI A) -->
+            <!-- BÊN TRÁI -->
             <div class="grid grid-rows-2 divide-y-2 divide-white h-full">
               <div id="boxA1" class="court-quadrant">
                 <span class="absolute top-1 left-1.5 text-[8px] font-bold text-white/40 uppercase ls-compact-hide">Ô Lẻ A</span>
@@ -260,7 +259,7 @@
               <div class="h-full border-l-2 border-dashed border-white/95"></div>
             </div>
 
-            <!-- BÊN PHẢI (ĐỘI B) -->
+            <!-- BÊN PHẢI -->
             <div class="grid grid-rows-2 divide-y-2 divide-white h-full">
               <div id="boxB0" class="court-quadrant">
                 <span class="absolute top-1 right-1.5 text-[8px] font-bold text-white/40 uppercase ls-compact-hide">Ô Chẵn B</span>
@@ -283,14 +282,18 @@
 
       <!-- THIẾT LẬP TRƯỚC TRẬN -->
       <div id="preMatchSetup" class="sc-panel rounded-2xl p-2 lg:p-2.5 space-y-1.5 landscape:space-y-1 shrink-0">
-        <div class="grid grid-cols-2 gap-1.5">
-          <button onclick="openManualLineupModal()" class="btn-tap py-1.5 landscape:py-1 px-2 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-[10px] lg:text-xs font-extrabold flex items-center justify-center gap-1">
+        <div class="grid grid-cols-3 gap-1.5">
+          <button onclick="openManualLineupModal()" class="btn-tap py-1.5 landscape:py-1 px-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-[10px] lg:text-xs font-extrabold flex items-center justify-center gap-1">
             <i data-lucide="users" class="w-3.5 h-3.5"></i> Chọn VĐV
           </button>
-          <button onclick="openCoinTossModal()" class="btn-tap py-1.5 landscape:py-1 px-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-300 text-[10px] lg:text-xs font-extrabold flex items-center justify-center gap-1">
+          <button onclick="openCoinTossModal()" class="btn-tap py-1.5 landscape:py-1 px-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-amber-300 text-[10px] lg:text-xs font-extrabold flex items-center justify-center gap-1">
             <i data-lucide="coins" class="w-3.5 h-3.5"></i> Bốc thăm
           </button>
+          <button onclick="triggerRefExcelImport()" class="btn-tap py-1.5 landscape:py-1 px-1.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/35 text-sky-300 text-[10px] lg:text-xs font-extrabold flex items-center justify-center gap-1">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i> Import XL
+          </button>
         </div>
+        <input id="refExcelInput" type="file" accept=".xlsx,.xls,.csv" onchange="handleRefExcelFile(event)" class="hidden" />
         <div class="grid grid-cols-3 gap-1 text-[10px] lg:text-[11px]">
           <button onclick="openTeamServePicker()" class="btn-tap py-1 px-1 rounded-xl bg-[#0a0d14] border border-white/10 text-center">
             <div class="text-[8px] text-slate-400 uppercase font-bold">Đội giao</div>
@@ -461,6 +464,7 @@
     let switchPopupShownForMatch = null;
     let timeoutInterval = null;
     let tossWinner = null;
+    let tossDraft = { servingTeam: null, sidesSwitched: false };
     let blindWizard = null;
     let isManualLineupOpen = false;
 
@@ -745,6 +749,87 @@
       }
     };
 
+    window.triggerRefExcelImport = () => {
+      if (!currentMatch) return;
+      if (isMatchStarted(currentMatch)) return alert('Trận đã bắt đầu, không thể import đội hình mới.');
+      const inp = document.getElementById('refExcelInput');
+      if (inp) { inp.value = ''; inp.click(); }
+    };
+
+    function mapRowToMatchIndex(rawLabel = '', fallbackIdx = 0) {
+      const s = String(rawLabel || '').trim().toLowerCase();
+      if (s.includes('đơn') || s.includes('21')) return 4;
+      if (s.includes('trận 1') || s.includes('đôi nữ') || s.includes('nu')) return 0;
+      if (s.includes('trận 2') || s.includes('đôi nam') || s.includes('nam')) return 1;
+      if (s.includes('trận 3') || s.includes('nam nữ 1') || s.includes('hỗn hợp 1')) return 2;
+      if (s.includes('trận 4') || s.includes('nam nữ 2') || s.includes('hỗn hợp 2')) return 3;
+      return fallbackIdx;
+    }
+
+    window.handleRefExcelFile = (evt) => {
+      const file = evt.target.files?.[0];
+      if (!file || !currentMatch || !currentMatchId) return;
+      if (!window.XLSX) return alert('Chưa tải được thư viện đọc Excel, kiểm tra lại kết nối mạng.');
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const wb = window.XLSX.read(e.target.result, { type: 'array' });
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          const rows = window.XLSX.utils.sheet_to_json(sheet, { header: 1 })
+            .filter(r => Array.isArray(r) && r.some(cell => String(cell ?? '').trim() !== ''));
+
+          if (!rows.length) return alert('File Excel trống.');
+
+          const firstCell = String(rows[0][0] ?? '').trim().toLowerCase();
+          const dataRows = /^(nội dung|noi dung|trận|tran|category|stt)/.test(firstCell) ? rows.slice(1) : rows;
+          if (!dataRows.length) return alert('Không có dữ liệu VĐV trong file.');
+
+          const tie = getActiveTie(currentMatch);
+          const updates = {};
+
+          if (tie && Array.isArray(tie.matchIds) && tie.matchIds.length) {
+            dataRows.forEach((r, idx) => {
+              const targetIdx = mapRowToMatchIndex(r[0], idx);
+              const mId = tie.matchIds[targetIdx];
+              if (!mId) return;
+
+              const a1 = String(r[1] ?? '').trim();
+              const a2 = String(r[2] ?? '').trim();
+              const b1 = String(r[3] ?? '').trim();
+              const b2 = String(r[4] ?? '').trim();
+
+              if (a1 || a2) updates[`matches/${mId}/teamA/players`] = [a1, a2];
+              if (b1 || b2) updates[`matches/${mId}/teamB/players`] = [b1, b2];
+            });
+
+            updates[`ties/${tie.id}/lineupA`] = true;
+            updates[`ties/${tie.id}/lineupB`] = true;
+            isManualLineupOpen = false;
+            blindWizard = null;
+            document.getElementById('blindRefModal')?.classList.add('hidden');
+          } else {
+            const r = dataRows[0];
+            const hasPrefix = /đôi|đơn|trận/i.test(String(r[0] ?? ''));
+            const offset = hasPrefix ? 1 : 0;
+            const a1 = String(r[offset] ?? '').trim();
+            const a2 = String(r[offset + 1] ?? '').trim();
+            const b1 = String(r[offset + 2] ?? '').trim();
+            const b2 = String(r[offset + 3] ?? '').trim();
+
+            if (a1 || a2) updates[`matches/${currentMatchId}/teamA/players`] = [a1, a2];
+            if (b1 || b2) updates[`matches/${currentMatchId}/teamB/players`] = [b1, b2];
+          }
+
+          await update(ref(db, '/'), updates);
+          playBeep(880, 0.14);
+        } catch (err) {
+          alert('Lỗi đọc file Excel: ' + (err?.message || err));
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    };
+
     window.openInjurySubModal = () => {
       if (!currentMatch || isMatchFinished(currentMatch)) return;
       document.getElementById('injErrMsg').classList.add('hidden');
@@ -858,8 +943,6 @@
 
     async function setServingTeam(team) { playBeep(600, 0.08); await update(ref(db, `matches/${currentMatchId}`), { servingTeam: team, servingBox: 0 }); }
 
-    let tossDraft = { servingTeam: null, sidesSwitched: false };
-
     function renderTossButtons(buttons) {
       const box = document.getElementById('tossChoices');
       box.innerHTML = buttons.map(b => `
@@ -937,7 +1020,6 @@
     window.handleTossSidePick = async (sideChoice, nextIsLoserBall) => {
       const picker = nextIsLoserBall ? tossWinner : (tossWinner === 'A' ? 'B' : 'A');
       const other = picker === 'A' ? 'B' : 'A';
-      // Mặc định A ở Trái, B ở Phải => đảo sân nếu A chọn Phải hoặc B chọn Trái
       tossDraft.sidesSwitched = (picker === 'A') ? (sideChoice === 'right') : (sideChoice === 'left');
       playBeep(680, 0.08);
 
@@ -999,7 +1081,6 @@
       renderBoard();
     });
 
-    // Kiểm tra lượt đồng đội đã đấu xong toàn bộ các trận chưa
     function isTieCompleted(tie, matchesMap) {
       if (!tie) return true;
       if (tie.walkoverWinner) return true;
@@ -1015,13 +1096,11 @@
       return true;
     }
 
-    // Tự động giải phóng sân đã xong & đẩy cặp tiếp theo không trùng CLB vào sân
     async function autoDispatchAfterFinish(latestMatch) {
       const matchesMap = { ...allMatches, [currentMatchId]: latestMatch };
       const tie = getActiveTie(latestMatch);
       const isTeamMode = Boolean(tie);
 
-      // Nếu là giải đồng đội mà vẫn còn trận con chưa đánh xong thì chưa đổi lượt
       if (isTeamMode && !isTieCompleted(tie, matchesMap)) return;
 
       const updates = {};
@@ -1030,7 +1109,6 @@
       const freeCourts = [];
       const playedCount = {};
 
-      // 1. Quét toàn bộ các sân: sân nào xong thì giải phóng, sân nào đang đánh thì giữ nguyên
       Object.entries(allCourts).forEach(([cId, c]) => {
         if (isTeamMode) {
           const tId = c.activeTieId || matchesMap[c.activeMatchId]?.tieId || '';
@@ -1060,7 +1138,6 @@
 
       if (!freeCourts.length) return;
 
-      // 2. Đếm số lượt đã đấu để ưu tiên đội được nghỉ
       if (isTeamMode) {
         Object.values(allTies).forEach(t => {
           if (isTieCompleted(t, matchesMap)) {
@@ -1148,7 +1225,6 @@
       if (!currentMatchId) return;
       await set(ref(db, `matches/${currentMatchId}`), newState);
       if (isMatchFinished(newState)) {
-        // Đợi 2.5 giây để trọng tài nhìn thấy thông báo Kết thúc trận rồi tự đẩy cặp mới vào sân
         setTimeout(() => autoDispatchAfterFinish(newState), 2500);
       }
     }
@@ -1170,11 +1246,11 @@
       saveMatch(nextState);
     };
     window.handleRallyPoint = (side) => {
-  if (!currentMatch || isMatchFinished(currentMatch)) return;
-  const actualTeam = currentMatch.sidesSwitched ? (side === 'A' ? 'B' : 'A') : side;
-  playBeep(880, 0.12);
-  saveMatch(awardPoint(currentMatch, actualTeam));
-};
+      if (!currentMatch || isMatchFinished(currentMatch)) return;
+      const actualTeam = currentMatch.sidesSwitched ? (side === 'A' ? 'B' : 'A') : side;
+      playBeep(880, 0.12);
+      saveMatch(awardPoint(currentMatch, actualTeam));
+    };
     window.handleSubtractPoint = async (side) => {
       if (!currentMatch || !currentMatchId) return;
       const actualSide = currentMatch.sidesSwitched ? (side === 'A' ? 'B' : 'A') : side;
@@ -1203,11 +1279,11 @@
     window.handleUndo = () => { if (!currentMatch) return; playBeep(300, 0.1); saveMatch(undoLastAction(currentMatch)); };
     window.handleSwitchSides = () => { if (!currentMatch || !currentMatchId) return; playBeep(660, 0.2); update(ref(db, `matches/${currentMatchId}`), { sidesSwitched: !currentMatch.sidesSwitched }); };
     window.confirmSwitchSides = async () => {
-  document.getElementById('switchModal').classList.add('hidden');
-  if (!currentMatchId || !currentMatch) return;
-  playBeep(660, 0.25);
-  await update(ref(db, `matches/${currentMatchId}`), { sidesSwitched: !currentMatch.sidesSwitched, midSwitched: true });
-};
+      document.getElementById('switchModal').classList.add('hidden');
+      if (!currentMatchId || !currentMatch) return;
+      playBeep(660, 0.25);
+      await update(ref(db, `matches/${currentMatchId}`), { sidesSwitched: !currentMatch.sidesSwitched, midSwitched: true });
+    };
 
     function renderBoard() {
       const m = currentMatch;
@@ -1236,9 +1312,10 @@
       document.getElementById('nameB').textContent = rightTeam.name;
       document.getElementById('scoreB').textContent = rightTeam.score;
       document.getElementById('btnRallyA').textContent = `+1 ${leftTeam.name}`;
-document.getElementById('btnRallyB').textContent = `+1 ${rightTeam.name}`;
+      document.getElementById('btnRallyB').textContent = `+1 ${rightTeam.name}`;
       document.getElementById('toA').textContent = m.teamA.timeouts ?? 2;
       document.getElementById('toB').textContent = m.teamB.timeouts ?? 2;
+
       const started = isMatchStarted(m);
       document.getElementById('preMatchSetup').classList.remove('hidden');
       document.querySelectorAll('#preMatchSetup button').forEach(btn => { btn.disabled = started; });
@@ -1249,7 +1326,6 @@ document.getElementById('btnRallyB').textContent = `+1 ${rightTeam.name}`;
       const leftColor = switched ? 'bg-rose-300' : 'bg-sky-300';
       const rightColor = switched ? 'bg-sky-300' : 'bg-rose-300';
 
-      // Cập nhật nhãn góc sân theo bên mới sau khi đổi sân
       const lblLeft = switched ? 'B' : 'A';
       const lblRight = switched ? 'A' : 'B';
       const setCornerLbl = (boxId, text) => {
