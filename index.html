@@ -734,7 +734,37 @@
       await update(ref(db, '/'), updates);
       showToast('Đã xóa sạch lịch & trận đấu cũ');
     };
+// POPUP XEM CHI TIẾT LƯỢT ĐẤU ĐỒNG ĐỘI
+    window.openTieDetailModal = (tieId) => {
+      const tie = dataStore.ties?.[tieId];
+      if (!tie) return showToast('Không tìm thấy thông tin lượt đấu');
 
+      const subNames = ['Trận 1: Đôi Nữ', 'Trận 2: Đôi Nam', 'Trận 3: Nam Nữ 1', 'Trận 4: Nam Nữ 2', 'Trận 5: Đơn 21đ'];
+      const rows = (tie.matchIds || []).map((id, idx) => {
+        const sm = dataStore.matches?.[id];
+        if (!sm) return '';
+        if (idx === 4 && tie.stage !== 'knockout') return '';
+        const stText = sm.status === 'finished' ? 'Đã xong' : (sm.status === 'live' ? '● LIVE' : 'Chưa đấu');
+        const stColor = sm.status === 'finished' ? 'text-emerald-400' : (sm.status === 'live' ? 'text-orange-400' : 'text-slate-500');
+        return `
+          <div class="sc-subcard rounded-xl p-2.5 space-y-1.5">
+            <div class="flex items-center justify-between text-[10px]">
+              <span class="font-extrabold text-amber-300">${subNames[idx] || `Trận ${idx + 1}`}</span>
+              <span class="${stColor} font-bold">${stText}</span>
+            </div>
+            <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-[11px]">
+              <div class="text-left text-slate-200 leading-tight break-words min-w-0">${formatPlayersSide(sm.teamA)}</div>
+              <div class="px-2 py-0.5 rounded-md bg-white/[0.06] font-black text-orange-400 tabular-nums whitespace-nowrap">${sm.teamA?.score ?? 0} - ${sm.teamB?.score ?? 0}</div>
+              <div class="text-right text-slate-200 leading-tight break-words min-w-0">${formatPlayersSide(sm.teamB)}</div>
+            </div>
+          </div>`;
+      }).join('');
+
+      openScModal({
+        title: `${tie.teamAName} vs ${tie.teamBName}`,
+        bodyHtml: rows || '<p class="text-center text-slate-400 py-4">Chưa có trận đấu con.</p>'
+      });
+    };
     window.openCourtDetailModal = (cId) => {
       const court = dataStore.courts?.[cId];
       const match = court?.activeMatchId ? dataStore.matches?.[court.activeMatchId] : null;
@@ -1777,24 +1807,36 @@
       const tiesArr = Object.values(dataStore.ties || {}).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
       document.getElementById('tiesContainer').innerHTML = tiesArr.map(tie => {
         const sub = (tie.matchIds || []).map(id => dataStore.matches?.[id]).filter(Boolean);
-        let wA = 0, wB = 0; sub.forEach(m => { if (m.winner === 'A') wA++; if (m.winner === 'B') wB++; });
-        const subLabels = ['Đôi Nữ', 'Đôi Nam', 'Nam Nữ 1', 'Nam Nữ 2', 'Đơn 21đ'];
+        let wA = 0, wB = 0;
+        sub.forEach(m => { if (m.winner === 'A') wA++; if (m.winner === 'B') wB++; });
+
+        const doneCount = sub.filter(m => m.status === 'finished').length;
+        const isLive = sub.some(m => m.status === 'live');
+        const allDone = sub.length >= 4 && doneCount >= 4 && (tie.stage !== 'knockout' || wA !== wB || doneCount === sub.length);
+
+        const statusText = allDone
+          ? `Đã xong (${doneCount} trận)`
+          : (isLive ? `● Đang đấu (${doneCount}/${sub.length} trận)` : 'Chưa thi đấu');
+        const statusColor = allDone
+          ? 'text-emerald-400'
+          : (isLive ? 'text-orange-400' : 'text-slate-400');
+
         return `
-          <div class="sc-card rounded-2xl overflow-hidden">
-            <div class="bg-white/[0.03] px-3.5 py-2.5 border-b border-white/[0.06] flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2 min-w-0 flex-1">${getTeamBadge(tie.teamAName)}<span class="font-extrabold text-xs text-white truncate">${tie.teamAName}</span></div>
-              <span class="px-2.5 py-0.5 rounded-lg bg-orange-500/20 text-orange-300 font-black text-sm tabular-nums shrink-0">${wA} - ${wB}</span>
-              <div class="flex items-center justify-end gap-2 min-w-0 flex-1"><span class="font-extrabold text-xs text-white truncate text-right">${tie.teamBName}</span>${getTeamBadge(tie.teamBName)}</div>
+          <div onclick="openTieDetailModal('${tie.id}')" class="sc-card rounded-2xl px-3.5 py-3 cursor-pointer hover:border-orange-500/40 active:scale-[0.99] transition space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0 flex-1">
+                ${getTeamBadge(tie.teamAName)}
+                <span class="font-extrabold text-xs text-white truncate">${tie.teamAName}</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] text-orange-400 font-black text-xs tabular-nums shrink-0">${wA} - ${wB}</span>
+              <div class="flex items-center justify-end gap-2 min-w-0 flex-1">
+                <span class="font-extrabold text-xs text-white truncate text-right">${tie.teamBName}</span>
+                ${getTeamBadge(tie.teamBName)}
+              </div>
             </div>
-            <div class="p-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs">
-              ${sub.map((m, idx) => `
-                <div class="sc-subcard rounded-xl px-2.5 py-2 flex items-center justify-between gap-2">
-                  <div class="min-w-0">
-                    <div class="font-bold text-slate-200 truncate">${subLabels[idx] || m.category}</div>
-                    <div class="text-[10px] text-slate-400 truncate">${formatPlayersSide(m.teamA)} vs ${formatPlayersSide(m.teamB)}</div>
-                  </div>
-                  <span class="font-black text-orange-400 tabular-nums shrink-0">${m.teamA.score} - ${m.teamB.score}</span>
-                </div>`).join('')}
+            <div class="flex items-center justify-between text-[10px] pt-1 border-t border-white/[0.06]">
+              <span class="font-bold ${statusColor}">${statusText}</span>
+              <span class="text-slate-400 font-semibold">Bấm xem chi tiết →</span>
             </div>
           </div>`;
       }).join('') || '<p class="text-xs text-slate-500 col-span-full text-center py-8">Chưa có lượt đấu đồng đội nào.</p>';
